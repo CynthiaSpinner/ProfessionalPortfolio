@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
+
+.navbar-brand {
+  position: relative;
+  overflow: visible;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 20px;
+  height: 60px;
+}
+
+.navbar-brand::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(
+      circle at 30% 30%,
+      rgba(129, 140, 248, 0.08) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle at 70% 70%,
+      rgba(129, 140, 248, 0.08) 0%,
+      transparent 70%
+    );
+  animation: subtleShift 12s ease-in-out infinite;
+  z-index: -1;
+}
+
+.navbar-brand::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(129, 140, 248, 0.02) 50%,
+    transparent 100%
+  );
+  animation: refinedShimmer 4s ease-in-out infinite;
+  z-index: -1;
+}
+
+.navbar-brand span {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin: 0 1px;
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  position: relative;
+  top: -0.1em;
+  text-shadow: 0 0 20px rgba(129, 140, 248, 0.2),
+    0 0 40px rgba(129, 140, 248, 0.1);
+  background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: elegantFlow 8s ease infinite;
+}
+
+.navbar-brand .gradient-text {
+  font-size: 1.5rem;
+  top: 0;
+  margin: 0;
+  padding-bottom: 5px;
+}
+
+.navbar-brand span::before,
+.navbar-brand span::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 150%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(129, 140, 248, 0.5),
+    transparent
+  );
+  animation: scanLine 2s linear infinite;
+  opacity: 0;
+}
+
+.navbar-brand span:first-child::before {
+  left: -5px;
+  animation-delay: 0s;
+}
+
+.navbar-brand span:first-child::after {
+  left: -8px;
+  animation-delay: 1s;
+}
+
+.navbar-brand span:last-child::before {
+  right: -5px;
+  animation-delay: 0.5s;
+}
+
+.navbar-brand span:last-child::after {
+  right: -8px;
+  animation-delay: 1.5s;
+}
+
+@keyframes subtleShift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(5px, 5px) scale(1.02);
+  }
+  50% {
+    transform: translate(-5px, -5px) scale(0.98);
+  }
+  75% {
+    transform: translate(-5px, 5px) scale(1.01);
+  }
+}
+
+@keyframes refinedShimmer {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateX(-100%);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes elegantFlow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes scanLine {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
