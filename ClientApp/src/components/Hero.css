@@ -1,0 +1,42 @@
+.hero-section {
+  background-color: #f8f9fa;
+}
+
+.hero-section h1 {
+  color: #343a40;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.hero-section .lead {
+  color: #6c757d;
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.hero-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hero-image img {
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.hero-image:hover img {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    text-align: center;
+  }
+
+  .hero-image {
+    margin-top: 2rem;
+  }
+}
