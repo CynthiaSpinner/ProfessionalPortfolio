@@ -1,6 +1,9 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "../components/HeadingGroup";
+import Footer from "../components/Footer";
+import Button from "../components/Button";
+import Card from "../components/Card";
 import "./Home.css";
 
 const Home = () => {
@@ -15,9 +18,7 @@ const Home = () => {
                 title="Welcome to My Portfolio"
                 subtitle="I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications."
               />
-              <Button variant="primary" size="lg" href="/projects">
-                View My Work
-              </Button>
+              <Button href="/projects">View My Work</Button>
             </Col>
           </Row>
         </Container>
@@ -32,28 +33,28 @@ const Home = () => {
           />
           <Row className="g-4">
             <Col md={4}>
-              <div className="feature-card">
+              <Card>
                 <HeadingGroup
                   title="Frontend Development"
                   subtitle="React, JavaScript, HTML5, CSS3, Bootstrap"
                 />
-              </div>
+              </Card>
             </Col>
             <Col md={4}>
-              <div className="feature-card">
+              <Card>
                 <HeadingGroup
                   title="Backend Development"
                   subtitle=".NET Core, C#, RESTful APIs, MySQL"
                 />
-              </div>
+              </Card>
             </Col>
             <Col md={4}>
-              <div className="feature-card">
+              <Card>
                 <HeadingGroup
                   title="Design & Tools"
                   subtitle="Adobe Creative Suite, UI/UX Design, Git, Docker"
                 />
-              </div>
+              </Card>
             </Col>
           </Row>
         </Container>
@@ -67,9 +68,7 @@ const Home = () => {
             subtitle="Let's work together to bring your ideas to life."
             className="mb-4"
           />
-          <Button variant="primary" size="lg" href="/contact">
-            Get in Touch
-          </Button>
+          <Button href="/contact">Get in Touch</Button>
         </Container>
       </section>
 
@@ -83,13 +82,13 @@ const Home = () => {
                 subtitle="I'm always interested in hearing about new projects and opportunities."
                 className="mb-4"
               />
-              <Button variant="outline-primary" size="lg" href="/contact">
-                Contact Me
-              </Button>
+              <Button href="/contact">Contact Me</Button>
             </Col>
           </Row>
         </Container>
       </section>
+
+      <Footer />
     </div>
   );
 };

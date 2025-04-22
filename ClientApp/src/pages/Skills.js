@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col, Card, CardBody, Progress } from "reactstrap";
+import Footer from "../components/Footer";
 
 const Skills = () => {
   return (
@@ -71,6 +72,7 @@ const Skills = () => {
           </Card>
         </Col>
       </Row>
+      <Footer />
     </Container>
   );
 };

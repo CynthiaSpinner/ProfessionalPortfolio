@@ -1,11 +1,11 @@
 :root {
   /* Primary Colors */
-  --primary: #a5b4fc; /* Soft lavender blue */
-  --primary-dark: #818cf8; /* Slightly darker lavender */
+  --primary: #818cf8; /* Soft lavender blue */
+  --primary-dark: #6366f1; /* Slightly darker lavender */
   --primary-light: #c7d2fe; /* Very light lavender */
 
   /* Secondary Colors */
-  --secondary: #a5b4fc; /* Soft lavender blue */
+  --secondary: #4b5563; /* Soft lavender blue */
   --secondary-dark: #818cf8;
   --secondary-light: #c7d2fe;
 
@@ -16,14 +16,14 @@
   --black: #030712; /* Very dark gray */
 
   /* Accent Colors */
-  --accent: #a5b4fc; /* Soft lavender blue */
+  --accent: #f59e0b; /* Soft lavender blue */
   --accent-dark: #818cf8;
   --accent-light: #c7d2fe;
 
   /* Text Colors */
-  --text-primary: var(--light);
-  --text-secondary: #6b7280;
-  --text-light: #d1d5db; /* Light gray */
+  --text-muted: #6b7280;
+  --bg-dark: #050510;
+  --bg-light: #f3f4f6;
 }
 
 * {
@@ -38,18 +38,39 @@ html {
 }
 
 body {
-  background: var(--black);
-  color: var(--text-primary);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-dark);
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-light);
+}
+
+p {
+  color: var(--text-muted);
+}
+
 a {
+  color: var(--text-light);
   text-decoration: none;
-  color: var(--primary-light);
+  transition: color 0.3s ease;
 }
 
 a:hover {
-  color: var(--text-light);
+  color: var(--primary-light);
+  text-shadow: 0 0 10px rgba(199, 210, 254, 0.3);
 }
 
 ul {

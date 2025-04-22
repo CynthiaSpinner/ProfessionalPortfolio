@@ -1,0 +1,153 @@
+.navbar {
+  background: #050510;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(129, 140, 248, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 24px;
+}
+
+.navbar-logo {
+  color: #242424;
+  justify-self: start;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-brand {
+  color: #818cf8 !important;
+  font-family: "'Playfair Display', serif";
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 10px rgba(129, 140, 248, 0.3),
+    0 0 20px rgba(129, 140, 248, 0.2);
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  text-align: center;
+}
+
+.nav-item {
+  height: 80px;
+}
+
+.nav-link {
+  color: #9ca3af !important;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #c7d2fe !important;
+  text-shadow: 0 0 8px rgba(199, 210, 254, 0.5);
+}
+
+/* Remove all existing navbar-toggler styles and start fresh */
+.navbar-toggler {
+  border: 1px solid rgba(129, 140, 248, 0.3) !important;
+}
+
+.navbar-toggler:hover:not(.menu-open) {
+  border-color: rgba(129, 140, 248, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+.navbar-toggler:focus {
+  box-shadow: none !important;
+}
+
+.navbar-toggler.menu-open {
+  box-shadow: 0 0 20px rgba(129, 140, 248, 0.4),
+    0 0 40px rgba(129, 140, 248, 0.2);
+  border-color: rgba(129, 140, 248, 0.5) !important;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(129, 140, 248, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.navbar-toggler:hover:not(.menu-open) .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(199, 210, 254, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.navbar-toggler.menu-open .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(199, 210, 254, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Add styles for when menu is closed */
+.navbar-collapse:not(.show) ~ .navbar-toggler {
+  box-shadow: none !important;
+  border-color: rgba(129, 140, 248, 0.3) !important;
+}
+
+.navbar-collapse:not(.show) ~ .navbar-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(129, 140, 248, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Dropdown menu styles */
+.navbar-collapse {
+  transition: none !important;
+}
+
+.navbar-nav {
+  transition: none !important;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .nav-item {
+    margin: 0.5rem 0;
+    position: relative;
+  }
+
+  .nav-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(129, 140, 248, 0.1) 20%,
+      rgba(129, 140, 248, 0.3) 50%,
+      rgba(129, 140, 248, 0.1) 80%,
+      transparent 100%
+    );
+    box-shadow: 0 0 20px rgba(129, 140, 248, 0.2),
+      0 0 35px rgba(129, 140, 248, 0.1);
+  }
+
+  .nav-link {
+    display: inline-block;
+    width: 100%;
+    padding: 0.5rem 1rem !important;
+  }
+
+  .navbar-collapse {
+    background-color: rgba(33, 37, 41, 0.95);
+    border-radius: 0.25rem;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+}

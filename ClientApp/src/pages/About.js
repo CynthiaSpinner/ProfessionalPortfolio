@@ -1,24 +1,19 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Button from "../components/Button";
+import Card from "../components/Card";
 import HeadingGroup from "../components/HeadingGroup";
 import "./About.css";
 
 const About = () => {
   return (
     <div className="about-page">
-      {/* Header Section */}
-      <section className="header-section">
-        <Container>
-          <Row className="align-items-center min-vh-50">
-            <Col lg={8} className="mx-auto text-center">
-              <HeadingGroup
-                title="Cynthia"
-                subtitle="Software Engineer & Creative Designer"
-              />
-            </Col>
-          </Row>
-        </Container>
-      </section>
+      <Header
+        title="About Me"
+        subtitle="Get to know more about my journey, skills, and what drives me as a developer."
+      />
 
       {/* About Section */}
       <section className="about-section py-5">
@@ -70,28 +65,28 @@ const About = () => {
           />
           <Row className="g-4">
             <Col md={4}>
-              <div className="skill-card">
+              <Card>
                 <HeadingGroup
                   title="Frontend Development"
                   subtitle="React, JavaScript, HTML5, CSS3, Bootstrap"
                 />
-              </div>
+              </Card>
             </Col>
             <Col md={4}>
-              <div className="skill-card">
+              <Card>
                 <HeadingGroup
                   title="Backend Development"
                   subtitle=".NET Core, C#, RESTful APIs, MySQL"
                 />
-              </div>
+              </Card>
             </Col>
             <Col md={4}>
-              <div className="skill-card">
+              <Card>
                 <HeadingGroup
                   title="Design & Tools"
                   subtitle="Adobe Creative Suite, UI/UX Design, Git, Docker"
                 />
-              </div>
+              </Card>
             </Col>
           </Row>
         </Container>
@@ -103,7 +98,7 @@ const About = () => {
           <h2 className="text-center mb-5">Collaborators</h2>
           <Row className="g-4">
             <Col md={4}>
-              <div className="team-card">
+              <Card>
                 <img
                   src="https://via.placeholder.com/150x150/333333/FFFFFF?text=Team+1"
                   alt="Team Member"
@@ -111,10 +106,10 @@ const About = () => {
                 />
                 <h3>John Doe</h3>
                 <p className="text-muted">Frontend Developer</p>
-              </div>
+              </Card>
             </Col>
             <Col md={4}>
-              <div className="team-card">
+              <Card>
                 <img
                   src="https://via.placeholder.com/150x150/333333/FFFFFF?text=Team+2"
                   alt="Team Member"
@@ -122,10 +117,10 @@ const About = () => {
                 />
                 <h3>Jane Smith</h3>
                 <p className="text-muted">UI/UX Designer</p>
-              </div>
+              </Card>
             </Col>
             <Col md={4}>
-              <div className="team-card">
+              <Card>
                 <img
                   src="https://via.placeholder.com/150x150/333333/FFFFFF?text=Team+3"
                   alt="Team Member"
@@ -133,7 +128,7 @@ const About = () => {
                 />
                 <h3>Mike Johnson</h3>
                 <p className="text-muted">Backend Developer</p>
-              </div>
+              </Card>
             </Col>
           </Row>
         </Container>
@@ -144,28 +139,28 @@ const About = () => {
         <Container>
           <Row className="g-4">
             <Col md={3} className="text-center">
-              <div className="stat-card">
+              <Card>
                 <h3 className="display-4 fw-bold">5+</h3>
                 <p className="text-muted">Years Experience</p>
-              </div>
+              </Card>
             </Col>
             <Col md={3} className="text-center">
-              <div className="stat-card">
+              <Card>
                 <h3 className="display-4 fw-bold">50+</h3>
                 <p className="text-muted">Projects Completed</p>
-              </div>
+              </Card>
             </Col>
             <Col md={3} className="text-center">
-              <div className="stat-card">
+              <Card>
                 <h3 className="display-4 fw-bold">10+</h3>
                 <p className="text-muted">Certifications</p>
-              </div>
+              </Card>
             </Col>
             <Col md={3} className="text-center">
-              <div className="stat-card">
+              <Card>
                 <h3 className="display-4 fw-bold">100%</h3>
                 <p className="text-muted">Client Satisfaction</p>
-              </div>
+              </Card>
             </Col>
           </Row>
         </Container>
@@ -178,11 +173,13 @@ const About = () => {
           <p className="lead mb-4">
             Let's discuss how we can bring your ideas to life.
           </p>
-          <Button variant="primary" size="lg" href="/contact">
+          <Button href="/contact" size="lg">
             Get in Touch
           </Button>
         </Container>
       </section>
+
+      <Footer />
     </div>
   );
 };

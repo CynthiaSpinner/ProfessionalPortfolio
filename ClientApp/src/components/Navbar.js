@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <nav
       className="navbar navbar-expand-lg navbar-dark bg-dark"
@@ -33,14 +35,18 @@ const Navbar = () => {
           <span className="gradient-text">pinner</span>
         </h1>
         <button
-          className="navbar-toggler"
+          className={`navbar-toggler ${isMenuOpen ? "menu-open" : ""}`}
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-expanded={isMenuOpen}
+          aria-controls="navbarNav"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div
+          className={`collapse navbar-collapse ${isMenuOpen ? "show" : ""}`}
+          id="navbarNav"
+        >
           <ul
             className="navbar-nav"
             style={{ gap: "0.75rem", marginTop: "0.15rem" }}
@@ -55,6 +61,7 @@ const Navbar = () => {
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </Link>
@@ -69,6 +76,7 @@ const Navbar = () => {
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Projects
               </Link>
@@ -83,6 +91,7 @@ const Navbar = () => {
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Graphic Design
               </Link>
@@ -97,6 +106,7 @@ const Navbar = () => {
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Design
               </Link>
@@ -111,6 +121,7 @@ const Navbar = () => {
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
+                onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
@@ -125,6 +136,7 @@ const Navbar = () => {
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Contact
               </Link>
