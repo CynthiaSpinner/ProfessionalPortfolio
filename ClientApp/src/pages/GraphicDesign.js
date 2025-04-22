@@ -1,20 +1,140 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Button from "../components/Button";
 import HeadingGroup from "../components/HeadingGroup";
+import PhotoGallery from "../components/PhotoGallery";
 import "./GraphicDesign.css";
+
+// Sample images for each section
+const photographyImages = [
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Nature Photography",
+    alt: "Nature scene",
+  },
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Portrait Work",
+    alt: "Portrait photo",
+  },
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Urban Landscape",
+    alt: "Cityscape",
+  },
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Wildlife",
+    alt: "Wildlife photo",
+  },
+];
+
+const adobeImages = [
+  {
+    src: "https://via.placeholder.com/1200x400",
+    title: "Brand Identity",
+    alt: "Brand design",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Print Design",
+    alt: "Print material",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Digital Art",
+    alt: "Digital artwork",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Packaging Design",
+    alt: "Product packaging",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Web Design",
+    alt: "Website design",
+  },
+];
+
+const afterEffectsImages = [
+  {
+    src: "https://via.placeholder.com/800x800",
+    title: "Motion Graphics",
+    alt: "Animated graphic",
+  },
+  {
+    src: "https://via.placeholder.com/800x800",
+    title: "Title Sequence",
+    alt: "Video title",
+  },
+  {
+    src: "https://via.placeholder.com/800x800",
+    title: "Visual Effects",
+    alt: "VFX shot",
+  },
+];
+
+const photoshopImages = [
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Photo Retouching",
+    alt: "Retouched photo",
+  },
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Digital Painting",
+    alt: "Digital art",
+  },
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Photo Manipulation",
+    alt: "Manipulated image",
+  },
+  {
+    src: "https://via.placeholder.com/800x400",
+    title: "Collage Art",
+    alt: "Photo collage",
+  },
+];
+
+const lightroomImages = [
+  {
+    src: "https://via.placeholder.com/1200x400",
+    title: "Color Correction",
+    alt: "Color corrected photo",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Preset Development",
+    alt: "Lightroom preset",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Batch Editing",
+    alt: "Edited photos",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Portrait Enhancement",
+    alt: "Enhanced portrait",
+  },
+  {
+    src: "https://via.placeholder.com/600x600",
+    title: "Black & White",
+    alt: "B&W photo",
+  },
+];
 
 const GraphicDesign = () => {
   return (
     <div className="graphic-design-page">
-      {/* Header Section */}
-      <section className="header-section">
-        <Container>
-          <HeadingGroup
-            title="Graphic Design Portfolio"
-            subtitle="Showcasing my expertise in various design tools and creative projects"
-          />
-        </Container>
-      </section>
+      <Header
+        title="Graphic Design"
+        subtitle="Discover my visual design projects and creative work."
+      />
 
       {/* Photography Section */}
       <section className="portfolio-section">
@@ -25,15 +145,8 @@ const GraphicDesign = () => {
                 title="Photography Showcase"
                 subtitle="A collection of my best photography work"
               />
-              <div className="video-container">
-                {/* Placeholder for video embed */}
-                <div className="video-placeholder">
-                  Video will be embedded here
-                </div>
-              </div>
-              <a href="/portfolio/photography" className="btn btn-primary">
-                View Full Portfolio
-              </a>
+              <PhotoGallery images={photographyImages} layout="landscape4" />
+              <Button href="/portfolio/photography">View Full Portfolio</Button>
             </Col>
           </Row>
         </Container>
@@ -48,15 +161,8 @@ const GraphicDesign = () => {
                 title="Adobe Creative Suite Projects"
                 subtitle="Professional design work using Adobe's industry-standard tools"
               />
-              <div className="video-container">
-                {/* Placeholder for video embed */}
-                <div className="video-placeholder">
-                  Video will be embedded here
-                </div>
-              </div>
-              <a href="/portfolio/adobe" className="btn btn-primary">
-                View Full Portfolio
-              </a>
+              <PhotoGallery images={adobeImages} layout="left-large-grid4" />
+              <Button href="/portfolio/adobe">View Full Portfolio</Button>
             </Col>
           </Row>
         </Container>
@@ -71,15 +177,10 @@ const GraphicDesign = () => {
                 title="Motion Graphics & Animation"
                 subtitle="Dynamic visual content created with Adobe AfterEffects"
               />
-              <div className="video-container">
-                {/* Placeholder for video embed */}
-                <div className="video-placeholder">
-                  Video will be embedded here
-                </div>
-              </div>
-              <a href="/portfolio/aftereffects" className="btn btn-primary">
+              <PhotoGallery images={afterEffectsImages} layout="square3" />
+              <Button href="/portfolio/aftereffects">
                 View Full Portfolio
-              </a>
+              </Button>
             </Col>
           </Row>
         </Container>
@@ -90,16 +191,12 @@ const GraphicDesign = () => {
         <Container>
           <Row>
             <Col>
-              <h2>Photoshop Projects</h2>
-              <div className="video-container">
-                {/* Placeholder for video embed */}
-                <div className="video-placeholder">
-                  Video will be embedded here
-                </div>
-              </div>
-              <a href="/portfolio/photoshop" className="btn btn-primary">
-                View Full Portfolio
-              </a>
+              <HeadingGroup
+                title="Photoshop Projects"
+                subtitle="Professional image editing and manipulation"
+              />
+              <PhotoGallery images={photoshopImages} layout="landscape4" />
+              <Button href="/portfolio/photoshop">View Full Portfolio</Button>
             </Col>
           </Row>
         </Container>
@@ -110,20 +207,21 @@ const GraphicDesign = () => {
         <Container>
           <Row>
             <Col>
-              <h2>Lightroom Projects</h2>
-              <div className="video-container">
-                {/* Placeholder for video embed */}
-                <div className="video-placeholder">
-                  Video will be embedded here
-                </div>
-              </div>
-              <a href="/portfolio/lightroom" className="btn btn-primary">
-                View Full Portfolio
-              </a>
+              <HeadingGroup
+                title="Lightroom Projects"
+                subtitle="Professional photo editing and organization"
+              />
+              <PhotoGallery
+                images={lightroomImages}
+                layout="left-large-grid4"
+              />
+              <Button href="/portfolio/lightroom">View Full Portfolio</Button>
             </Col>
           </Row>
         </Container>
       </section>
+
+      <Footer />
     </div>
   );
 };

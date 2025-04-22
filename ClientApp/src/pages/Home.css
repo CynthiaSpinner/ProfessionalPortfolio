@@ -38,44 +38,6 @@
   margin-bottom: 35px;
 }
 
-.home-btns {
-  display: flex;
-  gap: 20px;
-}
-
-.btn {
-  border-radius: 50px;
-  background: #4f46e5; /* Dark purple button color */
-  white-space: nowrap;
-  padding: 12px 30px;
-  color: #fff;
-  font-size: 16px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-}
-
-.btn:hover {
-  background: #4338ca; /* Even darker purple on hover */
-  transform: scale(1.05);
-}
-
-.btn-outline {
-  background: transparent;
-  border: 2px solid #4f46e5;
-  color: #4f46e5;
-}
-
-.btn-outline:hover {
-  background: #4f46e5;
-  color: #fff;
-}
-
 /* Update section backgrounds to match the theme */
 .hero-section {
   position: relative;
@@ -123,19 +85,6 @@
 .cta-section p {
   color: #e0e0e0;
   margin-bottom: 2rem;
-}
-
-.cta-section .btn {
-  background: #818cf8;
-  color: #fff;
-  padding: 0.75rem 2rem;
-  border-radius: 0.25rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.cta-section .btn:hover {
-  background: #6366f1;
 }
 
 .contact-section {
@@ -209,4 +158,33 @@
   line-height: 1.6;
   opacity: 0.9;
   transform: translateZ(5px);
+}
+
+.video-section {
+  background: linear-gradient(
+    135deg,
+    rgba(75, 75, 90, 0.3),
+    rgba(85, 85, 105, 0.2),
+    rgba(227, 235, 255, 0.1)
+  );
+  padding: 4rem 0;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 3px 3px rgba(0, 0, 0, 0.1);
+}
+
+.portfolio-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #050510;
 }
