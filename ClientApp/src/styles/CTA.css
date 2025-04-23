@@ -1,0 +1,45 @@
+.cta-section {
+  background: #1a1a1a;
+  padding: 4rem 0;
+  position: relative;
+}
+
+.cta-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.5px;
+  background: rgba(227, 235, 255, 0.4);
+  filter: blur(0.3px);
+  box-shadow: 0 0 10px rgba(227, 235, 255, 0.2);
+}
+
+.cta-section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.5px;
+  background: rgba(227, 235, 255, 0.4);
+  filter: blur(0.3px);
+  box-shadow: 0 0 10px rgba(227, 235, 255, 0.2);
+}
+
+.cta-section .container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cta-section h2 {
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.cta-section p {
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+} 

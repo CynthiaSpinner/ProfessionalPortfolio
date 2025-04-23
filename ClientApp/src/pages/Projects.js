@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProjectCard from "../components/ProjectCard";
 import Button from "../components/Button";
-import "./Projects.css";
+import "../styles/Projects.css";
 
 // Sample database content - replace with your actual data source
 const projects = [

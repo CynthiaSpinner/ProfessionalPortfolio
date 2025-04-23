@@ -281,3 +281,6 @@ bld/
 *.user
 *.userosscache
 *.sln.docstates
+
+# Cursor AI
+.cursor/
