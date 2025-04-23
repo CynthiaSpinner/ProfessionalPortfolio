@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import Button from "../components/Button";
 import HeadingGroup from "../components/HeadingGroup";
 import PhotoGallery from "../components/PhotoGallery";
-import "./GraphicDesign.css";
+import "../styles/GraphicDesign.css";
 
 // Sample images for each section
 const photographyImages = [

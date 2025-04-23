@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import "./PhotoGallery.css";
+import "../styles/PhotoGallery.css";
 
 const PhotoGallery = ({ images, layout = "default" }) => {
   const getLayoutClass = () => {
@@ -11,8 +11,6 @@ const PhotoGallery = ({ images, layout = "default" }) => {
         return "layout-mixed5";
       case "square3":
         return "layout-square3";
-      case "left-large-grid4":
-        return "layout-left-large-grid4";
       default:
         return "";
     }
@@ -28,7 +26,7 @@ const PhotoGallery = ({ images, layout = "default" }) => {
             md={
               layout === "landscape4"
                 ? 6
-                : layout === "left-large-grid4" && index === 0
+                : layout === "mixed5" && index === 0
                 ? 6
                 : 3
             }
@@ -36,8 +34,6 @@ const PhotoGallery = ({ images, layout = "default" }) => {
               layout === "landscape4"
                 ? 3
                 : layout === "mixed5" && index === 0
-                ? 12
-                : layout === "left-large-grid4" && index === 0
                 ? 6
                 : 3
             }

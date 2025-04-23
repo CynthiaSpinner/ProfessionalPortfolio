@@ -2,10 +2,10 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Button from "../components/Button";
 import Card from "../components/Card";
 import HeadingGroup from "../components/HeadingGroup";
-import "./About.css";
+import CTA from "../components/CTA";
+import "../styles/About.css";
 
 const About = () => {
   return (
@@ -93,7 +93,7 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="team-section py-5 bg-light">
+      <section className="team-section py-5">
         <Container>
           <h2 className="text-center mb-5">Collaborators</h2>
           <Row className="g-4">
@@ -104,8 +104,10 @@ const About = () => {
                   alt="Team Member"
                   className="img-fluid rounded-circle mb-3"
                 />
-                <h3>John Doe</h3>
-                <p className="text-muted">Frontend Developer</p>
+                <HeadingGroup
+                  title="John Doe"
+                  subtitle="Frontend Developer"
+                />
               </Card>
             </Col>
             <Col md={4}>
@@ -115,8 +117,10 @@ const About = () => {
                   alt="Team Member"
                   className="img-fluid rounded-circle mb-3"
                 />
-                <h3>Jane Smith</h3>
-                <p className="text-muted">UI/UX Designer</p>
+                <HeadingGroup
+                  title="Jane Smith"
+                  subtitle="UI/UX Designer"
+                />
               </Card>
             </Col>
             <Col md={4}>
@@ -126,8 +130,10 @@ const About = () => {
                   alt="Team Member"
                   className="img-fluid rounded-circle mb-3"
                 />
-                <h3>Mike Johnson</h3>
-                <p className="text-muted">Backend Developer</p>
+                <HeadingGroup
+                  title="Mike Johnson"
+                  subtitle="Backend Developer"
+                />
               </Card>
             </Col>
           </Row>
@@ -167,17 +173,10 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="cta-section py-5 bg-light">
-        <Container className="text-center">
-          <h2 className="mb-4">Interested in Working Together?</h2>
-          <p className="lead mb-4">
-            Let's discuss how we can bring your ideas to life.
-          </p>
-          <Button href="/contact" size="lg">
-            Get in Touch
-          </Button>
-        </Container>
-      </section>
+      <CTA
+        title="Interested in Working Together?"
+        subtitle="Let's discuss how we can bring your ideas to life."
+      />
 
       <Footer />
     </div>

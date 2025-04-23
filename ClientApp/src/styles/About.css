@@ -47,30 +47,26 @@
 }
 
 .social-links a {
-  color: #e0e0e0;
+  color: #9ca3af;
   transition: all 0.3s ease;
 }
 
 .social-links a:hover {
-  color: #818cf8;
+  color: #c7d2fe !important;
+  text-shadow: 0 0 8px rgba(199, 210, 254, 0.5);
   transform: translateY(-2px);
 }
 
 /* Skills Section */
 .skills-section {
   padding: 4rem 0;
-  background: #070715;
+  background: #050510;
 }
 
 /* Team Section */
 .team-section {
   padding: 4rem 0;
-  background: linear-gradient(
-    135deg,
-    rgba(75, 75, 90, 0.3),
-    rgba(85, 85, 105, 0.2),
-    rgba(227, 235, 255, 0.1)
-  );
+  background: #070715;
 }
 
 .team-section img {
@@ -110,9 +106,8 @@
   transform: translateY(-5px);
 }
 
-/* CTA Section */
-.cta-section {
-  background-color: #e0e0e0;
+.team-section h2 {
+  color: #818cf8;
 }
 
 @media (max-width: 768px) {

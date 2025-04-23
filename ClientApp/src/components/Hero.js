@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button } from "reactstrap";
 import { Link } from "react-router-dom";
-import "./Hero.css";
+import "../styles/Hero.css";
 
 function Hero({ about }) {
   return (
