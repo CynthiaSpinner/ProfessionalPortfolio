@@ -10,7 +10,7 @@ const Navbar = () => {
       className="navbar navbar-expand-lg navbar-dark bg-dark"
       style={{ minHeight: "60px" }}
     >
-      <div className="container">
+      <div className="container" style={{ maxWidth: "1200px", padding: "0 2rem" }}>
         <h1
           className="navbar-brand mb-0"
           style={{
@@ -27,6 +27,7 @@ const Navbar = () => {
             transition: "all 0.3s ease",
             display: "flex",
             alignItems: "center",
+            marginRight: "auto"
           }}
         >
           <span>C</span>
@@ -49,7 +50,13 @@ const Navbar = () => {
         >
           <ul
             className="navbar-nav"
-            style={{ gap: "0.75rem", marginTop: "0.15rem" }}
+            style={{ 
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "0.15rem",
+              padding: "0 2rem"
+            }}
           >
             <li className="nav-item">
               <Link
@@ -57,7 +64,7 @@ const Navbar = () => {
                 to="/"
                 style={{
                   color: "#a5b4fc",
-                  fontSize: "0.85rem",
+                  fontSize: "1rem",
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
@@ -72,7 +79,7 @@ const Navbar = () => {
                 to="/projects"
                 style={{
                   color: "#a5b4fc",
-                  fontSize: "0.85rem",
+                  fontSize: "1rem",
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
@@ -87,7 +94,7 @@ const Navbar = () => {
                 to="/graphic-design"
                 style={{
                   color: "#a5b4fc",
-                  fontSize: "0.85rem",
+                  fontSize: "1rem",
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
@@ -102,7 +109,7 @@ const Navbar = () => {
                 to="/design"
                 style={{
                   color: "#a5b4fc",
-                  fontSize: "0.85rem",
+                  fontSize: "1rem",
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
@@ -117,7 +124,7 @@ const Navbar = () => {
                 to="/about"
                 style={{
                   color: "#a5b4fc",
-                  fontSize: "0.85rem",
+                  fontSize: "1rem",
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
@@ -132,7 +139,7 @@ const Navbar = () => {
                 to="/contact"
                 style={{
                   color: "#a5b4fc",
-                  fontSize: "0.85rem",
+                  fontSize: "1rem",
                   padding: "0.5rem 0.75rem",
                   lineHeight: "1.2",
                 }}
@@ -140,6 +147,23 @@ const Navbar = () => {
               >
                 Contact
               </Link>
+            </li>
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                href="https://localhost:7094/Admin/Login"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#a5b4fc",
+                  fontSize: "1rem",
+                  padding: "0.5rem 0.75rem",
+                  lineHeight: "1.2",
+                }}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </a>
             </li>
           </ul>
         </div>
