@@ -10,8 +10,37 @@ namespace Portfolio.Models
         {
         }
 
-        public DbSet<About> Abouts { get; set; }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<Skill> Skills { get; set; }
+        public DbSet<Admin> Admins { get; set; } = null!;
+        public DbSet<HomePage> HomePages { get; set; } = null!;
+        public DbSet<Video> Videos { get; set; } = null!;
+        public DbSet<SkillsCategory> SkillsCategories { get; set; } = null!;
+        public DbSet<Project> Projects { get; set; } = null!;
+        public DbSet<About> Abouts { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure Admin entity
+            modelBuilder.Entity<Admin>(entity =>
+            {
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.Username).IsUnique();
+            });
+
+            // Configure HomePage entity
+            modelBuilder.Entity<HomePage>(entity =>
+            {
+                entity.HasIndex(e => e.IsActive);
+                entity.HasIndex(e => e.DisplayOrder);
+            });
+
+            // Configure SkillsCategory entity
+            modelBuilder.Entity<SkillsCategory>(entity =>
+            {
+                entity.HasIndex(e => e.IsActive);
+                entity.HasIndex(e => e.DisplayOrder);
+            });
+        }
     }
-} 
+}

@@ -26,8 +26,8 @@ namespace Portfolio.Controllers
         // GET: Portfolio/Skills
         public async Task<IActionResult> Skills()
         {
-            var skills = await _context.Skills.ToListAsync();
-            return View(skills);
+            var skillsCategories = await _context.SkillsCategories.ToListAsync();
+            return View(skillsCategories);
         }
 
         // GET: Portfolio/About
