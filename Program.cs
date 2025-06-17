@@ -1,11 +1,30 @@
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Admin/Login";
+        options.AccessDeniedPath = "/Admin/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.IsEssential = true;
+        options.Cookie.Name = "Portfolio.Admin.Auth";
+        options.Cookie.MaxAge = null; // This makes it a session cookie
+    });
 
 // Configure MySQL connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -43,10 +62,39 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    // Map admin routes first with higher priority
+    endpoints.MapControllerRoute(
+        name: "admin",
+        pattern: "Admin/{action=Login}/{id?}",
+        defaults: new { controller = "Admin" });
+
+    // Map default routes
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
+
+// SPA fallback - only for non-admin routes
+app.MapWhen(context => !context.Request.Path.StartsWithSegments("/Admin"), builder =>
+{
+    builder.UseSpa(spa =>
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            spa.UseProxyToSpaDevelopmentServer("https://localhost:44406");
+        }
+    });
+});
+
+// Ensure the wwwroot directory exists
+if (!Directory.Exists(Path.Combine(app.Environment.ContentRootPath, "wwwroot")))
+{
+    Directory.CreateDirectory(Path.Combine(app.Environment.ContentRootPath, "wwwroot"));
+}
 
 app.Run();

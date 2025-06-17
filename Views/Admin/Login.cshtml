@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Cynthia Spinner</title>
+    <link rel="stylesheet" href="~/css/login.css?v=1.0.1" />
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>
+
+                <span class="gradient-text">Login</span>
+            </h1>
+        </div>
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
