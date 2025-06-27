@@ -53,20 +53,20 @@
     <div class="admin-content">
         <div class="content-header">
             <h1>Welcome to Admin Dashboard</h1>
-            <p class="text-muted">Manage your portfolio content and settings</p>
+            <p class="text-muted" style="color: #9ca3af !important;">Manage your portfolio content and settings</p>
         </div>
 
-        <div class="content-section active" style="background-color: #6b7280;">
+        <div class="content-section active">
             <!-- Hero Section Card -->
             <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
                         <i class="fas fa-star"></i>
                         Hero
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Manage the hero content including title, subtitle, and action buttons.</p>
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage the hero content including title, subtitle, and action buttons.</p>
                     <button class="btn btn-primary" onclick="toggleHeroEdit()">
                         <i class="fas fa-edit"></i>
                         Edit Hero
@@ -77,20 +77,22 @@
                         <form id="heroForm">
                             <!-- Main Content -->
                             <div class="mb-4">
-                                <h5 class="mb-3">Main Content</h5>
-                                <div class="card">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Main Content</h5>
+                                <div class="card" style="border: 1px solid rgba(129, 140, 248, 0.2) !important;">
                                     <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="heroTitle" class="form-label">Title</label>
-                                            <input type="text" class="form-control" id="heroTitle" name="HeaderTitle" maxlength="100" required>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="heroTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="heroTitle" name="HeaderTitle" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="heroSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="heroSubtitle" name="HeaderSubtitle" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                            </div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="heroSubtitle" class="form-label">Subtitle</label>
-                                            <input type="text" class="form-control" id="heroSubtitle" name="HeaderSubtitle" maxlength="500" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="heroDescription" class="form-label">Description</label>
-                                            <textarea class="form-control" id="heroDescription" name="HeaderDescription" maxlength="1000" rows="3"></textarea>
+                                            <label for="heroDescription" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                            <textarea class="form-control" id="heroDescription" name="HeaderDescription" maxlength="1000" rows="3" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -98,16 +100,16 @@
 
                             <!-- Background -->
                             <div class="mb-4">
-                                <h5 class="mb-3">Background</h5>
-                                <div class="card">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Background</h5>
+                                <div class="card" style="border: 1px solid rgba(129, 140, 248, 0.2) !important;">
                                     <div class="card-body">
                                         <div class="mb-3">
-                                            <label for="heroBackgroundImage" class="form-label">Background Image URL</label>
-                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500">
+                                            <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Background Image URL</label>
+                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="heroBackgroundVideo" class="form-label">Background Video URL</label>
-                                            <input type="text" class="form-control" id="heroBackgroundVideo" name="HeaderBackgroundVideoUrl" maxlength="500">
+                                            <label for="heroBackgroundVideo" class="form-label" style="color: #9ca3af !important;">Background Video URL</label>
+                                            <input type="text" class="form-control" id="heroBackgroundVideo" name="HeaderBackgroundVideoUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
                                         </div>
                                     </div>
                                 </div>
@@ -115,20 +117,20 @@
 
                             <!-- Primary Button -->
                             <div class="mb-4">
-                                <h5 class="mb-3">Primary Button</h5>
-                                <div class="card">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Primary Button</h5>
+                                <div class="card" style="border: 1px solid rgba(129, 140, 248, 0.2) !important;">
                                     <div class="card-body">
                                         <div class="mb-3">
-                                            <label for="heroPrimaryButtonText" class="form-label">Button Text</label>
-                                            <input type="text" class="form-control" id="heroPrimaryButtonText" name="HeaderPrimaryButtonText" maxlength="50">
+                                            <label for="heroPrimaryButtonText" class="form-label" style="color: #9ca3af !important;">Button Text</label>
+                                            <input type="text" class="form-control" id="heroPrimaryButtonText" name="HeaderPrimaryButtonText" maxlength="50" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="heroPrimaryButtonUrl" class="form-label">Button URL</label>
-                                            <input type="text" class="form-control" id="heroPrimaryButtonUrl" name="HeaderPrimaryButtonUrl" maxlength="200">
+                                            <label for="heroPrimaryButtonUrl" class="form-label" style="color: #9ca3af !important;">Button URL</label>
+                                            <input type="text" class="form-control" id="heroPrimaryButtonUrl" name="HeaderPrimaryButtonUrl" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
                                         </div>
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input" id="showPrimaryButton" name="ShowHeaderPrimaryButton">
-                                            <label class="form-check-label" for="showPrimaryButton">Show Button</label>
+                                            <label class="form-check-label" for="showPrimaryButton" style="color: #9ca3af !important;">Show Button</label>
                                         </div>
                                     </div>
                                 </div>
@@ -153,18 +155,18 @@
             <!-- Features List Section Card -->
             <div class="card mb-4" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
                         <i class="fas fa-list"></i>
                         Features List Section
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Manage the Key Skills & Technologies section with its three feature cards.</p>
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage the Key Skills & Technologies section with its three feature cards.</p>
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h6 class="card-title">Frontend Development</h6>
+                                    <h6 class="card-title" style="color: #818cf8 !important;">Frontend Development</h6>
                                     <button class="btn btn-primary btn-sm" onclick="editFeature('frontend')">
                                         <i class="fas fa-edit"></i>
                                         Edit
@@ -175,7 +177,7 @@
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h6 class="card-title">Backend Development</h6>
+                                    <h6 class="card-title" style="color: #818cf8 !important;">Backend Development</h6>
                                     <button class="btn btn-primary btn-sm" onclick="editFeature('backend')">
                                         <i class="fas fa-edit"></i>
                                         Edit
@@ -186,7 +188,7 @@
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h6 class="card-title">Design & Tools</h6>
+                                    <h6 class="card-title" style="color: #818cf8 !important;">Design & Tools</h6>
                                     <button class="btn btn-primary btn-sm" onclick="editFeature('design')">
                                         <i class="fas fa-edit"></i>
                                         Edit
@@ -201,13 +203,13 @@
             <!-- CTA Section Card -->
             <div class="card mb-4" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
                         <i class="fas fa-bullhorn"></i>
                         Call to Action Section
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Manage the CTA section content including title and subtitle.</p>
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage the CTA section content including title and subtitle.</p>
                     <button class="btn btn-primary" onclick="editSection('cta')">
                         <i class="fas fa-edit"></i>
                         Edit CTA Section
@@ -218,13 +220,13 @@
             <!-- Footer Section Card -->
             <div class="card mb-4" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
                         <i class="fas fa-shoe-prints"></i>
                         Footer Section
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Manage the footer content and links.</p>
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage the footer content and links.</p>
                     <button class="btn btn-primary" onclick="editSection('footer')">
                         <i class="fas fa-edit"></i>
                         Edit Footer
