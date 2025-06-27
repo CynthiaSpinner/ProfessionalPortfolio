@@ -56,26 +56,102 @@
             <p class="text-muted">Manage your portfolio content and settings</p>
         </div>
 
-        <div class="content-section active">
-            <!-- Header Section Card -->
-            <div class="card mb-4">
+        <div class="content-section active" style="background-color: #6b7280;">
+            <!-- Hero Section Card -->
+            <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="fas fa-heading"></i>
-                        Header Section
+                        <i class="fas fa-star"></i>
+                        Hero
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Manage the main header content including title, subtitle, and action buttons.</p>
-                    <button class="btn btn-primary" onclick="editSection('header')">
+                    <p class="text-muted">Manage the hero content including title, subtitle, and action buttons.</p>
+                    <button class="btn btn-primary" onclick="toggleHeroEdit()">
                         <i class="fas fa-edit"></i>
-                        Edit Header
+                        Edit Hero
                     </button>
+                    
+                    <!-- Hero Edit Form (Hidden by default) -->
+                    <div id="heroEditForm" style="display: none; margin-top: 2rem;">
+                        <form id="heroForm">
+                            <!-- Main Content -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">Main Content</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="heroTitle" class="form-label">Title</label>
+                                            <input type="text" class="form-control" id="heroTitle" name="HeaderTitle" maxlength="100" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroSubtitle" class="form-label">Subtitle</label>
+                                            <input type="text" class="form-control" id="heroSubtitle" name="HeaderSubtitle" maxlength="500" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroDescription" class="form-label">Description</label>
+                                            <textarea class="form-control" id="heroDescription" name="HeaderDescription" maxlength="1000" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Background -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">Background</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="heroBackgroundImage" class="form-label">Background Image URL</label>
+                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroBackgroundVideo" class="form-label">Background Video URL</label>
+                                            <input type="text" class="form-control" id="heroBackgroundVideo" name="HeaderBackgroundVideoUrl" maxlength="500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Primary Button -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">Primary Button</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="heroPrimaryButtonText" class="form-label">Button Text</label>
+                                            <input type="text" class="form-control" id="heroPrimaryButtonText" name="HeaderPrimaryButtonText" maxlength="50">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroPrimaryButtonUrl" class="form-label">Button URL</label>
+                                            <input type="text" class="form-control" id="heroPrimaryButtonUrl" name="HeaderPrimaryButtonUrl" maxlength="200">
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="showPrimaryButton" name="ShowHeaderPrimaryButton">
+                                            <label class="form-check-label" for="showPrimaryButton">Show Button</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn btn-secondary" onclick="toggleHeroEdit()">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
             <!-- Features List Section Card -->
-            <div class="card mb-4">
+            <div class="card mb-4" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fas fa-list"></i>
@@ -123,7 +199,7 @@
             </div>
 
             <!-- CTA Section Card -->
-            <div class="card mb-4">
+            <div class="card mb-4" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fas fa-bullhorn"></i>
@@ -140,7 +216,7 @@
             </div>
 
             <!-- Footer Section Card -->
-            <div class="card mb-4">
+            <div class="card mb-4" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fas fa-shoe-prints"></i>
@@ -174,6 +250,39 @@
                 e.target.closest('.nav-link').classList.add('active');
                 document.getElementById(section).classList.add('active');
             });
+        });
+
+        // Toggle hero edit form
+        function toggleHeroEdit() {
+            const form = document.getElementById('heroEditForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Handle hero form submission
+        document.getElementById('heroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/homepage/header', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    alert('Hero section updated successfully!');
+                    toggleHeroEdit();
+                } else {
+                    alert('Failed to update hero section. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating the hero section.');
+            }
         });
 
         // Content management functions
