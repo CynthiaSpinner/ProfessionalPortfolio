@@ -15,7 +15,7 @@
 
 body {
     background-image: linear-gradient(135deg, rgba(5, 5, 16, 0.95), rgba(5, 5, 25, 0.9), rgba(10, 10, 35, 0.85));
-    color: var(--text-color);
+    color: var(--text-color) !important;
     font-family: 'Playfair Display', serif;
     min-height: 100vh;
     margin: 0;
@@ -24,8 +24,9 @@ body {
 
 /* Admin Container */
 .admin-container {
-    display: flex;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
     min-height: 100vh;
+    padding: 2rem;
 }
 
 /* Sidebar */
@@ -128,6 +129,11 @@ body {
     flex: 1;
     margin-left: var(--sidebar-width);
     padding: 20px;
+    color: var(--text-color) !important;
+}
+
+.admin-content * {
+    color: inherit !important;
 }
 
 .content-header {
@@ -231,19 +237,71 @@ body {
 
 /* Form Controls */
 .form-control {
-    background-color: rgba(50, 45, 60, 0.15) !important;
-    border: 1px solid rgba(187, 195, 255, 0.1) !important;
+    background-color: rgba(50, 45, 60, 0.25) !important;
+    border: 1px solid rgba(187, 195, 255, 0.8) !important;
     border-radius: 0.25rem !important;
-    color: #e0e0e0 !important;
+    color: #818cf8 !important;
     font-family: 'Playfair Display', serif !important;
     transition: all 0.3s ease !important;
+    -webkit-text-fill-color: #818cf8 !important;
 }
 
 .form-control:focus {
-    background-color: rgba(50, 45, 60, 0.25) !important;
-    border-color: rgba(129, 140, 248, 0.3) !important;
-    box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.1) !important;
+    background-color: rgba(50, 45, 60, 0.35) !important;
+    border-color: rgba(129, 140, 248, 1.0) !important;
+    box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.4) !important;
     outline: none !important;
+    color: #818cf8 !important;
+    -webkit-text-fill-color: #818cf8 !important;
+}
+
+/* Ultra-specific selectors to override Bootstrap */
+.admin-container .form-control,
+.admin-container input[type="text"],
+.admin-container input[type="password"],
+.admin-container textarea {
+    color: #818cf8 !important;
+    -webkit-text-fill-color: #818cf8 !important;
+}
+
+.admin-container .form-control:focus,
+.admin-container input[type="text"]:focus,
+.admin-container input[type="password"]:focus,
+.admin-container textarea:focus {
+    color: #818cf8 !important;
+    -webkit-text-fill-color: #818cf8 !important;
+}
+
+/* Override autofill styles like in login */
+.admin-container .form-control:-webkit-autofill,
+.admin-container input[type="text"]:-webkit-autofill,
+.admin-container input[type="password"]:-webkit-autofill,
+.admin-container textarea:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px rgba(50, 45, 60, 0.25) inset !important;
+    -webkit-text-fill-color: #818cf8 !important;
+    background-color: rgba(50, 45, 60, 0.25) !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+}
+
+.admin-container .form-control:-webkit-autofill:focus,
+.admin-container input[type="text"]:-webkit-autofill:focus,
+.admin-container input[type="password"]:-webkit-autofill:focus,
+.admin-container textarea:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px rgba(50, 45, 60, 0.35) inset !important;
+    -webkit-text-fill-color: #818cf8 !important;
+    background-color: rgba(50, 45, 60, 0.35) !important;
+}
+
+/* Override Bootstrap form styles */
+.form-label {
+    color: #9ca3af !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Override Bootstrap text colors */
+.text-muted {
+    color: #9ca3af !important;
 }
 
 /* Tables */
@@ -310,44 +368,47 @@ body {
 
 /* Card Styles */
 .card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 0.5rem;
-    box-shadow: var(--card-shadow);
-    backdrop-filter: blur(5px);
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.8), rgba(5, 5, 25, 0.6)) !important;
+    border: 1px solid rgba(187, 195, 255, 0.9) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(5px) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+    border-color: rgba(187, 195, 255, 1.0) !important;
 }
 
 .card-header {
-    background: linear-gradient(90deg, rgba(129, 140, 248, 0.1), rgba(165, 180, 252, 0.05));
-    border-bottom: 1px solid var(--card-border);
-    padding: 1rem 1.25rem;
+    background: linear-gradient(90deg, rgba(129, 140, 248, 0.15), rgba(165, 180, 252, 0.08)) !important;
+    border-bottom: 1px solid rgba(187, 195, 255, 0.9) !important;
+    padding: 1rem 1.25rem !important;
 }
 
 .card-header h5 {
-    color: var(--primary-color);
-    font-weight: 500;
-    font-style: italic;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    color: var(--primary-color) !important;
+    font-weight: 500 !important;
+    font-style: italic !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
 }
 
 .card-header h5 i {
-    font-size: 1.1rem;
-    color: var(--secondary-color);
+    font-size: 1.1rem !important;
+    color: var(--secondary-color) !important;
 }
 
 .card-body {
-    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.6), rgba(5, 5, 25, 0.4)) !important;
+    padding: 1.25rem !important;
+    color: var(--text-color) !important;
 }
 
 .card-body p {
@@ -361,4 +422,142 @@ body {
 
 .content-section .card:last-child {
     margin-bottom: 0;
+}
+
+/* Hero Form Layout */
+#heroEditForm .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+}
+
+#heroEditForm .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    #heroEditForm .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Force all text in admin content to be gray */
+.admin-content {
+    color: var(--text-color) !important;
+}
+
+.admin-content * {
+    color: inherit !important;
+}
+
+/* Specific overrides for common elements */
+.admin-content p {
+    color: #9ca3af !important;
+}
+
+.admin-content label {
+    color: #9ca3af !important;
+}
+
+.admin-content h1, 
+.admin-content h2, 
+.admin-content h3, 
+.admin-content h4, 
+.admin-content h5, 
+.admin-content h6 {
+    color: var(--primary-color) !important;
+}
+
+/* Override Bootstrap's default text color */
+body {
+    color: var(--text-color) !important;
+}
+
+/* Ensure form labels are gray */
+.form-label {
+    color: #9ca3af !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Override any Bootstrap text utilities */
+.text-dark {
+    color: #9ca3af !important;
+}
+
+.text-body {
+    color: #9ca3af !important;
+}
+
+/* Ultra-specific overrides for Bootstrap text colors */
+.admin-container .admin-content .card .card-body p,
+.admin-container .admin-content .card .card-body label,
+.admin-container .admin-content .card .card-body span,
+.admin-container .admin-content .card .card-body div:not(.btn) {
+    color: #9ca3af !important;
+}
+
+/* Override Bootstrap's default paragraph color */
+.admin-container p {
+    color: #9ca3af !important;
+}
+
+/* Override Bootstrap's default label color */
+.admin-container label {
+    color: #9ca3af !important;
+}
+
+/* Force all text except buttons to be gray */
+.admin-container *:not(.btn):not(.btn *) {
+    color: #9ca3af !important;
+}
+
+/* But preserve primary color for headings */
+.admin-container h1,
+.admin-container h2,
+.admin-container h3,
+.admin-container h4,
+.admin-container h5,
+.admin-container h6 {
+    color: var(--primary-color) !important;
+}
+
+.admin-input {
+    color: #818cf8 !important;
+    -webkit-text-fill-color: #818cf8 !important;
+    border: 1px solid rgba(129, 140, 248, 0.5) !important;
+    box-shadow: inset 0 0 5px rgba(129, 140, 248, 0.1) !important;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.admin-input:focus {
+    border-color: rgba(129, 140, 248, 0.8) !important;
+    box-shadow: inset 0 0 8px rgba(129, 140, 248, 0.2), 0 0 0 0.2rem rgba(129, 140, 248, 0.25) !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.admin-label {
+    color: #9ca3af !important;
+}
+
+.admin-heading {
+    color: #818cf8 !important;
+}
+
+/* Admin Dashboard Styles */
+.admin-container {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.admin-card {
+    border: 1px solid rgba(129, 140, 248, 0.6) !important;
+    box-shadow: inset 0 0 8px rgba(129, 140, 248, 0.1) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
 } 
