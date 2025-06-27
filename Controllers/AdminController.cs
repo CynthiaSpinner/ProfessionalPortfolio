@@ -54,7 +54,8 @@ namespace Portfolio.Controllers
                 {
                     var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                     _logger.LogWarning($"Model validation errors: {string.Join(", ", errors)}");
-                    return BadRequest(string.Join(", ", errors));
+                    ViewBag.ErrorMessage = "Please provide valid username and password.";
+                    return View(model);
                 }
 
                 _logger.LogInformation($"login attempt for username: {model.Username}");
@@ -62,7 +63,8 @@ namespace Portfolio.Controllers
                 if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
                 {
                     _logger.LogWarning("login attempt with empty username or password");
-                    return BadRequest("Username and password are required.");
+                    ViewBag.ErrorMessage = "Username and password are required.";
+                    return View(model);
                 }
 
                 var hashedPassword = HashPassword(model.Password);
@@ -74,7 +76,8 @@ namespace Portfolio.Controllers
                 if (admin == null)
                 {
                     _logger.LogWarning($"No admin found with username: {model.Username}");
-                    return BadRequest("Invalid username or password.");
+                    ViewBag.ErrorMessage = "Invalid username or password.";
+                    return View(model);
                 }
 
                 _logger.LogInformation($"Stored password hash: {admin.PasswordHash}");
@@ -83,7 +86,8 @@ namespace Portfolio.Controllers
                 if (admin.PasswordHash != hashedPassword)
                 {
                     _logger.LogWarning($"Password mismatch for username: {model.Username}");
-                    return BadRequest("Invalid username or password.");
+                    ViewBag.ErrorMessage = "Invalid username or password.";
+                    return View(model);
                 }
 
                 _logger.LogInformation($"login successful for username: {model.Username}");
@@ -110,7 +114,8 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during login");
-                return BadRequest($"An error occurred: {ex.Message}");
+                ViewBag.ErrorMessage = "An error occurred during login. Please try again.";
+                return View(model);
             }
         }
 
@@ -130,6 +135,44 @@ namespace Portfolio.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TestDatabaseConnection()
+        {
+            try
+            {
+                // Test basic connection
+                var canConnect = await _context.Database.CanConnectAsync();
+                
+                if (!canConnect)
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = "Cannot connect to database",
+                        details = "Database connection failed"
+                    });
+                }
+
+                // Test a simple query
+                var adminCount = await _context.Admins.CountAsync();
+                
+                return Json(new { 
+                    success = true, 
+                    message = "Database connection successful",
+                    details = $"Connected successfully. Found {adminCount} admin users.",
+                    adminCount = adminCount
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { 
+                    success = false, 
+                    message = "Database connection error",
+                    details = ex.Message,
+                    exceptionType = ex.GetType().Name
+                });
+            }
         }
 
         public class LoginModel

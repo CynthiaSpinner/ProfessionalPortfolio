@@ -33,6 +33,7 @@ const Home = () => {
                 />
               </Card>
             </Col>
+ 
             <Col md={4}>
               <Card>
                 <HeadingGroup
