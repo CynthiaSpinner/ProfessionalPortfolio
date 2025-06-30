@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Models.Portfolio;
+using Portfolio.Services;
+using Portfolio.Services.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,12 +18,14 @@ namespace Portfolio.Controllers
         private readonly PortfolioContext _context;
         private readonly ILogger<AdminController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IHomePageService _homePageService;
 
-        public AdminController(PortfolioContext context, ILogger<AdminController> logger, IConfiguration configuration)
+        public AdminController(PortfolioContext context, ILogger<AdminController> logger, IConfiguration configuration, IHomePageService homePageService)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
+            _homePageService = homePageService;
         }
 
         private string HashPassword(string password)
@@ -120,9 +124,20 @@ namespace Portfolio.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
-            return View();
+            try
+            {
+                var homePage = await _homePageService.GetHomePageAsync();
+                ViewBag.HomePage = homePage;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading dashboard");
+                ViewBag.HomePage = null;
+                return View();
+            }
         }
 
         [Authorize(Roles = "Admin")]
@@ -175,10 +190,85 @@ namespace Portfolio.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveHeroSection([FromForm] HeroSectionModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    _logger.LogWarning($"Hero section validation errors: {string.Join(", ", errors)}");
+                    return Json(new { success = false, message = "Validation failed", errors = errors });
+                }
+
+                // Get existing homepage or create new one
+                var existingHomePage = await _homePageService.GetHomePageAsync();
+                if (existingHomePage == null)
+                {
+                    existingHomePage = new HomePage
+                    {
+                        IsActive = true,
+                        DisplayOrder = 1,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                }
+
+                // Update hero section properties
+                existingHomePage.HeaderTitle = model.HeaderTitle ?? string.Empty;
+                existingHomePage.HeaderSubtitle = model.HeaderSubtitle ?? string.Empty;
+                existingHomePage.HeaderDescription = model.HeaderDescription ?? string.Empty;
+                existingHomePage.HeaderBackgroundImageUrl = model.HeaderBackgroundImageUrl ?? string.Empty;
+                existingHomePage.HeaderBackgroundVideoUrl = model.HeaderBackgroundVideoUrl ?? string.Empty;
+                existingHomePage.HeaderPrimaryButtonText = model.HeaderPrimaryButtonText ?? string.Empty;
+                existingHomePage.HeaderPrimaryButtonUrl = model.HeaderPrimaryButtonUrl ?? string.Empty;
+                existingHomePage.HeaderOverlayColor = model.ImageOverlayColor ?? "#000000";
+                existingHomePage.HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f; // Convert percentage to decimal
+                existingHomePage.UpdatedAt = DateTime.UtcNow;
+
+                // Save to database
+                var savedHomePage = await _homePageService.UpdateHeaderSectionAsync(existingHomePage);
+
+                _logger.LogInformation($"Hero section saved successfully. HomePage ID: {savedHomePage.Id}");
+
+                return Json(new { 
+                    success = true, 
+                    message = "Hero section saved successfully!",
+                    homePageId = savedHomePage.Id
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving hero section");
+                return Json(new { 
+                    success = false, 
+                    message = "An error occurred while saving the hero section. Please try again.",
+                    error = ex.Message
+                });
+            }
+        }
+
         public class LoginModel
         {
             public string Username { get; set; }
             public string Password { get; set; }
+        }
+
+        public class HeroSectionModel
+        {
+            public string? HeaderTitle { get; set; }
+            public string? HeaderSubtitle { get; set; }
+            public string? HeaderDescription { get; set; }
+            public string? HeaderBackgroundImageUrl { get; set; }
+            public string? HeaderBackgroundVideoUrl { get; set; }
+            public string? HeaderPrimaryButtonText { get; set; }
+            public string? HeaderPrimaryButtonUrl { get; set; }
+            public string? ImageOverlayColor { get; set; }
+            public int ImageOverlayOpacity { get; set; } = 50;
+            public string? VideoOverlayColor { get; set; }
+            public int VideoOverlayOpacity { get; set; } = 50;
         }
     }
 }

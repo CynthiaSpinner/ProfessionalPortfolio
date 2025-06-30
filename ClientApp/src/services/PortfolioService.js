@@ -17,4 +17,9 @@ export const PortfolioService = {
     const response = await axios.get(`${API_BASE_URL}/about`);
     return response.data;
   },
+
+  async getHeroSection() {
+    const response = await axios.get(`${API_BASE_URL}/hero`);
+    return response.data;
+  },
 };
