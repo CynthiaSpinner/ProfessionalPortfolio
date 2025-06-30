@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
+using Portfolio.Services;
+using Portfolio.Services.Interfaces;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
@@ -9,6 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register application services
+builder.Services.AddScoped<IHomePageService, HomePageService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddMemoryCache();
 
 // Add authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -74,7 +74,8 @@
                     
                     <!-- Hero Edit Form (Hidden by default) -->
                     <div id="heroEditForm" style="display: none; margin-top: 2rem;">
-                        <form id="heroForm">
+                        <form id="heroForm" asp-action="SaveHeroSection" asp-controller="Admin" method="post">
+                            @Html.AntiForgeryToken()
                             <!-- Main Content -->
                             <div class="mb-4">
                                 <h5 class="mb-3" style="color: #818cf8 !important;">Main Content</h5>
@@ -103,13 +104,89 @@
                                 <h5 class="mb-3" style="color: #818cf8 !important;">Background</h5>
                                 <div class="card">
                                     <div class="card-body">
+                                        <!-- Background Type Toggle -->
                                         <div class="mb-3">
+                                            <label class="form-label" style="color: #9ca3af !important;">Background Type</label>
+                                            <div class="toggle-container">
+                                                <span id="imageLabel" class="toggle-label" style="color: #818cf8 !important; font-weight: 500;">Image</span>
+                                                <div class="form-check form-switch toggle-wrapper">
+                                                    <input class="form-check-input" type="checkbox" id="backgroundTypeToggle" onchange="toggleBackgroundType()">
+                                                    <div class="particle-container" id="toggleParticles"></div>
+                                                </div>
+                                                <span id="videoLabel" class="toggle-label" style="color: #6b7280 !important;">Video</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Image URL Field -->
+                                        <div class="mb-3" id="imageUrlField">
                                             <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Background Image URL</label>
                                             <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            
+                                            <!-- Image Overlay Settings -->
+                                            <div class="mt-4 overlay-controls" id="imageOverlayControls">
+                                                <div class="overlay-header">
+                                                    <div class="overlay-toggle" onclick="toggleImageOverlay()">
+                                                        <div class="toggle-circle" id="imageToggleCircle"></div>
+                                                        <span class="overlay-label">Image Overlay</span>
+                                                    </div>
+                                                </div>
+                                                <div class="overlay-settings" id="imageOverlaySettings">
+                                                    <div class="setting-group">
+                                                        <label class="setting-label">Overlay Color</label>
+                                                        <div class="color-picker-container">
+                                                            <input type="color" id="imageOverlayColor" name="ImageOverlayColor" value="#000000" class="color-picker">
+                                                            <div class="color-preview" id="imageColorPreview"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="setting-group">
+                                                        <label class="setting-label">Opacity</label>
+                                                        <div class="custom-slider-container">
+                                                            <div class="custom-slider-track">
+                                                                <div class="custom-slider-fill" id="imageSliderFill"></div>
+                                                                <div class="custom-slider-thumb" id="imageSliderThumb"></div>
+                                                            </div>
+                                                            <input type="hidden" id="imageOverlayOpacity" name="ImageOverlayOpacity" value="50">
+                                                            <div class="slider-value" id="imageSliderValue">50%</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="mb-3">
+                                        
+                                        <!-- Video URL Field -->
+                                        <div class="mb-3" id="videoUrlField" style="display: none;">
                                             <label for="heroBackgroundVideo" class="form-label" style="color: #9ca3af !important;">Background Video URL</label>
                                             <input type="text" class="form-control" id="heroBackgroundVideo" name="HeaderBackgroundVideoUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            
+                                            <!-- Video Overlay Settings -->
+                                            <div class="mt-4 overlay-controls" id="videoOverlayControls">
+                                                <div class="overlay-header">
+                                                    <div class="overlay-toggle" onclick="toggleVideoOverlay()">
+                                                        <div class="toggle-circle" id="videoToggleCircle"></div>
+                                                        <span class="overlay-label">Video Overlay</span>
+                                                    </div>
+                                                </div>
+                                                <div class="overlay-settings" id="videoOverlaySettings">
+                                                    <div class="setting-group">
+                                                        <label class="setting-label">Overlay Color</label>
+                                                        <div class="color-picker-container">
+                                                            <input type="color" id="videoOverlayColor" name="VideoOverlayColor" value="#000000" class="color-picker">
+                                                            <div class="color-preview" id="videoColorPreview"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="setting-group">
+                                                        <label class="setting-label">Opacity</label>
+                                                        <div class="custom-slider-container">
+                                                            <div class="custom-slider-track">
+                                                                <div class="custom-slider-fill" id="videoSliderFill"></div>
+                                                                <div class="custom-slider-thumb" id="videoSliderThumb"></div>
+                                                            </div>
+                                                            <input type="hidden" id="videoOverlayOpacity" name="VideoOverlayOpacity" value="50">
+                                                            <div class="slider-value" id="videoSliderValue">50%</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -127,10 +204,6 @@
                                         <div class="mb-3">
                                             <label for="heroPrimaryButtonUrl" class="form-label" style="color: #9ca3af !important;">Button URL</label>
                                             <input type="text" class="form-control" id="heroPrimaryButtonUrl" name="HeaderPrimaryButtonUrl" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
-                                        </div>
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="showPrimaryButton" name="ShowHeaderPrimaryButton">
-                                            <label class="form-check-label" for="showPrimaryButton" style="color: #9ca3af !important;">Show Button</label>
                                         </div>
                                     </div>
                                 </div>
@@ -358,6 +431,473 @@
         function editFeature(featureId) {
             // TODO: Implement feature editing functionality
             console.log(`Editing feature: ${featureId}`);
+        }
+
+        // Toggle background type
+        function toggleBackgroundType() {
+            const imageUrlField = document.getElementById('imageUrlField');
+            const videoUrlField = document.getElementById('videoUrlField');
+            const imageLabel = document.getElementById('imageLabel');
+            const videoLabel = document.getElementById('videoLabel');
+            const toggle = document.getElementById('backgroundTypeToggle');
+            
+            // Create particle animation
+            createToggleParticles();
+            
+            if (toggle.checked) {
+                // Video selected
+                imageUrlField.style.display = 'none';
+                videoUrlField.style.display = 'block';
+                imageLabel.style.color = '#6b7280';
+                imageLabel.style.fontWeight = '400';
+                videoLabel.style.color = '#818cf8';
+                videoLabel.style.fontWeight = '500';
+            } else {
+                // Image selected
+                imageUrlField.style.display = 'block';
+                videoUrlField.style.display = 'none';
+                imageLabel.style.color = '#818cf8';
+                imageLabel.style.fontWeight = '500';
+                videoLabel.style.color = '#6b7280';
+                videoLabel.style.fontWeight = '400';
+            }
+        }
+
+        // Create particle animation
+        function createToggleParticles() {
+            const particleContainer = document.getElementById('toggleParticles');
+            const toggle = document.getElementById('backgroundTypeToggle');
+            const numParticles = 8;
+            
+            // Clear existing particles
+            particleContainer.innerHTML = '';
+            
+            // Calculate the position of the rounded square
+            const toggleRect = toggle.getBoundingClientRect();
+            const containerRect = particleContainer.getBoundingClientRect();
+            
+            // The rounded square is positioned based on the toggle state
+            const squareOffset = toggle.checked ? toggleRect.width - 12 : 6; // Approximate position of the square
+            const squareX = squareOffset - (containerRect.width / 2);
+            const squareY = (toggleRect.height / 2) - (containerRect.height / 2);
+            
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Position particle at the rounded square location
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.transform = 'translate(-50%, -50%)';
+                
+                // Random direction and distance from the square
+                const angle = (i / numParticles) * 2 * Math.PI;
+                const distance = 15 + Math.random() * 10;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--x', x + 'px');
+                particle.style.setProperty('--y', y + 'px');
+                
+                // Random delay for staggered effect
+                particle.style.animationDelay = (Math.random() * 0.2) + 's';
+                
+                particleContainer.appendChild(particle);
+            }
+            
+            // Clean up particles after animation
+            setTimeout(() => {
+                particleContainer.innerHTML = '';
+            }, 1000);
+        }
+
+        // Toggle image overlay settings
+        function toggleImageOverlay() {
+            const overlayControls = document.getElementById('imageOverlayControls');
+            const toggleCircle = document.getElementById('imageToggleCircle');
+            const isExpanded = overlayControls.classList.contains('expanded');
+            
+            if (isExpanded) {
+                overlayControls.classList.remove('expanded');
+                toggleCircle.classList.remove('active');
+            } else {
+                overlayControls.classList.add('expanded');
+                toggleCircle.classList.add('active');
+            }
+        }
+
+        // Toggle video overlay settings
+        function toggleVideoOverlay() {
+            const overlayControls = document.getElementById('videoOverlayControls');
+            const toggleCircle = document.getElementById('videoToggleCircle');
+            const isExpanded = overlayControls.classList.contains('expanded');
+            
+            if (isExpanded) {
+                overlayControls.classList.remove('expanded');
+                toggleCircle.classList.remove('active');
+            } else {
+                overlayControls.classList.add('expanded');
+                toggleCircle.classList.add('active');
+            }
+        }
+
+        // Update color preview with opacity
+        function updateColorPreview(colorPicker, previewElement, sliderElement) {
+            const color = colorPicker.value;
+            const opacity = sliderElement.value / 100;
+            
+            // Convert hex to rgba
+            const r = parseInt(color.substr(1, 2), 16);
+            const g = parseInt(color.substr(3, 2), 16);
+            const b = parseInt(color.substr(5, 2), 16);
+            
+            previewElement.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+
+        // Update slider fill and value
+        function updateSliderFill(slider, valueElement) {
+            const percentage = slider.value;
+            valueElement.textContent = percentage + '%';
+            
+            // Update the glowing bar width
+            slider.style.setProperty('--glow-width', percentage + '%');
+        }
+
+        // Initialize elegant controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize color pickers
+            initializeColorPickers();
+            
+            // Initialize custom sliders
+            initializeCustomSliders();
+            
+            // Initialize form submission
+            initializeFormSubmission();
+        });
+
+        // Initialize color pickers
+        function initializeColorPickers() {
+            const imageColorPicker = document.getElementById('imageOverlayColor');
+            const videoColorPicker = document.getElementById('videoOverlayColor');
+            const imageColorPreview = document.getElementById('imageColorPreview');
+            const videoColorPreview = document.getElementById('videoColorPreview');
+            const imageSlider = document.getElementById('imageOverlayOpacity');
+            const videoSlider = document.getElementById('videoOverlayOpacity');
+
+            // Set initial colors with opacity
+            updateColorPreview(imageColorPicker, imageColorPreview, imageSlider);
+            updateColorPreview(videoColorPicker, videoColorPreview, videoSlider);
+
+            // Add event listeners for color changes
+            imageColorPicker.addEventListener('input', function() {
+                updateColorPreview(this, imageColorPreview, imageSlider);
+            });
+
+            videoColorPicker.addEventListener('input', function() {
+                updateColorPreview(this, videoColorPreview, videoSlider);
+            });
+        }
+
+        // Initialize custom sliders
+        function initializeCustomSliders() {
+            initializeCustomSlider('imageSliderThumb', 'imageSliderFill', 'imageOverlayOpacity', 'imageSliderValue', 50);
+            initializeCustomSlider('videoSliderThumb', 'videoSliderFill', 'videoOverlayOpacity', 'videoSliderValue', 50);
+        }
+
+        // Initialize a single custom slider
+        function initializeCustomSlider(thumbId, fillId, hiddenInputId, valueId, initialValue) {
+            const thumb = document.getElementById(thumbId);
+            const fill = document.getElementById(fillId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const valueDisplay = document.getElementById(valueId);
+            const track = thumb.parentElement;
+
+            let isDragging = false;
+            let currentValue = initialValue;
+
+            // Set initial position
+            updateSliderPosition(currentValue);
+
+            // Mouse events
+            thumb.addEventListener('mousedown', startDragging);
+            track.addEventListener('mousedown', handleTrackClick);
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', stopDragging);
+
+            // Touch events for mobile
+            thumb.addEventListener('touchstart', startDragging);
+            track.addEventListener('touchstart', handleTrackClick);
+            document.addEventListener('touchmove', handleTouchMove);
+            document.addEventListener('touchend', stopDragging);
+
+            function startDragging(e) {
+                e.preventDefault();
+                isDragging = true;
+                thumb.style.cursor = 'grabbing';
+            }
+
+            function stopDragging() {
+                isDragging = false;
+                thumb.style.cursor = 'grab';
+            }
+
+            function handleMouseMove(e) {
+                if (!isDragging) return;
+                updateSliderFromEvent(e);
+            }
+
+            function handleTouchMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                updateSliderFromEvent(touch);
+            }
+
+            function handleTrackClick(e) {
+                updateSliderFromEvent(e);
+            }
+
+            function updateSliderFromEvent(e) {
+                const rect = track.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                updateSliderPosition(percentage);
+            }
+
+            function updateSliderPosition(percentage) {
+                currentValue = Math.round(percentage);
+                
+                // Update thumb position
+                thumb.style.left = percentage + '%';
+                
+                // Update fill width
+                fill.style.width = percentage + '%';
+                
+                // Update hidden input value
+                hiddenInput.value = currentValue;
+                
+                // Update display value
+                valueDisplay.textContent = currentValue + '%';
+                
+                // Update color preview if applicable
+                updateColorPreviewFromSlider(hiddenInputId);
+            }
+
+            function updateColorPreviewFromSlider(sliderId) {
+                if (sliderId === 'imageOverlayOpacity') {
+                    const colorPicker = document.getElementById('imageOverlayColor');
+                    const preview = document.getElementById('imageColorPreview');
+                    if (colorPicker && preview) {
+                        updateColorPreview(colorPicker, preview, { value: currentValue });
+                    }
+                } else if (sliderId === 'videoOverlayOpacity') {
+                    const colorPicker = document.getElementById('videoOverlayColor');
+                    const preview = document.getElementById('videoColorPreview');
+                    if (colorPicker && preview) {
+                        updateColorPreview(colorPicker, preview, { value: currentValue });
+                    }
+                }
+            }
+        }
+
+        // Initialize form submission
+        function initializeFormSubmission() {
+            const heroForm = document.getElementById('heroForm');
+            
+            heroForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitButton = heroForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitButton.disabled = true;
+                
+                try {
+                    const formData = new FormData(heroForm);
+                    
+                    const response = await fetch('/Admin/SaveHeroSection', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Show success message
+                        showNotification('Success!', result.message, 'success');
+                        
+                        // Hide the form
+                        toggleHeroEdit();
+                        
+                        // No need to refresh the admin page - the frontend will show updated content
+                    } else {
+                        // Show error message
+                        showNotification('Error!', result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error saving hero section:', error);
+                    showNotification('Error!', 'An unexpected error occurred. Please try again.', 'error');
+                } finally {
+                    // Restore button state
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }
+            });
+        }
+
+        // Show notification
+        function showNotification(title, message, type) {
+            if (type === 'success') {
+                showHeroSuccessPopup(title, message);
+            } else {
+                // Create error notification element
+                const notification = document.createElement('div');
+                notification.className = `alert alert-danger alert-dismissible fade show position-fixed`;
+                notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                notification.innerHTML = `
+                    <strong>${title}</strong> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                // Add to page
+                document.body.appendChild(notification);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Show hero success popup
+        function showHeroSuccessPopup(title, message) {
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'hero-success-overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(5, 5, 16, 0.9);
+                backdrop-filter: blur(10px);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: fadeIn 0.3s ease-out;
+            `;
+
+            // Create popup card
+            const popup = document.createElement('div');
+            popup.className = 'hero-success-popup';
+            popup.style.cssText = `
+                background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+                border: 1px solid rgba(187, 195, 255, 0.1);
+                border-radius: 12px;
+                padding: 2rem;
+                text-align: center;
+                max-width: 400px;
+                width: 90%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                animation: slideIn 0.4s ease-out;
+            `;
+
+            // Create content
+            popup.innerHTML = `
+                <div class="success-icon" style="
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(135deg, #818cf8, #6366f1);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 1.5rem;
+                    animation: pulse 2s infinite;
+                ">
+                    <i class="fas fa-check" style="color: white; font-size: 1.5rem;"></i>
+                </div>
+                <h3 style="color: #818cf8; margin-bottom: 1rem; font-weight: 500;">${title}</h3>
+                <p style="color: #a5b4fc; margin-bottom: 2rem; line-height: 1.6;">${message}</p>
+                <button class="btn btn-primary" onclick="closeHeroSuccessPopup()" style="
+                    background: linear-gradient(135deg, #818cf8, #6366f1);
+                    border: none;
+                    padding: 0.75rem 2rem;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(129, 140, 248, 0.3);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(129, 140, 248, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(129, 140, 248, 0.3)'">
+                    <i class="fas fa-arrow-right"></i>
+                    Continue
+                </button>
+            `;
+
+            // Add styles for animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @@keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @@keyframes slideIn {
+                    from { 
+                        opacity: 0; 
+                        transform: translateY(-30px) scale(0.9); 
+                    }
+                    to { 
+                        opacity: 1; 
+                        transform: translateY(0) scale(1); 
+                    }
+                }
+                @@keyframes pulse {
+                    0%, 100% { 
+                        transform: scale(1); 
+                        box-shadow: 0 0 0 0 rgba(129, 140, 248, 0.7); 
+                    }
+                    50% { 
+                        transform: scale(1.05); 
+                        box-shadow: 0 0 0 10px rgba(129, 140, 248, 0); 
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Add to page
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+
+            // Add close function to global scope
+            window.closeHeroSuccessPopup = function() {
+                overlay.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (overlay.parentNode) {
+                        overlay.remove();
+                    }
+                    if (style.parentNode) {
+                        style.remove();
+                    }
+                }, 300);
+            };
+
+            // Add fadeOut animation
+            const fadeOutStyle = document.createElement('style');
+            fadeOutStyle.textContent = `
+                @@keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(fadeOutStyle);
         }
     </script>
 }
