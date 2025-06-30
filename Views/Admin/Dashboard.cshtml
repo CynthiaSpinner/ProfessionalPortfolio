@@ -56,7 +56,7 @@
             <p class="text-muted" style="color: #9ca3af !important;">Manage your portfolio content and settings</p>
         </div>
 
-        <div class="content-section active">
+        <div id="home" class="content-section active">
             <!-- Hero Section Card -->
             <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
@@ -78,21 +78,21 @@
                             <!-- Main Content -->
                             <div class="mb-4">
                                 <h5 class="mb-3" style="color: #818cf8 !important;">Main Content</h5>
-                                <div class="card" style="border: 1px solid rgba(129, 140, 248, 0.2) !important;">
+                                <div class="card">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label for="heroTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
-                                                <input type="text" class="form-control" id="heroTitle" name="HeaderTitle" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                                <input type="text" class="form-control" id="heroTitle" name="HeaderTitle" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label for="heroSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
-                                                <input type="text" class="form-control" id="heroSubtitle" name="HeaderSubtitle" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                                <input type="text" class="form-control" id="heroSubtitle" name="HeaderSubtitle" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="heroDescription" class="form-label" style="color: #9ca3af !important;">Description</label>
-                                            <textarea class="form-control" id="heroDescription" name="HeaderDescription" maxlength="1000" rows="3" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;"></textarea>
+                                            <textarea class="form-control" id="heroDescription" name="HeaderDescription" maxlength="1000" rows="3" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -101,15 +101,15 @@
                             <!-- Background -->
                             <div class="mb-4">
                                 <h5 class="mb-3" style="color: #818cf8 !important;">Background</h5>
-                                <div class="card" style="border: 1px solid rgba(129, 140, 248, 0.2) !important;">
+                                <div class="card">
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Background Image URL</label>
-                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                         </div>
                                         <div class="mb-3">
                                             <label for="heroBackgroundVideo" class="form-label" style="color: #9ca3af !important;">Background Video URL</label>
-                                            <input type="text" class="form-control" id="heroBackgroundVideo" name="HeaderBackgroundVideoUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                            <input type="text" class="form-control" id="heroBackgroundVideo" name="HeaderBackgroundVideoUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                         </div>
                                     </div>
                                 </div>
@@ -118,15 +118,15 @@
                             <!-- Primary Button -->
                             <div class="mb-4">
                                 <h5 class="mb-3" style="color: #818cf8 !important;">Primary Button</h5>
-                                <div class="card" style="border: 1px solid rgba(129, 140, 248, 0.2) !important;">
+                                <div class="card">
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label for="heroPrimaryButtonText" class="form-label" style="color: #9ca3af !important;">Button Text</label>
-                                            <input type="text" class="form-control" id="heroPrimaryButtonText" name="HeaderPrimaryButtonText" maxlength="50" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                            <input type="text" class="form-control" id="heroPrimaryButtonText" name="HeaderPrimaryButtonText" maxlength="50" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                         </div>
                                         <div class="mb-3">
                                             <label for="heroPrimaryButtonUrl" class="form-label" style="color: #9ca3af !important;">Button URL</label>
-                                            <input type="text" class="form-control" id="heroPrimaryButtonUrl" name="HeaderPrimaryButtonUrl" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; border: 1px solid rgba(129, 140, 248, 0.15) !important;">
+                                            <input type="text" class="form-control" id="heroPrimaryButtonUrl" name="HeaderPrimaryButtonUrl" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                         </div>
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input" id="showPrimaryButton" name="ShowHeaderPrimaryButton">
@@ -243,21 +243,63 @@
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                const section = e.target.closest('.nav-link').dataset.section;
+                const navLink = e.target.closest('.nav-link');
+                
+                if (!navLink) return; // Guard against null
+                
+                const section = navLink.dataset.section;
                 
                 // Update active states
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                 document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
                 
-                e.target.closest('.nav-link').classList.add('active');
-                document.getElementById(section).classList.add('active');
+                navLink.classList.add('active');
+                
+                const targetSection = document.getElementById(section);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
             });
         });
 
         // Toggle hero edit form
         function toggleHeroEdit() {
             const form = document.getElementById('heroEditForm');
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            const editButton = document.querySelector('.btn-primary[onclick="toggleHeroEdit()"]');
+            
+            if (form.style.display === 'none' || form.style.display === '') {
+                // Show form, hide edit button
+                editButton.style.opacity = '0';
+                editButton.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    editButton.style.display = 'none';
+                    form.style.display = 'block';
+                    form.style.opacity = '0';
+                    form.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        form.style.opacity = '1';
+                        form.style.transform = 'translateY(0)';
+                    }, 50);
+                }, 200);
+            } else {
+                // Hide form, show edit button
+                form.style.opacity = '0';
+                form.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    form.style.display = 'none';
+                    editButton.style.display = 'inline-flex';
+                    editButton.style.opacity = '0';
+                    editButton.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        editButton.style.opacity = '1';
+                        editButton.style.transform = 'translateY(0)';
+                    }, 50);
+                }, 200);
+            }
         }
 
         // Handle hero form submission

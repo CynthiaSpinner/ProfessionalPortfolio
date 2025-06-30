@@ -16,7 +16,7 @@
 body {
     background-image: linear-gradient(135deg, rgba(5, 5, 16, 0.95), rgba(5, 5, 25, 0.9), rgba(10, 10, 35, 0.85));
     color: var(--text-color) !important;
-    font-family: 'Playfair Display', serif;
+    font-family: "Inter", "Arial", sans-serif;
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -24,9 +24,8 @@ body {
 
 /* Admin Container */
 .admin-container {
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    display: flex;
     min-height: 100vh;
-    padding: 2rem;
 }
 
 /* Sidebar */
@@ -40,6 +39,95 @@ body {
     height: 100vh;
     overflow-y: auto;
     backdrop-filter: blur(5px);
+    /* Hide scrollbars */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.admin-sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Magical separator between sidebar and content */
+.admin-sidebar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(129, 140, 248, 0.2) 0%,
+        rgba(129, 140, 248, 0.6) 25%,
+        rgba(129, 140, 248, 0.8) 50%,
+        rgba(129, 140, 248, 0.6) 75%,
+        rgba(129, 140, 248, 0.2) 100%
+    );
+    box-shadow: 
+        0 0 8px rgba(129, 140, 248, 0.6),
+        0 0 16px rgba(129, 140, 248, 0.4),
+        0 0 24px rgba(129, 140, 248, 0.3),
+        0 0 32px rgba(129, 140, 248, 0.2),
+        0 0 40px rgba(129, 140, 248, 0.1);
+    animation: magicalGlow 4s ease-in-out infinite;
+}
+
+/* Floating particles effect */
+.admin-sidebar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -0.5px;
+    width: 2px;
+    height: 100%;
+    background: radial-gradient(
+        circle at 50% 0%,
+        rgba(129, 140, 248, 0.9) 0%,
+        transparent 70%
+    );
+    animation: floatingParticles 6s ease-in-out infinite;
+}
+
+@keyframes magicalGlow {
+    0%, 100% {
+        opacity: 0.9;
+        box-shadow: 
+            0 0 8px rgba(129, 140, 248, 0.6),
+            0 0 16px rgba(129, 140, 248, 0.4),
+            0 0 24px rgba(129, 140, 248, 0.3),
+            0 0 32px rgba(129, 140, 248, 0.2),
+            0 0 40px rgba(129, 140, 248, 0.1);
+    }
+    50% {
+        opacity: 1;
+        box-shadow: 
+            0 0 12px rgba(129, 140, 248, 0.8),
+            0 0 20px rgba(129, 140, 248, 0.6),
+            0 0 28px rgba(129, 140, 248, 0.4),
+            0 0 36px rgba(129, 140, 248, 0.3),
+            0 0 44px rgba(129, 140, 248, 0.2);
+    }
+}
+
+@keyframes floatingParticles {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.3;
+    }
+    25% {
+        transform: translateY(-20px) scale(1.1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-40px) scale(0.9);
+        opacity: 0.4;
+    }
+    75% {
+        transform: translateY(-20px) scale(1.05);
+        opacity: 0.7;
+    }
 }
 
 .sidebar-header {
@@ -55,9 +143,8 @@ body {
     left: 0;
     right: 0;
     height: 0.5px;
-    background: rgba(227, 235, 255, 0.4);
-    filter: blur(0.3px);
-    box-shadow: 0 0 10px rgba(227, 235, 255, 0.2);
+    background: rgba(129, 140, 248, 0.4);
+    box-shadow: 0 0 10px rgba(129, 140, 248, 0.2);
 }
 
 .sidebar-header h2 {
@@ -65,6 +152,7 @@ body {
     font-size: 1.5rem;
     font-weight: 500;
     font-style: italic;
+    font-family: 'Playfair Display', serif;
     background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
     background-size: 200% 100%;
     -webkit-background-clip: text;
@@ -88,7 +176,7 @@ body {
     display: flex;
     align-items: center;
     padding: 12px 20px;
-    color: var(--text-color);
+    color: #818cf8;
     text-decoration: none;
     transition: all 0.3s ease;
     position: relative;
@@ -97,13 +185,18 @@ body {
 .sidebar-nav .nav-link:hover,
 .sidebar-nav .nav-link.active {
     background: linear-gradient(90deg, rgba(129, 140, 248, 0.1), rgba(165, 180, 252, 0.05));
-    color: var(--primary-color);
+    color: #818cf8;
 }
 
 .sidebar-nav .nav-link i {
     width: 20px;
     margin-right: 10px;
     font-size: 1.1rem;
+    color: #818cf8;
+}
+
+.sidebar-nav .nav-link span {
+    color: #818cf8;
 }
 
 .sidebar-footer {
@@ -119,9 +212,20 @@ body {
     left: 0;
     right: 0;
     height: 0.5px;
-    background: rgba(227, 235, 255, 0.4);
-    filter: blur(0.3px);
-    box-shadow: 0 0 10px rgba(227, 235, 255, 0.2);
+    background: rgba(129, 140, 248, 0.4);
+    box-shadow: 0 0 10px rgba(129, 140, 248, 0.2);
+}
+
+.sidebar-footer .btn {
+    /* Remove light purple color - let it use default styling */
+}
+
+.sidebar-footer .btn i {
+    /* Remove light purple color - let it use default styling */
+}
+
+.sidebar-footer .btn span {
+    /* Remove light purple color - let it use default styling */
 }
 
 /* Main Content */
@@ -144,6 +248,7 @@ body {
     font-size: 1.75rem;
     font-weight: 500;
     font-style: italic;
+    font-family: 'Playfair Display', serif;
     background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
     background-size: 200% 100%;
     -webkit-background-clip: text;
@@ -191,7 +296,7 @@ body {
     border-radius: 0.25rem;
     padding: 0.5rem 1.5rem;
     font-weight: 500;
-    transition: all 0.15s ease;
+    transition: all 0.3s ease;
     height: 40px;
     display: inline-flex;
     align-items: center;
@@ -203,7 +308,7 @@ body {
 .btn-primary {
     background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5)) !important;
     border: 1px solid rgba(129, 140, 248, 0.2) !important;
-    color: #9ca3af !important;
+    color: #6b7280 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -230,29 +335,44 @@ body {
     color: #fca5a5 !important;
 }
 
+.btn-secondary {
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5)) !important;
+    border: 1px solid rgba(129, 140, 248, 0.2) !important;
+    color: #6b7280 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.8), rgba(5, 5, 25, 0.6)) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(129, 140, 248, 0.3) !important;
+    border-color: rgba(129, 140, 248, 0.4) !important;
+    color: #c7d2fe !important;
+}
+
 .btn i {
     margin-right: 8px;
     font-size: 1.1rem;
 }
 
 /* Form Controls */
-.form-control {
-    background-color: rgba(50, 45, 60, 0.25) !important;
-    border: 1px solid rgba(187, 195, 255, 0.8) !important;
-    border-radius: 0.25rem !important;
-    color: #818cf8 !important;
-    font-family: 'Playfair Display', serif !important;
-    transition: all 0.3s ease !important;
-    -webkit-text-fill-color: #818cf8 !important;
+.admin-container .form-control {
+    background-color: rgba(50, 45, 60, 0.25);
+    border: 1px solid rgba(187, 195, 255, 0.5);
+    border-radius: 0.25rem;
+    color: #818cf8;
+    font-family: "Inter", "Arial", sans-serif;
+    transition: all 0.3s ease;
+    -webkit-text-fill-color: #818cf8;
 }
 
-.form-control:focus {
-    background-color: rgba(50, 45, 60, 0.35) !important;
-    border-color: rgba(129, 140, 248, 1.0) !important;
-    box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.4) !important;
-    outline: none !important;
-    color: #818cf8 !important;
-    -webkit-text-fill-color: #818cf8 !important;
+.admin-container .form-control:focus {
+    background-color: rgba(50, 45, 60, 0.35);
+    border-color: rgba(129, 140, 248, 0.7);
+    box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.3);
+    outline: none;
+    color: #818cf8;
+    -webkit-text-fill-color: #818cf8;
 }
 
 /* Ultra-specific selectors to override Bootstrap */
@@ -294,14 +414,14 @@ body {
 
 /* Override Bootstrap form styles */
 .form-label {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
     font-size: 0.9rem !important;
     margin-bottom: 0.5rem !important;
 }
 
 /* Override Bootstrap text colors */
 .text-muted {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
 }
 
 /* Tables */
@@ -367,51 +487,51 @@ body {
 /* General admin styles will go here */
 
 /* Card Styles */
-.card {
-    background: linear-gradient(135deg, rgba(0, 0, 10, 0.8), rgba(5, 5, 25, 0.6)) !important;
-    border: 1px solid rgba(187, 195, 255, 0.9) !important;
-    border-radius: 0.5rem !important;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
-    backdrop-filter: blur(5px) !important;
-    position: relative !important;
-    overflow: hidden !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+.admin-container .card {
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.8), rgba(5, 5, 25, 0.6));
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
-    border-color: rgba(187, 195, 255, 1.0) !important;
+.admin-container .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    border-color: rgba(165, 180, 252, 0.5);
 }
 
-.card-header {
-    background: linear-gradient(90deg, rgba(129, 140, 248, 0.15), rgba(165, 180, 252, 0.08)) !important;
-    border-bottom: 1px solid rgba(187, 195, 255, 0.9) !important;
-    padding: 1rem 1.25rem !important;
+.admin-container .card-header {
+    background: linear-gradient(90deg, rgba(129, 140, 248, 0.15), rgba(165, 180, 252, 0.08));
+    border-bottom: 1px solid rgba(129, 140, 248, 0.3);
+    padding: 1rem 1.25rem;
 }
 
-.card-header h5 {
-    color: var(--primary-color) !important;
-    font-weight: 500 !important;
-    font-style: italic !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
+.admin-container .card-header h5 {
+    color: var(--primary-color);
+    font-weight: 500;
+    font-style: italic;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.card-header h5 i {
-    font-size: 1.1rem !important;
-    color: var(--secondary-color) !important;
+.admin-container .card-header h5 i {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
 }
 
-.card-body {
-    background: linear-gradient(135deg, rgba(0, 0, 10, 0.6), rgba(5, 5, 25, 0.4)) !important;
-    padding: 1.25rem !important;
-    color: var(--text-color) !important;
+.admin-container .card-body {
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.6), rgba(5, 5, 25, 0.4));
+    padding: 1.25rem;
+    color: var(--text-color);
 }
 
-.card-body p {
+.admin-container .card-body p {
     margin-bottom: 1rem;
 }
 
@@ -457,11 +577,11 @@ body {
 
 /* Specific overrides for common elements */
 .admin-content p {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
 }
 
 .admin-content label {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
 }
 
 .admin-content h1, 
@@ -480,18 +600,18 @@ body {
 
 /* Ensure form labels are gray */
 .form-label {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
     font-size: 0.9rem !important;
     margin-bottom: 0.5rem !important;
 }
 
 /* Override any Bootstrap text utilities */
 .text-dark {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
 }
 
 .text-body {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
 }
 
 /* Ultra-specific overrides for Bootstrap text colors */
@@ -499,65 +619,147 @@ body {
 .admin-container .admin-content .card .card-body label,
 .admin-container .admin-content .card .card-body span,
 .admin-container .admin-content .card .card-body div:not(.btn) {
-    color: #9ca3af !important;
+    color: #6b7280 !important;
 }
 
 /* Override Bootstrap's default paragraph color */
-.admin-container p {
-    color: #9ca3af !important;
+.admin-container .admin-content p {
+    color: #6b7280 !important;
 }
 
 /* Override Bootstrap's default label color */
-.admin-container label {
-    color: #9ca3af !important;
+.admin-container .admin-content label {
+    color: #6b7280 !important;
 }
 
-/* Force all text except buttons to be gray */
-.admin-container *:not(.btn):not(.btn *) {
-    color: #9ca3af !important;
+/* Force all text in admin content area except buttons to be gray */
+.admin-container .admin-content *:not(.btn):not(.btn *) {
+    color: #6b7280 !important;
 }
 
-/* But preserve primary color for headings */
-.admin-container h1,
-.admin-container h2,
-.admin-container h3,
-.admin-container h4,
-.admin-container h5,
-.admin-container h6 {
+/* But preserve primary color for headings in admin content */
+.admin-container .admin-content h1,
+.admin-container .admin-content h2,
+.admin-container .admin-content h3,
+.admin-container .admin-content h4,
+.admin-container .admin-content h5,
+.admin-container .admin-content h6 {
     color: var(--primary-color) !important;
 }
 
-.admin-input {
+/* Sidebar Header - Ensure "Admin Panel" is light purple */
+.admin-sidebar .sidebar-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: elegantFlow 3s ease infinite;
+}
+
+/* Sidebar Navigation - Match frontend navbar styling */
+.admin-sidebar .sidebar-nav ul li a.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem !important;
+    color: #a5b4fc !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    font-size: 1rem;
+}
+
+.admin-sidebar .sidebar-nav ul li a.nav-link:hover,
+.admin-sidebar .sidebar-nav ul li a.nav-link.active {
+    background: linear-gradient(90deg, rgba(129, 140, 248, 0.1), rgba(165, 180, 252, 0.05));
+    color: #c7d2fe !important;
+    transform: translateY(-1px);
+}
+
+.admin-sidebar .sidebar-nav ul li a.nav-link i {
+    width: 20px;
+    margin-right: 10px;
+    font-size: 1.1rem;
+    color: #6b7280 !important;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .sidebar-nav ul li a.nav-link:hover i,
+.admin-sidebar .sidebar-nav ul li a.nav-link.active i {
+    color: #c7d2fe !important;
+}
+
+.admin-sidebar .sidebar-nav ul li a.nav-link span {
+    color: #a5b4fc !important;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .sidebar-nav ul li a.nav-link:hover span,
+.admin-sidebar .sidebar-nav ul li a.nav-link.active span {
+    color: #c7d2fe !important;
+}
+
+.admin-sidebar .sidebar-footer .btn {
+    /* Remove light purple color - let it use default styling */
+}
+
+.admin-sidebar .sidebar-footer .btn i {
+    /* Remove light purple color - let it use default styling */
+}
+
+.admin-sidebar .sidebar-footer .btn span {
+    /* Remove light purple color - let it use default styling */
+}
+
+/* Content Header - Ensure "Welcome to the admin dashboard" is light purple */
+.admin-container .admin-content .content-header h1 {
+    font-size: 1.75rem;
+    font-weight: 500;
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    animation: elegantFlow 3s ease infinite;
+    margin-bottom: 10px;
+}
+
+/* Ultra-specific override for the welcome header */
+.admin-container .admin-content .content-header h1 {
     color: #818cf8 !important;
-    -webkit-text-fill-color: #818cf8 !important;
-    border: 1px solid rgba(129, 140, 248, 0.5) !important;
-    box-shadow: inset 0 0 5px rgba(129, 140, 248, 0.1) !important;
-    background-color: rgba(255, 255, 255, 0.4) !important;
+    background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%) !important;
+    background-size: 200% 100% !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
 }
 
-.admin-input:focus {
-    border-color: rgba(129, 140, 248, 0.8) !important;
-    box-shadow: inset 0 0 8px rgba(129, 140, 248, 0.2), 0 0 0 0.2rem rgba(129, 140, 248, 0.25) !important;
-    background-color: rgba(255, 255, 255, 0.5) !important;
+/* Main card bodies - the ones with buttons and hero edit form */
+.admin-container .content-section .card .card-body {
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.6), rgba(5, 5, 25, 0.4));
+    padding: 1.25rem;
+    color: var(--text-color);
 }
 
-.admin-label {
-    color: #9ca3af !important;
+/* Nested card bodies inside forms - blue-gray background */
+.admin-container .content-section .card .card-body .card .card-body {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(51, 65, 85, 0.3));
+    padding: 1.25rem;
+    color: var(--text-color);
 }
 
-.admin-heading {
-    color: #818cf8 !important;
+/* Hero Edit Button and Form Transitions */
+.btn-primary[onclick="toggleHeroEdit()"] {
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Admin Dashboard Styles */
-.admin-container {
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-    min-height: 100vh;
-    padding: 2rem;
-}
-
-.admin-card {
-    border: 1px solid rgba(129, 140, 248, 0.6) !important;
-    box-shadow: inset 0 0 8px rgba(129, 140, 248, 0.1) !important;
-    background-color: rgba(255, 255, 255, 0.05) !important;
+#heroEditForm {
+    transition: opacity 0.2s ease, transform 0.2s ease;
 } 
