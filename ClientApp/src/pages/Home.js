@@ -80,6 +80,7 @@ const Home = () => {
       <Header
         title={heroData.title}
         subtitle={heroData.subtitle}
+        description={heroData.description}
         backgroundImageUrl={heroData.backgroundImageUrl}
         backgroundVideoUrl={heroData.backgroundVideoUrl}
         overlayColor={heroData.overlayColor}
