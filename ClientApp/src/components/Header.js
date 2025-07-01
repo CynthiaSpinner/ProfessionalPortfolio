@@ -7,6 +7,7 @@ import "../styles/Header.css";
 const Header = ({
   title,
   subtitle,
+  description,
   backgroundImageUrl,
   backgroundVideoUrl,
   overlayColor = "#000000",
@@ -83,6 +84,11 @@ const Header = ({
         <Row className="justify-content-center">
           <Col lg={8} className="text-center">
             <HeadingGroup title={title} subtitle={subtitle} />
+            {description && (
+              <p className="lead mt-3" style={{ color: "#6b7280", fontSize: "1.1rem" }}>
+                {description}
+              </p>
+            )}
             {showButtons && (
               <div className="mt-4">
                 <Button href={primaryButtonUrl}>{primaryButtonText}</Button>

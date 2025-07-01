@@ -200,64 +200,270 @@ namespace Portfolio.Controllers
                 if (!ModelState.IsValid)
                 {
                     var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                    _logger.LogWarning($"Hero section validation errors: {string.Join(", ", errors)}");
-                    return Json(new { success = false, message = "Validation failed", errors = errors });
+                    return Json(new { success = false, message = string.Join(", ", errors) });
                 }
 
-                // Get existing homepage or create new one
-                var existingHomePage = await _homePageService.GetHomePageAsync();
-                if (existingHomePage == null)
+                var homePage = await _homePageService.GetHomePageAsync();
+                
+                if (homePage == null)
                 {
-                    existingHomePage = new HomePage
-                    {
-                        IsActive = true,
-                        DisplayOrder = 1,
-                        CreatedAt = DateTime.UtcNow
-                    };
+                    // Create new home page if it doesn't exist
+                    homePage = new HomePage();
+                    _context.HomePages.Add(homePage);
                 }
 
                 // Update hero section properties
-                existingHomePage.HeaderTitle = model.HeaderTitle ?? string.Empty;
-                existingHomePage.HeaderSubtitle = model.HeaderSubtitle ?? string.Empty;
-                existingHomePage.HeaderDescription = model.HeaderDescription ?? string.Empty;
-                existingHomePage.HeaderBackgroundImageUrl = model.HeaderBackgroundImageUrl ?? string.Empty;
-                existingHomePage.HeaderBackgroundVideoUrl = model.HeaderBackgroundVideoUrl ?? string.Empty;
-                existingHomePage.HeaderPrimaryButtonText = model.HeaderPrimaryButtonText ?? string.Empty;
-                existingHomePage.HeaderPrimaryButtonUrl = model.HeaderPrimaryButtonUrl ?? string.Empty;
-                existingHomePage.HeaderOverlayColor = model.ImageOverlayColor ?? "#000000";
-                existingHomePage.HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f; // Convert percentage to decimal
-                existingHomePage.UpdatedAt = DateTime.UtcNow;
+                homePage.HeaderTitle = model.HeaderTitle ?? "Welcome to My Portfolio";
+                homePage.HeaderSubtitle = model.HeaderSubtitle ?? "I am a passionate software engineer specializing in full-stack development.";
+                homePage.HeaderDescription = model.HeaderDescription ?? "";
+                homePage.HeaderBackgroundImageUrl = model.HeaderBackgroundImageUrl ?? "";
+                homePage.HeaderBackgroundVideoUrl = model.HeaderBackgroundVideoUrl ?? "";
+                homePage.HeaderPrimaryButtonText = model.HeaderPrimaryButtonText ?? "View Projects";
+                homePage.HeaderPrimaryButtonUrl = model.HeaderPrimaryButtonUrl ?? "/projects";
+                homePage.HeaderOverlayColor = model.ImageOverlayColor ?? "#000000";
+                homePage.HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f;
+                homePage.UpdatedAt = DateTime.UtcNow;
 
-                // Save to database
-                var savedHomePage = await _homePageService.UpdateHeaderSectionAsync(existingHomePage);
+                await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"Hero section saved successfully. HomePage ID: {savedHomePage.Id}");
-
-                return Json(new { 
-                    success = true, 
-                    message = "Hero section saved successfully!",
-                    homePageId = savedHomePage.Id
-                });
+                return Json(new { success = true, message = "Hero section saved successfully!" });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving hero section");
+                return Json(new { success = false, message = "An error occurred while saving the hero section." });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveHeroTemplate([FromForm] HeroTemplateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                // Check if template with this nickname already exists
+                var existingTemplate = await _context.HeroTemplates
+                    .FirstOrDefaultAsync(t => t.Nickname == model.Nickname);
+                
+                if (existingTemplate != null)
+                {
+                    return Json(new { success = false, message = "A template with this nickname already exists. Please choose a different name." });
+                }
+
+                // Create new hero template
+                var template = new HeroTemplate
+                {
+                    Nickname = model.Nickname,
+                    HeaderTitle = model.HeaderTitle ?? "",
+                    HeaderSubtitle = model.HeaderSubtitle ?? "",
+                    HeaderDescription = model.HeaderDescription ?? "",
+                    HeaderBackgroundImageUrl = model.HeaderBackgroundImageUrl ?? "",
+                    HeaderBackgroundVideoUrl = model.HeaderBackgroundVideoUrl ?? "",
+                    HeaderPrimaryButtonText = model.HeaderPrimaryButtonText ?? "",
+                    HeaderPrimaryButtonUrl = model.HeaderPrimaryButtonUrl ?? "",
+                    HeaderOverlayColor = model.ImageOverlayColor ?? "#000000",
+                    HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.HeroTemplates.Add(template);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Hero template saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving hero template");
+                return Json(new { success = false, message = "An error occurred while saving the hero template." });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateHeroTemplate([FromForm] HeroTemplateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                // Find existing template by ID
+                var existingTemplate = await _context.HeroTemplates.FindAsync(model.Id);
+                
+                if (existingTemplate == null)
+                {
+                    return Json(new { success = false, message = "Template not found." });
+                }
+
+                // Update template properties
+                existingTemplate.Nickname = model.Nickname;
+                existingTemplate.HeaderTitle = model.HeaderTitle ?? "";
+                existingTemplate.HeaderSubtitle = model.HeaderSubtitle ?? "";
+                existingTemplate.HeaderDescription = model.HeaderDescription ?? "";
+                existingTemplate.HeaderBackgroundImageUrl = model.HeaderBackgroundImageUrl ?? "";
+                existingTemplate.HeaderBackgroundVideoUrl = model.HeaderBackgroundVideoUrl ?? "";
+                existingTemplate.HeaderPrimaryButtonText = model.HeaderPrimaryButtonText ?? "";
+                existingTemplate.HeaderPrimaryButtonUrl = model.HeaderPrimaryButtonUrl ?? "";
+                existingTemplate.HeaderOverlayColor = model.ImageOverlayColor ?? "#000000";
+                existingTemplate.HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f;
+
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Hero template updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating hero template");
+                return Json(new { success = false, message = "An error occurred while updating the hero template." });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetHeroTemplates()
+        {
+            try
+            {
+                var templates = await _context.HeroTemplates
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Select(t => new
+                    {
+                        id = t.Id,
+                        nickname = t.Nickname,
+                        title = t.HeaderTitle,
+                        subtitle = t.HeaderSubtitle,
+                        createdAt = t.CreatedAt
+                    })
+                    .ToListAsync();
+
+                return Json(new { 
+                    success = true, 
+                    message = "Hero templates retrieved successfully.",
+                    data = templates 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving hero templates");
                 return Json(new { 
                     success = false, 
-                    message = "An error occurred while saving the hero section. Please try again.",
-                    error = ex.Message
+                    message = "An error occurred while retrieving hero templates.",
+                    data = new object[] { } 
                 });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetHeroTemplate(int id)
+        {
+            try
+            {
+                var template = await _context.HeroTemplates.FindAsync(id);
+                
+                if (template == null)
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = "Template not found.",
+                        data = (object)null 
+                    });
+                }
+
+                var templateData = new
+                {
+                    nickname = template.Nickname,
+                    title = template.HeaderTitle,
+                    subtitle = template.HeaderSubtitle,
+                    description = template.HeaderDescription,
+                    backgroundImageUrl = template.HeaderBackgroundImageUrl,
+                    backgroundVideoUrl = template.HeaderBackgroundVideoUrl,
+                    primaryButtonText = template.HeaderPrimaryButtonText,
+                    primaryButtonUrl = template.HeaderPrimaryButtonUrl,
+                    overlayColor = template.HeaderOverlayColor,
+                    overlayOpacity = template.HeaderOverlayOpacity,
+                    createdAt = template.CreatedAt
+                };
+
+                return Json(new { 
+                    success = true, 
+                    message = "Hero template retrieved successfully.",
+                    data = templateData 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving hero template");
+                return Json(new { 
+                    success = false, 
+                    message = "An error occurred while retrieving the hero template.",
+                    data = (object)null 
+                });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteHeroTemplate(int id)
+        {
+            try
+            {
+                var template = await _context.HeroTemplates.FindAsync(id);
+                
+                if (template == null)
+                {
+                    return Json(new { success = false, message = "Template not found." });
+                }
+
+                _context.HeroTemplates.Remove(template);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Hero template deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting hero template");
+                return Json(new { success = false, message = "An error occurred while deleting the hero template." });
             }
         }
 
         public class LoginModel
         {
-            public string Username { get; set; }
-            public string Password { get; set; }
+            public string? Username { get; set; }
+            public string? Password { get; set; }
         }
 
         public class HeroSectionModel
         {
+            public string? HeaderTitle { get; set; }
+            public string? HeaderSubtitle { get; set; }
+            public string? HeaderDescription { get; set; }
+            public string? HeaderBackgroundImageUrl { get; set; }
+            public string? HeaderBackgroundVideoUrl { get; set; }
+            public string? HeaderPrimaryButtonText { get; set; }
+            public string? HeaderPrimaryButtonUrl { get; set; }
+            public string? ImageOverlayColor { get; set; }
+            public int ImageOverlayOpacity { get; set; } = 50;
+            public string? VideoOverlayColor { get; set; }
+            public int VideoOverlayOpacity { get; set; } = 50;
+        }
+
+        public class HeroTemplateModel
+        {
+            public int? Id { get; set; }
+            public string? Nickname { get; set; }
             public string? HeaderTitle { get; set; }
             public string? HeaderSubtitle { get; set; }
             public string? HeaderDescription { get; set; }

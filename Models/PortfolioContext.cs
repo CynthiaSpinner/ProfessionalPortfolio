@@ -16,6 +16,7 @@ namespace Portfolio.Models
         public DbSet<SkillsCategory> SkillsCategories { get; set; } = null!;
         public DbSet<Project> Projects { get; set; } = null!;
         public DbSet<About> Abouts { get; set; } = null!;
+        public DbSet<HeroTemplate> HeroTemplates { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
