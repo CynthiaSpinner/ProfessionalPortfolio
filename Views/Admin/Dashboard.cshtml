@@ -794,6 +794,9 @@
                         
                         // Reload templates to reflect changes
                         await loadTemplates();
+                        
+                        // Frontend will automatically detect changes within 3 seconds
+                        console.log('Changes saved successfully - frontend will update automatically');
                     } else {
                         // Show error message
                         showNotification('Error!', result.message, 'error');
