@@ -19,13 +19,15 @@ namespace Portfolio.Controllers
         private readonly ILogger<AdminController> _logger;
         private readonly IConfiguration _configuration;
         private readonly IHomePageService _homePageService;
+        private readonly WebSocketService _webSocketService;
 
-        public AdminController(PortfolioContext context, ILogger<AdminController> logger, IConfiguration configuration, IHomePageService homePageService)
+        public AdminController(PortfolioContext context, ILogger<AdminController> logger, IConfiguration configuration, IHomePageService homePageService, WebSocketService webSocketService)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
             _homePageService = homePageService;
+            _webSocketService = webSocketService;
         }
 
         private string HashPassword(string password)
@@ -203,11 +205,11 @@ namespace Portfolio.Controllers
                     return Json(new { success = false, message = string.Join(", ", errors) });
                 }
 
+                // Single database query - get or create home page
                 var homePage = await _homePageService.GetHomePageAsync();
                 
                 if (homePage == null)
                 {
-                    // Create new home page if it doesn't exist
                     homePage = new HomePage();
                     _context.HomePages.Add(homePage);
                 }
@@ -224,9 +226,37 @@ namespace Portfolio.Controllers
                 homePage.HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f;
                 homePage.UpdatedAt = DateTime.UtcNow;
 
+                // Single save operation
                 await _context.SaveChangesAsync();
 
-                return Json(new { success = true, message = "Hero section saved successfully!" });
+                // Force cache refresh to ensure fresh data (only if it's the service with caching)
+                if (_homePageService is Services.HomePageService homePageService)
+                {
+                    homePageService.ForceCacheRefresh();
+                }
+                var updatedHomePage = await _homePageService.GetHomePageAsync();
+
+                // Broadcast WebSocket message to all connected clients
+                await _webSocketService.BroadcastHeroDataUpdatedAsync();
+
+                // Return updated data for immediate frontend refresh
+                return Json(new { 
+                    success = true, 
+                    message = "Hero section saved successfully!",
+                    data = new
+                    {
+                        title = updatedHomePage?.HeaderTitle ?? homePage.HeaderTitle,
+                        subtitle = updatedHomePage?.HeaderSubtitle ?? homePage.HeaderSubtitle,
+                        description = updatedHomePage?.HeaderDescription ?? homePage.HeaderDescription,
+                        backgroundImageUrl = updatedHomePage?.HeaderBackgroundImageUrl ?? homePage.HeaderBackgroundImageUrl,
+                        backgroundVideoUrl = updatedHomePage?.HeaderBackgroundVideoUrl ?? homePage.HeaderBackgroundVideoUrl,
+                        primaryButtonText = updatedHomePage?.HeaderPrimaryButtonText ?? homePage.HeaderPrimaryButtonText,
+                        primaryButtonUrl = updatedHomePage?.HeaderPrimaryButtonUrl ?? homePage.HeaderPrimaryButtonUrl,
+                        overlayColor = updatedHomePage?.HeaderOverlayColor ?? homePage.HeaderOverlayColor,
+                        overlayOpacity = updatedHomePage?.HeaderOverlayOpacity ?? homePage.HeaderOverlayOpacity,
+                        lastModified = updatedHomePage?.UpdatedAt ?? homePage.UpdatedAt ?? homePage.CreatedAt
+                    }
+                });
             }
             catch (Exception ex)
             {

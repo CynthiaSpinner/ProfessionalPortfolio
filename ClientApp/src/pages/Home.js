@@ -23,24 +23,23 @@ const Home = () => {
     lastModified: null
   });
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [lastCheckTime, setLastCheckTime] = useState(null);
 
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
-        if (!loading) {
-          setRefreshing(true);
-        }
-        
         const data = await PortfolioService.getHeroSection();
         
-        // Only update if data has actually changed
+        // Only update if data has actually changed to prevent unnecessary re-renders
         if (data.lastModified !== heroData.lastModified) {
-          setHeroData(data);
-          console.log("Hero data updated:", new Date(data.lastModified));
-        } else {
-          console.log("No changes detected, skipping update");
+          setHeroData(prevData => {
+            // Deep comparison to avoid unnecessary updates
+            if (JSON.stringify(prevData) !== JSON.stringify(data)) {
+              console.log("Hero data updated:", new Date(data.lastModified));
+              return data;
+            }
+            return prevData;
+          });
         }
         
         setLastCheckTime(new Date());
@@ -49,19 +48,105 @@ const Home = () => {
         // Keep default values if fetch fails
       } finally {
         setLoading(false);
-        setRefreshing(false);
       }
     };
 
     // Initial fetch
     fetchHeroData();
 
-    // Set up auto-refresh every 3 seconds
-    const intervalId = setInterval(fetchHeroData, 3000);
+    // Set up WebSocket connection for real-time updates (NO POLLING!)
+    const getWebSocketUrl = () => {
+      if (process.env.NODE_ENV === 'production') {
+        // In production, use the same host as the current page
+        return `wss://${window.location.host}/ws/portfolio`;
+      } else {
+        // In development, connect to the ASP.NET Core backend directly
+        // The React dev server runs on 44406, but the backend runs on 7094 (HTTPS)
+        return `wss://localhost:7094/ws/portfolio`;
+      }
+    };
+    
+    let ws = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 3;
+    let reconnectTimeout = null;
+    let fallbackPollingInterval = null;
+    
+    const connectWebSocket = () => {
+      try {
+        ws = new WebSocket(getWebSocketUrl());
+        
+        ws.onopen = () => {
+          console.log('WebSocket connected for real-time updates');
+          reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+          
+          // Clear any fallback polling if WebSocket is working
+          if (fallbackPollingInterval) {
+            clearInterval(fallbackPollingInterval);
+            fallbackPollingInterval = null;
+          }
+        };
+        
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.type === 'heroDataUpdated') {
+            console.log('Real-time update received, refreshing data...');
+            fetchHeroData();
+          }
+        };
+        
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+        };
+        
+        ws.onclose = (event) => {
+          console.log('WebSocket connection closed');
+          
+          // Try to reconnect if not a normal closure
+          if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
+            reconnectAttempts++;
+            console.log(`WebSocket reconnection attempt ${reconnectAttempts}/${maxReconnectAttempts}`);
+            
+            reconnectTimeout = setTimeout(() => {
+              connectWebSocket();
+            }, 2000 * reconnectAttempts); // Exponential backoff
+          } else if (reconnectAttempts >= maxReconnectAttempts) {
+            console.log('WebSocket reconnection failed, falling back to polling');
+            
+            // Fallback to polling if WebSocket fails
+            fallbackPollingInterval = setInterval(() => {
+              console.log('Fallback polling: checking for updates...');
+              fetchHeroData();
+            }, 5000); // Poll every 5 seconds as fallback
+          }
+        };
+      } catch (error) {
+        console.error('Failed to create WebSocket connection:', error);
+        
+        // Fallback to polling if WebSocket creation fails
+        fallbackPollingInterval = setInterval(() => {
+          console.log('Fallback polling: checking for updates...');
+          fetchHeroData();
+        }, 5000);
+      }
+    };
+    
+    // Start WebSocket connection
+    connectWebSocket();
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [heroData.lastModified]);
+    // Cleanup on component unmount
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+      if (fallbackPollingInterval) {
+        clearInterval(fallbackPollingInterval);
+      }
+    };
+  }, []); // Empty dependency array - only run once on mount
 
   if (loading) {
     return (
@@ -88,7 +173,6 @@ const Home = () => {
         primaryButtonText={heroData.primaryButtonText}
         primaryButtonUrl={heroData.primaryButtonUrl}
         showButtons={true}
-        refreshing={refreshing}
       />
 
       {/* Features List Section */}

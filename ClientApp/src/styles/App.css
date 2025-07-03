@@ -33,8 +33,41 @@
   font-family: "Inter", "Arial", sans-serif;
 }
 
-html {
-  scroll-behavior: smooth;
+html, body {
+  height: auto;
+  min-height: 100vh;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(33, 37, 41);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: 
+    linear-gradient(135deg, rgba(75, 75, 90, 0.3), rgba(85, 85, 105, 0.2), rgba(227, 235, 255, 0.1)),
+    linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.1) 75%, transparent 75%) 0 50%,
+    linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.1) 75%, transparent 75%) 0 calc(50% - 3px),
+    linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.1) 75%, transparent 75%) 0 calc(50% + 3px);
+  border-radius: 0 !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(75, 75, 90, 0.4), rgba(85, 85, 105, 0.3), rgba(227, 235, 255, 0.2));
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 0 12px rgba(0, 0, 0, 0.3);
 }
 
 body {
@@ -92,6 +125,8 @@ section {
   display: flex;
   flex-direction: column;
   background: var(--black);
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 main {
@@ -182,4 +217,23 @@ main {
   section {
     padding: 2rem 0;
   }
+}
+
+/* Ensure proper scrolling */
+.scroll-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  width: 100%;
+}
+
+
+
+/* Ensure the page container adapts to content */
+.home-page {
+  min-height: 100vh;
+}
+
+/* Make sure all sections can expand naturally */
+section {
+  padding: 4rem 0;
 }

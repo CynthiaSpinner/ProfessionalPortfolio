@@ -10,6 +10,9 @@ namespace Portfolio.Services
     {
         private readonly PortfolioContext _context;
         private readonly IFileService _fileService;
+        private HomePage? _cachedHomePage;
+        private DateTime _lastCacheTime = DateTime.MinValue;
+        private readonly TimeSpan _cacheExpiration = TimeSpan.FromMinutes(5); // 5 minute cache since no polling
 
         public HomePageService(PortfolioContext context, IFileService fileService)
         {
@@ -19,8 +22,31 @@ namespace Portfolio.Services
 
         public async Task<HomePage?> GetHomePageAsync()
         {
-            return await _context.HomePages
+            // Check if cache is still valid
+            if (_cachedHomePage != null && DateTime.UtcNow - _lastCacheTime < _cacheExpiration)
+            {
+                return _cachedHomePage;
+            }
+
+            // Fetch from database and update cache
+            _cachedHomePage = await _context.HomePages
                 .FirstOrDefaultAsync(hp => hp.IsActive);
+            _lastCacheTime = DateTime.UtcNow;
+            
+            return _cachedHomePage;
+        }
+
+        // Method to invalidate cache when data is updated
+        private void InvalidateCache()
+        {
+            _cachedHomePage = null;
+            _lastCacheTime = DateTime.MinValue;
+        }
+
+        // Method to force cache refresh
+        public void ForceCacheRefresh()
+        {
+            InvalidateCache();
         }
 
         public async Task<HomePage> CreateHomePageAsync(HomePage homePage)
@@ -35,6 +61,10 @@ namespace Portfolio.Services
             homePage.UpdatedAt = DateTime.UtcNow;
             _context.Entry(homePage).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+            
+            // Invalidate cache after update
+            InvalidateCache();
+            
             return homePage;
         }
 
