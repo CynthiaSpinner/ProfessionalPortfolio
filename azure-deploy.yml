@@ -1,0 +1,48 @@
+name: Deploy to Azure App Service
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: ClientApp/package-lock.json
+    
+    - name: Restore .NET dependencies
+      run: dotnet restore
+    
+    - name: Install Node.js dependencies
+      run: npm ci --prefix ClientApp
+    
+    - name: Build React app
+      run: npm run build --prefix ClientApp
+    
+    - name: Build .NET app
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Publish .NET app
+      run: dotnet publish --no-build --configuration Release --output ./publish
+    
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'YOUR_APP_SERVICE_NAME'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish 
