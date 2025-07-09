@@ -42,6 +42,11 @@ jobs:
     - name: Build React app
       run: npm run build --prefix ClientApp
     
+    - name: Copy React build to wwwroot
+      run: |
+        mkdir -p wwwroot
+        cp -r ClientApp/build/* wwwroot/
+    
     - name: Build .NET app
       run: dotnet build --no-restore --configuration Release
     
