@@ -22,9 +22,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: ClientApp/package-lock.json
-        registry-url: 'https://registry.npmjs.org'
     
     - name: Restore .NET dependencies
       run: dotnet restore Portfolio.csproj
@@ -32,10 +29,13 @@ jobs:
     - name: Install Node.js dependencies
       run: |
         cd ClientApp
+        npm cache clean --force
         npm install --no-audit --no-fund --legacy-peer-deps
     
     - name: Build React app
-      run: npm run build --prefix ClientApp
+      run: |
+        cd ClientApp
+        npm run build
     
     - name: Copy React build to wwwroot
       run: |
