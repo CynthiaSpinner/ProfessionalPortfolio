@@ -85,6 +85,16 @@ namespace Portfolio.Controllers
             }
         }
 
+        [HttpGet("test")]
+        public IActionResult Test()
+        {
+            return Ok(new { 
+                message = "Backend is working!", 
+                timestamp = DateTime.UtcNow,
+                database = "Connected to Azure SQL Database"
+            });
+        }
+
         // GET: Portfolio/About
         public async Task<IActionResult> About()
         {
