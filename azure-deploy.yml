@@ -24,23 +24,20 @@ jobs:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: ClientApp/package-lock.json
-        registry-url: 'https://registry.npmjs.org'
-    
-    - name: Update npm to latest version
-      run: npm install -g npm@latest
     
     - name: Restore .NET dependencies
-      run: dotnet restore
+      run: dotnet restore Portfolio.csproj
     
     - name: Install Node.js dependencies
       run: |
-        export WEBSITE_NODE_DEFAULT_VERSION=18.19.0
+        cd ClientApp
         npm cache clean --force
-        npm config set registry https://registry.npmjs.org/
-        timeout 600 npm install --prefix ClientApp --no-audit --no-fund || (echo "npm install timed out, retrying..." && timeout 600 npm install --prefix ClientApp --no-audit --no-fund)
+        npm install --no-audit --no-fund --legacy-peer-deps
     
     - name: Build React app
-      run: npm run build --prefix ClientApp
+      run: |
+        cd ClientApp
+        npm run build
     
     - name: Copy React build to wwwroot
       run: |
@@ -48,10 +45,10 @@ jobs:
         cp -r ClientApp/build/* wwwroot/
     
     - name: Build .NET app
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build Portfolio.csproj --no-restore --configuration Release
     
     - name: Publish .NET app
-      run: dotnet publish --no-build --configuration Release --output ./publish
+      run: dotnet publish Portfolio.csproj --no-build --configuration Release --output ./publish
     
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
