@@ -151,7 +151,7 @@ const Navbar = () => {
             <li className="nav-item">
               <a
                 className="nav-link"
-                href="https://localhost:7094/Admin/Login"
+                href="/Admin/Login"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
