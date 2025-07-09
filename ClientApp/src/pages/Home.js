@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "../components/HeadingGroup";
 import Footer from "../components/Footer";
-import Button from "../components/Button";
 import Card from "../components/Card";
 import Header from "../components/Header";
 import "../styles/Home.css";
@@ -23,7 +22,6 @@ const Home = () => {
     lastModified: null
   });
   const [loading, setLoading] = useState(true);
-  const [lastCheckTime, setLastCheckTime] = useState(null);
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -41,8 +39,6 @@ const Home = () => {
             return prevData;
           });
         }
-        
-        setLastCheckTime(new Date());
       } catch (error) {
         console.error("Error fetching hero data:", error);
         // Keep default values if fetch fails
@@ -146,7 +142,7 @@ const Home = () => {
         clearInterval(fallbackPollingInterval);
       }
     };
-  }, []); // Empty dependency array - only run once on mount
+  }, [heroData.lastModified]); // Add heroData.lastModified as dependency
 
   if (loading) {
     return (
