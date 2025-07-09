@@ -35,6 +35,8 @@ jobs:
     - name: Install Node.js dependencies
       run: |
         export WEBSITE_NODE_DEFAULT_VERSION=18.19.0
+        npm cache clean --force
+        npm config set registry https://registry.npmjs.org/
         timeout 600 npm install --prefix ClientApp --no-audit --no-fund || (echo "npm install timed out, retrying..." && timeout 600 npm install --prefix ClientApp --no-audit --no-fund)
     
     - name: Build React app
