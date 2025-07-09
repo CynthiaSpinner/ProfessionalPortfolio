@@ -49,7 +49,7 @@
     <!-- <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" /> -->
   </Target>
 
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="'$(Configuration)' == 'Debug'">
     <!-- Skip npm install during deployment - handled by GitHub Actions -->
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
 
