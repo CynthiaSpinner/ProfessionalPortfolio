@@ -26,9 +26,6 @@ jobs:
         cache-dependency-path: ClientApp/package-lock.json
         registry-url: 'https://registry.npmjs.org'
     
-    - name: Update npm to latest version
-      run: npm install -g npm@latest
-    
     - name: Restore .NET dependencies
       run: dotnet restore Portfolio.csproj
     
