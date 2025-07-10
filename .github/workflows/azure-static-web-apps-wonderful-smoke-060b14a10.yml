@@ -50,6 +50,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E7E2D612BC2D44D8B524E20CED405F89 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FC9A748DF011496D92EB0CAF79CE0A80 }}
       
+      - name: Install Azure Static Web Apps CLI
+        run: |
+          az extension add --name staticwebapp
+      
       - name: Deploy to Static Web App
         run: |
-          az webapp deployment source config-zip --resource-group portfolio-resources --name wonderful-smoke-060b14a10 --src ClientApp/build.zip 
+          az staticwebapp deploy --source ClientApp/build --name wonderful-smoke-060b14a10 --resource-group portfolio-resources 
