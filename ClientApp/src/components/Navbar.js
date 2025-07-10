@@ -148,6 +148,23 @@ const Navbar = () => {
                 Contact
               </Link>
             </li>
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                href="https://portfolio-app-1776.azurewebsites.net/Admin/Login"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#a5b4fc",
+                  fontSize: "1rem",
+                  padding: "0.5rem 0.75rem",
+                  lineHeight: "1.2",
+                }}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </a>
+            </li>
           </ul>
         </div>
       </div>
