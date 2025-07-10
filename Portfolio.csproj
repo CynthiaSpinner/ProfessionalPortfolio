@@ -11,6 +11,8 @@
     <SpaProxyServerUrl>https://localhost:44406</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <ImplicitUsings>enable</ImplicitUsings>
+    <WebPublishMethod>MSDeploy</WebPublishMethod>
+    <PublishProvider>AzureWebSite</PublishProvider>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +42,9 @@
     
     <!-- Ensure wwwroot content is included in the build -->
     <Content Include="wwwroot\**" />
+    <Content Include="wwwroot\css\**" />
+    <Content Include="wwwroot\js\**" />
+    <Content Include="wwwroot\lib\**" />
   </ItemGroup>
 
   <!-- ALL NPM TARGETS REMOVED - Handled by GitHub Actions deployment pipeline -->
