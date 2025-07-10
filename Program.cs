@@ -125,10 +125,17 @@ app.Map("/ws/portfolio", async context =>
 
 app.UseEndpoints(endpoints =>
 {
-    // Map admin routes first with higher priority - serve login at root
+    // Redirect root to admin login
+    endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("/Admin/Login");
+        return Task.CompletedTask;
+    });
+
+    // Map admin routes first with higher priority
     endpoints.MapControllerRoute(
         name: "admin",
-        pattern: "{action=Login}/{id?}",
+        pattern: "Admin/{action=Login}/{id?}",
         defaults: new { controller = "Admin" });
 
     // Map API routes
