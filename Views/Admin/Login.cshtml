@@ -10,8 +10,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Cynthia Spinner</title>
-    <link rel="stylesheet" href="~/css/login.css?v=1.0.6" />
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
         /* Force hide scrollbars */
         html, body {
             scrollbar-width: none !important;
@@ -31,6 +32,222 @@
         }
         html::-webkit-scrollbar-corner, body::-webkit-scrollbar-corner {
             display: none !important;
+        }
+
+        /* Override any React app styles that might be applied */
+        *::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        *::-webkit-scrollbar-track {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        *::-webkit-scrollbar-corner {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        :root {
+            --primary-color: #818cf8;
+            --secondary-color: #a5b4fc;
+            --background-color: #050510;
+            --text-color: #a5b4fc;
+        }
+
+        body {
+            background-image: linear-gradient(135deg, rgba(5, 5, 16, 0.95), rgba(5, 5, 25, 0.9), rgba(10, 10, 35, 0.85));
+            color: var(--text-color);
+            font-family: 'Playfair Display', serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            min-height: 400px;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+            border: 1px solid rgba(187, 195, 255, 0.1);
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-container.has-error {
+            animation: growContainer 1.2s ease-in-out forwards;
+        }
+
+        @keyframes growContainer {
+            0% { min-height: 400px; }
+            100% { min-height: 450px; }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 0.6875rem;
+            flex-shrink: 0;
+        }
+
+        .login-header h1 {
+            font-size: 2.25rem;
+            font-weight: 500;
+            font-style: italic;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-header h1 span {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            height: 44px;
+            font-family: "Playfair Display", serif;
+            font-style: italic;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            position: relative;
+            text-shadow: 0 0 20px rgba(129, 140, 248, 0.2), 0 0 40px rgba(129, 140, 248, 0.1);
+            background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: elegantFlow 3s ease infinite;
+        }
+
+        .form-group {
+            margin-bottom: 1.1875rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .login-container .form-group input[type="text"],
+        .login-container .form-group input[type="password"],
+        .login-container .form-control {
+            width: 100%;
+            max-width: 300px;
+            padding: 0.75rem 1rem;
+            background-color: rgba(50, 45, 60, 0.15);
+            border: 1px solid rgba(187, 195, 255, 0.1);
+            border-radius: 0.25rem;
+            color: #818cf8;
+            font-family: 'Playfair Display', serif;
+            transition: all 0.3s ease;
+            -webkit-text-fill-color: #818cf8;
+        }
+
+        .login-container .form-group input[type="text"]:focus,
+        .login-container .form-group input[type="password"]:focus,
+        .login-container .form-control:focus {
+            background-color: rgba(50, 45, 60, 0.25);
+            border-color: rgba(129, 140, 248, 0.3);
+            box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.1);
+            outline: none;
+            color: #818cf8;
+            -webkit-text-fill-color: #818cf8;
+        }
+
+        .login-container .btn-primary {
+            width: 100%;
+            max-width: 300px;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #818cf8, #a5b4fc);
+            border: none;
+            border-radius: 0.25rem;
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .login-container .btn-primary:hover {
+            background: linear-gradient(135deg, #a5b4fc, #818cf8);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(129, 140, 248, 0.3);
+        }
+
+        @keyframes elegantFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .login-container .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            animation: fadeInError 0.3s ease-in-out;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .login-container .error-message:not(:empty) {
+            display: block;
+        }
+
+        .login-container .validation-message {
+            color: #fca5a5;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        @keyframes fadeInError {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
