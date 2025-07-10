@@ -53,8 +53,8 @@ const Home = () => {
     // Set up WebSocket connection for real-time updates (NO POLLING!)
     const getWebSocketUrl = () => {
       if (process.env.NODE_ENV === 'production') {
-        // In production, use the same host as the current page
-        return `wss://${window.location.host}/ws/portfolio`;
+        // In production, connect to the Azure App Service backend
+        return `wss://portfolio-app-1776.azurewebsites.net/ws/portfolio`;
       } else {
         // In development, connect to the ASP.NET Core backend directly
         // The React dev server runs on 44406, but the backend runs on 7094 (HTTPS)
