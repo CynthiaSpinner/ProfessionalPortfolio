@@ -22,29 +22,13 @@ jobs:
       with:
         dotnet-version: '9.0.x'
     
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
     - name: Restore .NET dependencies
       run: dotnet restore Portfolio.csproj
     
-    - name: Install Node.js dependencies
+    - name: Clean wwwroot folder
       run: |
-        cd ClientApp
-        npm cache clean --force
-        npm install --no-audit --no-fund --legacy-peer-deps
-    
-    - name: Build React app
-      run: |
-        cd ClientApp
-        npm run build
-    
-    - name: Copy React build to wwwroot
-      run: |
+        rm -rf wwwroot
         mkdir -p wwwroot
-        cp -r ClientApp/build/* wwwroot/
     
     - name: Build .NET app
       run: dotnet build Portfolio.csproj --no-restore --configuration Release
