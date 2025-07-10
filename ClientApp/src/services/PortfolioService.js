@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const API_BASE_URL = "/api/portfolio";
+// In production, this will point to your Azure App Service API
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? "https://portfolio-app-1776.azurewebsites.net/api/portfolio"
+  : "/api/portfolio";
 
 export const PortfolioService = {
   async getProjects() {

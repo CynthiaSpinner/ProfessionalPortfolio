@@ -20,20 +20,21 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<WebSocketService>();
 
-// Add CORS for development
-if (builder.Environment.IsDevelopment())
+// Add CORS for development and production
+builder.Services.AddCors(options =>
 {
-    builder.Services.AddCors(options =>
+    options.AddPolicy("AllowPortfolio", policy =>
     {
-        options.AddPolicy("AllowReactDevServer", policy =>
-        {
-            policy.WithOrigins("https://localhost:44406", "http://localhost:44406")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        });
+        policy.WithOrigins(
+                "https://localhost:44406", 
+                "http://localhost:44406",
+                "https://wonderful-smoke-060b14a10.1.azurestaticapps.net"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
-}
+});
 
 // Add authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -85,11 +86,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// Add CORS middleware for development
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors("AllowReactDevServer");
-}
+// Add CORS middleware for both development and production
+app.UseCors("AllowPortfolio");
 
 app.UseRouting();
 
@@ -133,22 +131,15 @@ app.UseEndpoints(endpoints =>
         pattern: "Admin/{action=Login}/{id?}",
         defaults: new { controller = "Admin" });
 
+    // Map API routes
+    endpoints.MapControllerRoute(
+        name: "api",
+        pattern: "api/{controller=Portfolio}/{action=Index}/{id?}");
+
     // Map default routes
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
-});
-
-// SPA fallback - only for non-admin routes
-app.MapWhen(context => !context.Request.Path.StartsWithSegments("/Admin"), builder =>
-{
-    builder.UseSpa(spa =>
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            spa.UseProxyToSpaDevelopmentServer("https://localhost:44406");
-        }
-    });
 });
 
 // Ensure the wwwroot directory exists
