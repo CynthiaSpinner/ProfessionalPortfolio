@@ -85,11 +85,49 @@ namespace Portfolio.Controllers
             }
         }
 
-        // GET: Portfolio/About
-        public async Task<IActionResult> About()
+        // GET: api/portfolio/projects
+        [HttpGet("api/portfolio/projects")]
+        public async Task<IActionResult> GetProjects()
         {
-            var about = await _context.Abouts.FirstOrDefaultAsync();
-            return View(about);
+            try
+            {
+                var projects = await _context.Projects.ToListAsync();
+                return Json(projects);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to load projects data" });
+            }
+        }
+
+        // GET: api/portfolio/skills
+        [HttpGet("api/portfolio/skills")]
+        public async Task<IActionResult> GetSkills()
+        {
+            try
+            {
+                var skillsCategories = await _context.SkillsCategories.ToListAsync();
+                return Json(skillsCategories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to load skills data" });
+            }
+        }
+
+        // GET: api/portfolio/about
+        [HttpGet("api/portfolio/about")]
+        public async Task<IActionResult> GetAbout()
+        {
+            try
+            {
+                var about = await _context.Abouts.FirstOrDefaultAsync();
+                return Json(about);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to load about data" });
+            }
         }
     }
 }
