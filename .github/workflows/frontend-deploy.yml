@@ -29,7 +29,8 @@ jobs:
     - name: Install dependencies
       run: |
         cd ClientApp
-        npm ci
+        ls -la
+        npm install
     
     - name: Build React app
       run: |
