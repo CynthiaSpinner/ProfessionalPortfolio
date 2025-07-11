@@ -46,8 +46,14 @@ jobs:
         tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E7E2D612BC2D44D8B524E20CED405F89 }}
         subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FC9A748DF011496D92EB0CAF79CE0A80 }}
     
+    - name: Set Azure context
+      run: |
+        az webapp list --resource-group portfolio-frontend --query "[].name" -o tsv
+        az webapp show --name portfolio-frontend-1776 --resource-group portfolio-frontend
+    
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'portfolio-frontend-1776'
-        package: ClientApp/build 
+        package: ClientApp/build
+        resource-group-name: 'portfolio-frontend' 
