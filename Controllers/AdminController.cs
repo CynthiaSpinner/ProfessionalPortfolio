@@ -120,7 +120,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during login");
-                ViewBag.ErrorMessage = "An error occurred during login. Please try again.";
+                ViewBag.ErrorMessage = $"An error occurred during login: {ex.Message}";
                 return View(model);
             }
         }

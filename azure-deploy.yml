@@ -42,6 +42,10 @@ jobs:
         mkdir -p wwwroot
         cp -r ClientApp/build/* wwwroot/
     
+    - name: Copy Azure configuration
+      run: |
+        cp appsettings.Azure.json appsettings.json
+    
     - name: Build .NET app
       run: dotnet build Portfolio.csproj --no-restore --configuration Release
     
