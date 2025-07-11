@@ -1,0 +1,360 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+/* Hide scrollbars on login page - Override any global styles */
+html, body {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* Internet Explorer 10+ */
+}
+
+html::-webkit-scrollbar, 
+body::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
+    width: 0 !important;
+    height: 0 !important;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Override any React app styles that might be applied */
+*::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+*::-webkit-scrollbar-track {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+*::-webkit-scrollbar-thumb {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+*::-webkit-scrollbar-corner {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+:root {
+    --primary-color: #818cf8;
+    --secondary-color: #a5b4fc;
+    --background-color: #050510;
+    --text-color: #a5b4fc;
+}
+
+body {
+    background-image: linear-gradient(135deg, rgba(5, 5, 16, 0.95), rgba(5, 5, 25, 0.9), rgba(10, 10, 35, 0.85));
+    color: var(--text-color);
+    font-family: 'Playfair Display', serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+}
+
+.login-container {
+    max-width: 400px;
+    width: 100%;
+    min-height: 400px;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+    border: 1px solid rgba(187, 195, 255, 0.1);
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container.has-error {
+    animation: growContainer 1.2s ease-in-out forwards;
+}
+@keyframes growContainer {
+    0% {
+        min-height: 400px;
+    }
+    100% {
+        min-height: 450px;
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 0.6875rem;
+    flex-shrink: 0;
+}
+
+.login-header h1 {
+    font-size: 2.25rem;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.login-header h1 span {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    height: 44px;
+    font-family: "Playfair Display", serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    position: relative;
+    text-shadow: 0 0 20px rgba(129, 140, 248, 0.2),
+        0 0 40px rgba(129, 140, 248, 0.1);
+    background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: elegantFlow 3s ease infinite;
+}
+
+.form-group {
+    margin-bottom: 1.1875rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #9ca3af;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+/* Ultra-specific selectors to override any global styles */
+.login-container .form-group input[type="text"],
+.login-container .form-group input[type="password"],
+.login-container .form-control {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.75rem 1rem;
+    background-color: rgba(50, 45, 60, 0.15);
+    border: 1px solid rgba(187, 195, 255, 0.1);
+    border-radius: 0.25rem;
+    color: #818cf8;
+    font-family: 'Playfair Display', serif;
+    transition: all 0.3s ease;
+    -webkit-text-fill-color: #818cf8;
+}
+
+.login-container .form-group input[type="text"]:focus,
+.login-container .form-group input[type="password"]:focus,
+.login-container .form-control:focus {
+    background-color: rgba(50, 45, 60, 0.25);
+    border-color: rgba(129, 140, 248, 0.3);
+    box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.1);
+    outline: none;
+    color: #818cf8;
+    -webkit-text-fill-color: #818cf8;
+}
+
+.login-container .form-group input[type="text"]:active,
+.login-container .form-group input[type="password"]:active,
+.login-container .form-control:active {
+    background-color: rgba(50, 45, 60, 0.25);
+    color: #818cf8;
+    -webkit-text-fill-color: #818cf8;
+}
+
+.login-container .form-group input[type="text"]:focus-visible,
+.login-container .form-group input[type="password"]:focus-visible,
+.login-container .form-control:focus-visible {
+    background-color: rgba(50, 45, 60, 0.25);
+    color: #818cf8;
+    -webkit-text-fill-color: #818cf8;
+}
+
+/* Override autofill styles */
+.login-container .form-group input[type="text"]:-webkit-autofill,
+.login-container .form-group input[type="password"]:-webkit-autofill,
+.login-container .form-control:-webkit-autofill,
+.login-container .form-group input[type="text"]:-webkit-autofill:hover,
+.login-container .form-group input[type="password"]:-webkit-autofill:hover,
+.login-container .form-control:-webkit-autofill:hover,
+.login-container .form-group input[type="text"]:-webkit-autofill:focus,
+.login-container .form-group input[type="password"]:-webkit-autofill:focus,
+.login-container .form-control:-webkit-autofill:focus,
+.login-container .form-group input[type="text"]:-webkit-autofill:active,
+.login-container .form-group input[type="password"]:-webkit-autofill:active,
+.login-container .form-control:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px rgba(50, 45, 60, 0.15) inset;
+    -webkit-text-fill-color: #818cf8;
+    background-color: rgba(50, 45, 60, 0.15);
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Additional autofill overrides for when suggestions are selected */
+.login-container .form-group input[type="text"]:-webkit-autofill,
+.login-container .form-group input[type="password"]:-webkit-autofill,
+.login-container .form-control:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px rgba(50, 45, 60, 0.15) inset !important;
+    -webkit-text-fill-color: #818cf8 !important;
+    background-color: rgba(50, 45, 60, 0.15) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Override autocomplete dropdown styling */
+.login-container .form-group input[type="text"]::-webkit-calendar-picker-indicator,
+.login-container .form-group input[type="password"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* Ensure autofill doesn't change background on selection */
+.login-container .form-group input[type="text"]:autofill,
+.login-container .form-group input[type="password"]:autofill,
+.login-container .form-control:autofill {
+    background-color: rgba(50, 45, 60, 0.15) !important;
+    color: #818cf8 !important;
+    -webkit-text-fill-color: #818cf8 !important;
+}
+
+/* Placeholder styling */
+.login-container .form-group input[type="text"]::placeholder,
+.login-container .form-group input[type="password"]::placeholder,
+.login-container .form-control::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+}
+
+/* Button styling */
+.login-container .btn-primary {
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    border-radius: 0.25rem;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    text-transform: none;
+    letter-spacing: normal;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.login-container .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(0, 0, 10, 0.8), rgba(5, 5, 25, 0.6));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(129, 140, 248, 0.3);
+    border-color: rgba(129, 140, 248, 0.4);
+    color: #c7d2fe;
+}
+
+@keyframes elegantFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Error message styling */
+.login-container .error-message {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    width: 100%;
+    max-width: 300px;
+    height: 3.25rem;
+    padding: 0;
+    border-radius: 0.25rem;
+    margin: 0 auto 1.5rem auto;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInError 0.4s ease-out forwards;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.4;
+}
+
+.login-container .error-message:not(:empty) {
+    min-height: 3.25rem;
+}
+
+/* Validation message styling */
+.login-container .validation-message {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    text-align: center;
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+/* Reserve space for validation message when not present */
+.login-container form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@keyframes fadeInError {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 
