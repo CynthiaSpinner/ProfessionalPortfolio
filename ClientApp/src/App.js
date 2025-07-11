@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-// Frontend deployment test - simplified workflow
+// Frontend deployment test - remove startup command
 import { PortfolioProvider } from "./context/PortfolioContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
