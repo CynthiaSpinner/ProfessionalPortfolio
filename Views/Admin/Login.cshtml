@@ -389,7 +389,8 @@
             </div>
         }
         
-        <form action="/Admin/Login" method="post" id="loginForm">
+        <form asp-action="Login" method="post" id="loginForm">
+            @Html.AntiForgeryToken()
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="username" name="username" value="@Model?.Username">
