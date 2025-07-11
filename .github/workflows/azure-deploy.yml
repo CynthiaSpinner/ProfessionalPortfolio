@@ -25,11 +25,6 @@ jobs:
     - name: Restore .NET dependencies
       run: dotnet restore Portfolio.csproj
     
-    - name: Clean wwwroot folder
-      run: |
-        rm -rf wwwroot
-        mkdir -p wwwroot
-    
     - name: Build .NET app
       run: dotnet build Portfolio.csproj --no-restore --configuration Release
     
