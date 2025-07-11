@@ -174,6 +174,35 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> TestLogin()
+        {
+            try
+            {
+                string password = "Yareyou2";
+                string hash = HashPassword(password);
+                
+                var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Username == "admin");
+                
+                return Json(new { 
+                    success = true, 
+                    password = password,
+                    generatedHash = hash,
+                    storedHash = admin?.PasswordHash,
+                    matches = admin?.PasswordHash == hash,
+                    adminExists = admin != null
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { 
+                    success = false, 
+                    message = "Login test error",
+                    details = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> TestDatabaseConnection()
         {
             try
