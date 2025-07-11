@@ -39,12 +39,6 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-    
-    <!-- Ensure wwwroot content is included in the build -->
-    <Content Include="wwwroot\**" />
-    <Content Include="wwwroot\css\**" />
-    <Content Include="wwwroot\js\**" />
-    <Content Include="wwwroot\lib\**" />
   </ItemGroup>
 
   <!-- ALL NPM TARGETS REMOVED - Handled by GitHub Actions deployment pipeline -->
