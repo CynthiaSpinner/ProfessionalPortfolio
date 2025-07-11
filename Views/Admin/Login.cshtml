@@ -425,6 +425,11 @@
                 console.log('Username value:', document.getElementById('username').value);
                 console.log('Password value:', document.getElementById('password').value);
                 
+                // Add a small delay to see if we can capture more info
+                setTimeout(function() {
+                    console.log('Form submission should be complete now');
+                }, 1000);
+                
                 // Don't prevent default - let it submit normally
                 console.log('Allowing form to submit...');
             });
