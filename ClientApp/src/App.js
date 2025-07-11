@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+// Frontend deployment test
 import { PortfolioProvider } from "./context/PortfolioContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
