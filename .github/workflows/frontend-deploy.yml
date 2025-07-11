@@ -51,9 +51,18 @@ jobs:
         az webapp list --resource-group portfolio-frontend --query "[].name" -o tsv
         az webapp show --name portfolio-frontend-1776 --resource-group portfolio-frontend
     
+    - name: Configure App Service for static files
+      run: |
+        az webapp config set --name portfolio-frontend-1776 --resource-group portfolio-frontend --startup-file "pm2 serve /home/site/wwwroot --no-daemon --spa"
+    
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'portfolio-frontend-1776'
         package: ClientApp/build
-        resource-group-name: 'portfolio-frontend' 
+        resource-group-name: 'portfolio-frontend'
+    
+    - name: Check deployed files
+      run: |
+        az webapp deployment list --name portfolio-frontend-1776 --resource-group portfolio-frontend
+        az webapp browse --name portfolio-frontend-1776 --resource-group portfolio-frontend 
