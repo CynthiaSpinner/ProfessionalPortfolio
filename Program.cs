@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Services;
 using Portfolio.Services.Interfaces;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Caching.Memory;
@@ -59,18 +59,15 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json");
 }
 
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 36));
-
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
-    options.UseMySql(connectionString, serverVersion, mysqlOptions =>
+    options.UseSqlServer(connectionString, sqlOptions =>
     {
-        mysqlOptions.EnableRetryOnFailure(
+        sqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(30),
             errorNumbersToAdd: null);
-        mysqlOptions.CommandTimeout(60);
-        mysqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        sqlOptions.CommandTimeout(60);
     });
 });
 
