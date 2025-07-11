@@ -67,6 +67,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             try
