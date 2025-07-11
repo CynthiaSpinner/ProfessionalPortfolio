@@ -39,9 +39,6 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-    
-    <!-- Ensure wwwroot files are included in publish -->
-    <Content Include="wwwroot\**" />
   </ItemGroup>
 
   <!-- ALL NPM TARGETS REMOVED - Handled by GitHub Actions deployment pipeline -->
