@@ -46,6 +46,8 @@ namespace Portfolio.Controllers
             {
                 return RedirectToAction("Dashboard");
             }
+            // Clear any existing error messages
+            ViewBag.ErrorMessage = null;
             return View();
         }
 
@@ -74,6 +76,7 @@ namespace Portfolio.Controllers
                 }
 
                 var hashedPassword = HashPassword(model.Password);
+                _logger.LogInformation($"Input password: {model.Password}");
                 _logger.LogInformation($"Input password hash: {hashedPassword}");
 
                 var admin = await _context.Admins
@@ -87,6 +90,9 @@ namespace Portfolio.Controllers
                 }
 
                 _logger.LogInformation($"Stored password hash: {admin.PasswordHash}");
+                _logger.LogInformation($"Expected hash for 'Yareyou2': WmFyZXlvdTI=");
+                _logger.LogInformation($"Input hash equals expected: {hashedPassword == "WmFyZXlvdTI="}");
+                _logger.LogInformation($"Stored hash equals expected: {admin.PasswordHash == "WmFyZXlvdTI="}");
                 _logger.LogInformation($"Password match: {admin.PasswordHash == hashedPassword}");
 
                 if (admin.PasswordHash != hashedPassword)
