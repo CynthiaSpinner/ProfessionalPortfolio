@@ -50,5 +50,5 @@ jobs:
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'portfolio-frontend-1776'  # You'll need to create this App Service
+        app-name: 'portfolio-frontend-1776'
         package: ClientApp/build 
