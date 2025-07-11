@@ -42,13 +42,27 @@ namespace Portfolio.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                return RedirectToAction("Dashboard");
+                _logger.LogInformation("Login page requested");
+                
+                if (User.Identity.IsAuthenticated)
+                {
+                    _logger.LogInformation("User already authenticated, redirecting to dashboard");
+                    return RedirectToAction("Dashboard");
+                }
+                
+                // Clear any existing error messages
+                ViewBag.ErrorMessage = null;
+                _logger.LogInformation("Login page loaded successfully");
+                return View();
             }
-            // Clear any existing error messages
-            ViewBag.ErrorMessage = null;
-            return View();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading login page");
+                ViewBag.ErrorMessage = $"Error loading login page: {ex.Message}";
+                return View();
+            }
         }
 
         [HttpPost]
