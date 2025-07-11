@@ -1,9 +1,9 @@
 import axios from "axios";
 
 // For development, use mock data
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
-const API_URL = process.env.REACT_APP_API_URL || "https://localhost:44406/api";
+const API_URL = process.env.REACT_APP_API_URL || "https://portfolio-app-1776-hkdfazazd5cqfzbk.centralus-01.azurewebsites.net/api";
 
 const api = axios.create({
   baseURL: API_URL,
