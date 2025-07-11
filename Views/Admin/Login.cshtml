@@ -389,8 +389,7 @@
             </div>
         }
         
-        <form asp-action="Login" method="post" id="loginForm">
-            @Html.AntiForgeryToken()
+        <form action="/Admin/Login" method="post" id="loginForm">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="username" name="username" value="@Model?.Username">
@@ -407,58 +406,20 @@
     </div>
 
     <script>
-        // Clear password field when there's an error
-        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-        {
-            <text>
-            document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('password').value = '';
-            });
-            </text>
-        }
-
-        // Custom form validation
+        // Simple form submission test
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('loginForm');
-            const validationMessage = document.getElementById('validationMessage');
+            const submitButton = form.querySelector('button[type="submit"]');
             
             console.log('Login form loaded');
             
-            // Add click handler to button for debugging
-            const submitButton = form.querySelector('button[type="submit"]');
             submitButton.addEventListener('click', function(e) {
                 console.log('Login button clicked');
             });
             
             form.addEventListener('submit', function(e) {
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value.trim();
-                
-                if (!username || !password) {
-                    e.preventDefault();
-                    validationMessage.textContent = 'Please fill in all fields.';
-                    validationMessage.style.opacity = '1';
-                    return false;
-                }
-                
-                // Clear validation message if fields are filled
-                validationMessage.style.opacity = '0';
-                
-                // Allow form to submit normally
-                console.log('Form submitting with username:', username);
-            });
-            
-            // Clear validation message when user starts typing
-            const inputs = form.querySelectorAll('input[type="text"], input[type="password"]');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    const username = document.getElementById('username').value.trim();
-                    const password = document.getElementById('password').value.trim();
-                    
-                    if (username && password) {
-                        validationMessage.style.opacity = '0';
-                    }
-                });
+                console.log('Form submitting...');
+                // Don't prevent default - let it submit normally
             });
         });
     </script>
