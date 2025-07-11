@@ -420,7 +420,13 @@
             
             form.addEventListener('submit', function(e) {
                 console.log('Form submitting...');
+                console.log('Form action:', form.action);
+                console.log('Form method:', form.method);
+                console.log('Username value:', document.getElementById('username').value);
+                console.log('Password value:', document.getElementById('password').value);
+                
                 // Don't prevent default - let it submit normally
+                console.log('Allowing form to submit...');
             });
         });
     </script>
