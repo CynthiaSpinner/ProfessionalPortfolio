@@ -422,6 +422,14 @@
             const form = document.getElementById('loginForm');
             const validationMessage = document.getElementById('validationMessage');
             
+            console.log('Login form loaded');
+            
+            // Add click handler to button for debugging
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.addEventListener('click', function(e) {
+                console.log('Login button clicked');
+            });
+            
             form.addEventListener('submit', function(e) {
                 const username = document.getElementById('username').value.trim();
                 const password = document.getElementById('password').value.trim();
@@ -435,6 +443,9 @@
                 
                 // Clear validation message if fields are filled
                 validationMessage.style.opacity = '0';
+                
+                // Allow form to submit normally
+                console.log('Form submitting with username:', username);
             });
             
             // Clear validation message when user starts typing
