@@ -345,35 +345,13 @@
 
         /* Validation message styling */
         .login-container .validation-message {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            width: 100%;
-            max-width: 300px;
-            height: 3.25rem;
-            padding: 0;
-            border-radius: 0.25rem;
-            margin: 0 auto 1.5rem auto;
+            color: #9ca3af;
+            font-size: 0.875rem;
             text-align: center;
-            font-size: 0.9rem;
-            font-weight: 500;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
-            position: relative;
-            overflow: hidden;
+            margin-top: 1rem;
             opacity: 0;
-            transform: translateY(-10px);
-            animation: fadeInError 0.4s ease-out forwards;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.4;
             transition: opacity 0.3s ease;
-        }
-
-        .login-container .validation-message:not(:empty) {
-            min-height: 3.25rem;
+            line-height: 1.4;
         }
 
         /* Reserve space for validation message when not present */
