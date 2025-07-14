@@ -407,32 +407,66 @@
     </div>
 
     <script>
-        // Simple form submission test
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('loginForm');
-            const submitButton = form.querySelector('button[type="submit"]');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const validationMessage = document.getElementById('validationMessage');
+            const loginContainer = document.querySelector('.login-container');
             
-            console.log('Login form loaded');
-            
-            submitButton.addEventListener('click', function(e) {
-                console.log('Login button clicked');
-            });
-            
-            form.addEventListener('submit', function(e) {
-                console.log('Form submitting...');
-                console.log('Form action:', form.action);
-                console.log('Form method:', form.method);
-                console.log('Username value:', document.getElementById('username').value);
-                console.log('Password value:', document.getElementById('password').value);
+            // Function to show validation message
+            function showValidationMessage(message) {
+                validationMessage.textContent = message;
+                validationMessage.style.opacity = '1';
+                loginContainer.classList.add('has-error');
                 
-                // Add a small delay to see if we can capture more info
+                // Hide message after 3 seconds
                 setTimeout(function() {
-                    console.log('Form submission should be complete now');
-                }, 1000);
+                    validationMessage.style.opacity = '0';
+                    loginContainer.classList.remove('has-error');
+                }, 3000);
+            }
+            
+            // Function to hide validation message
+            function hideValidationMessage() {
+                validationMessage.style.opacity = '0';
+                loginContainer.classList.remove('has-error');
+            }
+            
+            // Form submission handler
+            form.addEventListener('submit', function(e) {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
                 
-                // Don't prevent default - let it submit normally
-                console.log('Allowing form to submit...');
+                // Check if fields are empty
+                if (!username || !password) {
+                    e.preventDefault();
+                    showValidationMessage('Please fill out all fields');
+                    return false;
+                }
+                
+                // If validation passes, hide any existing messages
+                hideValidationMessage();
+                
+                // Allow form to submit
+                console.log('Form submitting with valid data');
             });
+            
+            // Clear validation message when user starts typing
+            usernameInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    hideValidationMessage();
+                }
+            });
+            
+            passwordInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    hideValidationMessage();
+                }
+            });
+            
+            // Focus management
+            usernameInput.focus();
         });
     </script>
 </body>
