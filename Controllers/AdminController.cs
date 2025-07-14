@@ -74,49 +74,30 @@ namespace Portfolio.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                    _logger.LogWarning($"Model validation errors: {string.Join(", ", errors)}");
                     ViewBag.ErrorMessage = "Please provide valid username and password.";
                     return View(model);
                 }
 
-                _logger.LogInformation($"login attempt for username: {model.Username}");
-
                 if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
                 {
-                    _logger.LogWarning("login attempt with empty username or password");
                     ViewBag.ErrorMessage = "Username and password are required.";
                     return View(model);
                 }
 
                 var hashedPassword = HashPassword(model.Password);
-                _logger.LogInformation($"Input password: {model.Password}");
-                _logger.LogInformation($"Input password hash: {hashedPassword}");
 
+                // Optimized query - only select the fields we need
                 var admin = await _context.Admins
-                    .FirstOrDefaultAsync(a => a.Username == model.Username);
+                    .Where(a => a.Username == model.Username)
+                    .Select(a => new { a.Username, a.PasswordHash })
+                    .FirstOrDefaultAsync();
 
-                if (admin == null)
+                if (admin == null || admin.PasswordHash != hashedPassword)
                 {
-                    _logger.LogWarning($"No admin found with username: {model.Username}");
                     ViewBag.ErrorMessage = "Invalid username or password.";
                     return View(model);
                 }
 
-                _logger.LogInformation($"Stored password hash: {admin.PasswordHash}");
-                _logger.LogInformation($"Expected hash for 'Yareyou2': WmFyZXlvdTI=");
-                _logger.LogInformation($"Input hash equals expected: {hashedPassword == "WmFyZXlvdTI="}");
-                _logger.LogInformation($"Stored hash equals expected: {admin.PasswordHash == "WmFyZXlvdTI="}");
-                _logger.LogInformation($"Password match: {admin.PasswordHash == hashedPassword}");
-
-                if (admin.PasswordHash != hashedPassword)
-                {
-                    _logger.LogWarning($"Password mismatch for username: {model.Username}");
-                    ViewBag.ErrorMessage = "Invalid username or password.";
-                    return View(model);
-                }
-
-                _logger.LogInformation($"login successful for username: {model.Username}");
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, admin.Username),
