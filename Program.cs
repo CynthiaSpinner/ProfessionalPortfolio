@@ -88,20 +88,7 @@ var staticFileOptions = new StaticFileOptions
     DefaultContentType = "application/octet-stream"
 };
 
-// Add request logging for static files
-app.Use(async (context, next) =>
-{
-    var path = context.Request.Path.Value;
-    if (path.StartsWith("/lib/") || path.StartsWith("/css/") || path.StartsWith("/js/"))
-    {
-        Console.WriteLine($"Static file request: {path}");
-        var wwwrootPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
-        var filePath = Path.Combine(wwwrootPath, path.TrimStart('/'));
-        Console.WriteLine($"Looking for file at: {filePath}");
-        Console.WriteLine($"File exists: {File.Exists(filePath)}");
-    }
-    await next();
-});
+
 
 app.UseStaticFiles(staticFileOptions);
 
@@ -144,36 +131,7 @@ app.Map("/ws/portfolio", async context =>
 
 app.UseEndpoints(endpoints =>
 {
-    // Test endpoint to check file structure
-    endpoints.MapGet("/test-files", async context =>
-    {
-        var wwwrootPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
-        var response = $"ContentRootPath: {app.Environment.ContentRootPath}\n";
-        response += $"wwwrootPath: {wwwrootPath}\n";
-        response += $"wwwroot exists: {Directory.Exists(wwwrootPath)}\n";
-        
-        if (Directory.Exists(wwwrootPath))
-        {
-            response += "\nwwwroot contents:\n";
-            foreach (var item in Directory.GetFileSystemEntries(wwwrootPath))
-            {
-                response += $"- {Path.GetFileName(item)}\n";
-            }
-            
-            var cssPath = Path.Combine(wwwrootPath, "css");
-            if (Directory.Exists(cssPath))
-            {
-                response += "\ncss contents:\n";
-                foreach (var item in Directory.GetFileSystemEntries(cssPath))
-                {
-                    response += $"- {Path.GetFileName(item)}\n";
-                }
-            }
-        }
-        
-        context.Response.ContentType = "text/plain";
-        await context.Response.WriteAsync(response);
-    });
+
 
     // Redirect root to admin login
     endpoints.MapGet("/", context =>
