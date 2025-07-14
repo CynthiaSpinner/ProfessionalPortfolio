@@ -151,7 +151,7 @@ const Navbar = () => {
             <li className="nav-item">
               <a
                 className="nav-link"
-                href="https://portfolio-app-1776.azurewebsites.net/Admin/Login"
+                href="https://portfolio-app-1776-hkdfazazd5cqfzbk.centralus-01.azurewebsites.net/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
