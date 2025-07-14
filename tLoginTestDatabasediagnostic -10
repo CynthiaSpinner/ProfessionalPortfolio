@@ -1,0 +1,10 @@
+[33m71e0d6d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/development[m[33m, [m[1;32mdevelopment[m[33m)[m  SECURITY: Remove exposed test endpoints and debug logging
+[33m59efb9d[m Fix login validation message styling and add database performance testing
+[33mdee3f18[m Add debugging and resource group specification to frontend deployment
+[33m2898697[m Add debugging for static file serving and test endpoint
+[33m7579270[m Add login test endpoint
+[33mb147854[m Remove ValidateAntiForgeryToken to test login functionality
+[33m57681c5[m Add detailed form submission debugging
+[33me7c9686[m Remove anti-forgery token to test form submission
+[33m177d96c[m Add debugging to login form submission
+[33m5295310[m Add backend test endpoint and simple HTML test page
