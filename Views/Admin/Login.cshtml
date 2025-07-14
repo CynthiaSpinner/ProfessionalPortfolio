@@ -380,10 +380,18 @@
             color: #9ca3af;
             font-size: 0.875rem;
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             opacity: 0;
             transition: opacity 0.3s ease;
             line-height: 1.4;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .login-container .validation-message.show {
+            opacity: 1;
+            height: auto;
+            margin-top: 0.5rem;
         }
 
         /* Reserve space for validation message when not present */
@@ -465,17 +473,15 @@
                 loginText.textContent = 'Login';
             }
             
-            // Function to show validation message
+            // Function to show validation message (doesn't enlarge container)
             function showValidationMessage(message) {
                 validationMessage.textContent = message;
-                validationMessage.style.opacity = '1';
-                loginContainer.classList.add('has-error');
+                validationMessage.classList.add('show');
             }
             
             // Function to hide validation message
             function hideValidationMessage() {
-                validationMessage.style.opacity = '0';
-                loginContainer.classList.remove('has-error');
+                validationMessage.classList.remove('show');
             }
             
             // Form submission handler
