@@ -207,26 +207,37 @@ namespace Portfolio.Controllers
         {
             try
             {
+                var startTime = DateTime.UtcNow;
+                
                 // Test basic connection
                 var canConnect = await _context.Database.CanConnectAsync();
+                var connectionTime = DateTime.UtcNow - startTime;
                 
                 if (!canConnect)
                 {
                     return Json(new { 
                         success = false, 
                         message = "Cannot connect to database",
-                        details = "Database connection failed"
+                        details = "Database connection failed",
+                        connectionTimeMs = connectionTime.TotalMilliseconds
                     });
                 }
 
                 // Test a simple query
+                var queryStartTime = DateTime.UtcNow;
                 var adminCount = await _context.Admins.CountAsync();
+                var queryTime = DateTime.UtcNow - queryStartTime;
+                
+                var totalTime = DateTime.UtcNow - startTime;
                 
                 return Json(new { 
                     success = true, 
                     message = "Database connection successful",
                     details = $"Connected successfully. Found {adminCount} admin users.",
-                    adminCount = adminCount
+                    adminCount = adminCount,
+                    connectionTimeMs = connectionTime.TotalMilliseconds,
+                    queryTimeMs = queryTime.TotalMilliseconds,
+                    totalTimeMs = totalTime.TotalMilliseconds
                 });
             }
             catch (Exception ex)

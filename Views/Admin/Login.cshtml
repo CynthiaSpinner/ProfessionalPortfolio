@@ -345,16 +345,35 @@
 
         /* Validation message styling */
         .login-container .validation-message {
-            color: #9ca3af;
-            font-size: 0.875rem;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            width: 100%;
+            max-width: 300px;
+            height: 3.25rem;
+            padding: 0;
+            border-radius: 0.25rem;
+            margin: 0 auto 1.5rem auto;
             text-align: center;
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
             opacity: 0;
+            transform: translateY(-10px);
+            animation: fadeInError 0.4s ease-out forwards;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
             transition: opacity 0.3s ease;
-            pointer-events: none;
+        }
+
+        .login-container .validation-message:not(:empty) {
+            min-height: 3.25rem;
         }
 
         /* Reserve space for validation message when not present */
@@ -419,12 +438,6 @@
                 validationMessage.textContent = message;
                 validationMessage.style.opacity = '1';
                 loginContainer.classList.add('has-error');
-                
-                // Hide message after 3 seconds
-                setTimeout(function() {
-                    validationMessage.style.opacity = '0';
-                    loginContainer.classList.remove('has-error');
-                }, 3000);
             }
             
             // Function to hide validation message

@@ -241,6 +241,9 @@ obj/
 .vs/
 .vscode/
 
+# Local development files
+appsettings.Local.json
+
 # Node
 node_modules/
 .npm-cache/
