@@ -189,6 +189,7 @@ namespace Portfolio.Controllers
                 homePage.HeaderPrimaryButtonUrl = model.HeaderPrimaryButtonUrl ?? "/projects";
                 homePage.HeaderOverlayColor = model.ImageOverlayColor ?? "#000000";
                 homePage.HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f;
+                homePage.IsActive = true; // Ensure the home page is active
                 homePage.UpdatedAt = DateTime.UtcNow;
 
                 // Single save operation
@@ -226,7 +227,11 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving hero section");
-                return Json(new { success = false, message = "An error occurred while saving the hero section." });
+                return Json(new { 
+                    success = false, 
+                    message = $"An error occurred while updating database: {ex.Message}",
+                    details = ex.InnerException?.Message
+                });
             }
         }
 
