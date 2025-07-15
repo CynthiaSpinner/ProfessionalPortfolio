@@ -166,13 +166,19 @@ namespace Portfolio.Controllers
                 var adminCount = await _context.Admins.CountAsync();
                 var templateCount = await _context.HeroTemplates.CountAsync();
                 
+                // Get template details if any exist
+                var templates = await _context.HeroTemplates
+                    .Select(t => new { t.Id, t.Nickname, t.HeaderTitle })
+                    .ToListAsync();
+                
                 return Json(new { 
                     success = true, 
                     message = "Database connection test successful",
                     data = new {
                         homePages = homePageCount,
                         admins = adminCount,
-                        heroTemplates = templateCount
+                        heroTemplates = templateCount,
+                        templates = templates
                     }
                 });
             }
@@ -405,16 +411,21 @@ namespace Portfolio.Controllers
         {
             try
             {
+                _logger.LogInformation($"Attempting to retrieve hero template with ID: {id}");
+                
                 var template = await _context.HeroTemplates.FindAsync(id);
                 
                 if (template == null)
                 {
+                    _logger.LogWarning($"Hero template with ID {id} not found");
                     return Json(new { 
                         success = false, 
                         message = "Template not found.",
                         data = (object)null 
                     });
                 }
+
+                _logger.LogInformation($"Found template: {template.Nickname}");
 
                 var templateData = new
                 {
@@ -439,10 +450,10 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving hero template");
+                _logger.LogError(ex, "Error retrieving hero template with ID {Id}: {Message}", id, ex.Message);
                 return Json(new { 
                     success = false, 
-                    message = "An error occurred while retrieving the hero template.",
+                    message = $"An error occurred while retrieving the hero template: {ex.Message}",
                     data = (object)null 
                 });
             }

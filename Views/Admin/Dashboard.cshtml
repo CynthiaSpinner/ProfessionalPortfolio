@@ -1086,6 +1086,7 @@
         // Load all templates
         async function loadTemplates() {
             try {
+                console.log('Loading templates...');
                 const response = await fetch('/Admin/GetHeroTemplates');
                 
                 // Check if response is OK before trying to parse JSON
@@ -1096,9 +1097,11 @@
                 }
                 
                 const result = await response.json();
+                console.log('Templates response:', result);
                 
                 if (result.success) {
                     currentTemplates = result.data;
+                    console.log('Loaded templates:', currentTemplates);
                     updateTemplateDropdown();
                     setupCustomDropdown();
                 } else {
@@ -1232,10 +1235,13 @@
 
         // Update template dropdown
         function updateTemplateDropdown() {
+            console.log('Updating template dropdown with templates:', currentTemplates);
             const templateOptions = document.getElementById('templateOptions');
+            console.log('Template options element:', templateOptions);
             templateOptions.innerHTML = '';
             
             currentTemplates.forEach((template, idx) => {
+                console.log('Creating option for template:', template);
                 const option = document.createElement('div');
                 option.className = 'dropdown-item';
                 option.style.cssText = 'color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease; border-top: 1px solid rgba(129, 140, 248, 0.2);';
@@ -1257,6 +1263,7 @@
                 
                 templateOptions.appendChild(option);
             });
+            console.log('Template dropdown updated');
         }
 
         // Select template from dropdown
