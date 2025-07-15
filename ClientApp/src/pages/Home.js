@@ -54,7 +54,7 @@ const Home = () => {
     const getWebSocketUrl = () => {
       if (process.env.NODE_ENV === 'production') {
         // In production, connect to the Azure App Service backend
-        return `wss://portfolio-app-1776.azurewebsites.net/ws/portfolio`;
+        return `wss://portfolio-app-1776-hkdfazazd5cqfzbk.centralus-01.azurewebsites.net/ws/portfolio`;
       } else {
         // In development, connect to the ASP.NET Core backend directly
         // The React dev server runs on 44406, but the backend runs on 7094 (HTTPS)

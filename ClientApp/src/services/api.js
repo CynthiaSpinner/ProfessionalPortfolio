@@ -61,5 +61,3 @@ export const portfolioApi = {
       : api.get("/portfolio/skills"),
   updateSkills: (data) => api.put("/portfolio/skills", data),
 };
-
-export default api;
