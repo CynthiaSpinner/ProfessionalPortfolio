@@ -428,14 +428,23 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             submitBtn.disabled = true;
             
+            let response = null;
+            
             try {
                 // Use the form's natural submission to the correct backend route
                 const formData = new FormData(e.target);
                 
-                const response = await fetch(e.target.action, {
+                response = await fetch(e.target.action, {
                     method: 'POST',
                     body: formData
                 });
+                
+                // Check if response is OK before trying to parse JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+                }
                 
                 const result = await response.json();
                 
@@ -446,11 +455,24 @@
                     // The backend will automatically broadcast the WebSocket message
                     console.log('Hero section saved successfully, WebSocket broadcast sent');
                 } else {
-                    alert(`Failed to update hero section: ${result.message}`);
+                    console.error('Server error:', result);
+                    alert(`Failed to update hero section: ${result.message}\n\nDetails: ${result.details || 'No additional details'}`);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while updating the hero section.');
+                
+                // Try to get response text for debugging if we have a response
+                if (response) {
+                    try {
+                        const responseText = await response.text();
+                        console.error('Response text:', responseText);
+                        alert(`An error occurred while updating the hero section.\n\nError: ${error.message}\n\nResponse: ${responseText.substring(0, 200)}...`);
+                    } catch (textError) {
+                        alert(`An error occurred while updating the hero section.\n\nError: ${error.message}`);
+                    }
+                } else {
+                    alert(`An error occurred while updating the hero section.\n\nError: ${error.message}`);
+                }
             } finally {
                 // Restore button state
                 submitBtn.innerHTML = originalText;
@@ -1065,6 +1087,14 @@
         async function loadTemplates() {
             try {
                 const response = await fetch('/Admin/GetHeroTemplates');
+                
+                // Check if response is OK before trying to parse JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error loading templates:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+                }
+                
                 const result = await response.json();
                 
                 if (result.success) {
@@ -1076,6 +1106,7 @@
                 }
             } catch (error) {
                 console.error('Error loading templates:', error);
+                // Don't show alert for template loading errors as they're not critical
             }
         }
         
@@ -1248,6 +1279,14 @@
         async function loadTemplateById(templateId) {
             try {
                 const response = await fetch(`/Admin/GetHeroTemplate?id=${templateId}`);
+                
+                // Check if response is OK before trying to parse JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error loading template:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+                }
+                
                 const result = await response.json();
                 
                 if (result.success) {
@@ -1357,34 +1396,63 @@
 
         // WebSocket connection for real-time updates
         let ws = null;
+        let wsReconnectAttempts = 0;
+        const maxReconnectAttempts = 3;
         
         function connectWebSocket() {
+            // Don't try to reconnect if we've exceeded max attempts
+            if (wsReconnectAttempts >= maxReconnectAttempts) {
+                console.log('WebSocket: Max reconnection attempts reached, stopping reconnection');
+                return;
+            }
+            
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/ws/portfolio`;
             
-            ws = new WebSocket(wsUrl);
-            
-            ws.onopen = () => {
-                console.log('Admin WebSocket connected');
-            };
-            
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.type === 'heroDataUpdated') {
-                    console.log('Hero data updated via WebSocket');
-                    // Could show a notification or update UI
+            try {
+                ws = new WebSocket(wsUrl);
+                
+                ws.onopen = () => {
+                    console.log('Admin WebSocket connected');
+                    wsReconnectAttempts = 0; // Reset counter on successful connection
+                };
+                
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'heroDataUpdated') {
+                            console.log('Hero data updated via WebSocket');
+                            // Could show a notification or update UI
+                        }
+                    } catch (error) {
+                        console.error('WebSocket: Error parsing message:', error);
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+                
+                ws.onclose = () => {
+                    console.log('WebSocket connection closed');
+                    wsReconnectAttempts++;
+                    
+                    // Only reconnect if we haven't exceeded max attempts
+                    if (wsReconnectAttempts < maxReconnectAttempts) {
+                        console.log(`WebSocket: Attempting reconnection ${wsReconnectAttempts}/${maxReconnectAttempts}`);
+                        setTimeout(connectWebSocket, 5000);
+                    } else {
+                        console.log('WebSocket: Max reconnection attempts reached');
+                    }
+                };
+            } catch (error) {
+                console.error('WebSocket: Error creating connection:', error);
+                wsReconnectAttempts++;
+                
+                if (wsReconnectAttempts < maxReconnectAttempts) {
+                    setTimeout(connectWebSocket, 5000);
                 }
-            };
-            
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
-            
-            ws.onclose = () => {
-                console.log('WebSocket connection closed');
-                // Reconnect after 5 seconds
-                setTimeout(connectWebSocket, 5000);
-            };
+            }
         }
         
         // Connect WebSocket when page loads

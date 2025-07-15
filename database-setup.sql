@@ -1,85 +1,88 @@
--- Create the database if it doesn't exist
--- (This is usually already done when you created the Azure SQL Database)
+-- Database Setup Script for Cynthia Portfolio
+-- This script creates the missing tables and indexes needed for the portfolio application
+-- Run this script first to set up the database schema
 
--- Create tables based on your Entity Framework models
-CREATE TABLE [dbo].[Admins] (
-    [Id] INT IDENTITY(1,1) PRIMARY KEY,
-    [Username] NVARCHAR(100) NOT NULL UNIQUE,
-    [PasswordHash] NVARCHAR(255) NOT NULL,
-    [Email] NVARCHAR(255),
-    [CreatedAt] DATETIME2 DEFAULT GETDATE(),
-    [LastLogin] DATETIME2
-);
+-- Create Abouts table
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Abouts')
+BEGIN
+    CREATE TABLE Abouts (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Name NVARCHAR(MAX) NOT NULL,
+        Title NVARCHAR(MAX) NOT NULL,
+        Biography NVARCHAR(MAX) NOT NULL,
+        ProfileImageUrl NVARCHAR(MAX) NOT NULL,
+        Email NVARCHAR(MAX) NOT NULL,
+        LinkedInUrl NVARCHAR(MAX) NOT NULL,
+        GithubUrl NVARCHAR(MAX) NOT NULL,
+        InterestsJson NVARCHAR(MAX) NOT NULL DEFAULT '[]'
+    );
+    PRINT 'Created Abouts table';
+END
+ELSE
+    PRINT 'Abouts table already exists';
 
-CREATE TABLE [dbo].[HomePages] (
-    [Id] INT IDENTITY(1,1) PRIMARY KEY,
-    [Title] NVARCHAR(255) NOT NULL,
-    [Subtitle] NVARCHAR(500),
-    [HeroImage] NVARCHAR(500),
-    [AboutText] NVARCHAR(MAX),
-    [ContactEmail] NVARCHAR(255),
-    [ContactPhone] NVARCHAR(50),
-    [CreatedAt] DATETIME2 DEFAULT GETDATE(),
-    [UpdatedAt] DATETIME2 DEFAULT GETDATE()
-);
+-- Create Education table
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Education')
+BEGIN
+    CREATE TABLE Education (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Institution NVARCHAR(MAX) NOT NULL,
+        Degree NVARCHAR(MAX) NOT NULL,
+        Field NVARCHAR(MAX) NOT NULL,
+        StartDate DATETIME2 NOT NULL,
+        EndDate DATETIME2 NULL,
+        Description NVARCHAR(MAX) NOT NULL,
+        AboutId INT NULL
+    );
+    PRINT 'Created Education table';
+END
+ELSE
+    PRINT 'Education table already exists';
 
-CREATE TABLE [dbo].[Projects] (
-    [Id] INT IDENTITY(1,1) PRIMARY KEY,
-    [Title] NVARCHAR(255) NOT NULL,
-    [Description] NVARCHAR(MAX),
-    [ImageUrl] NVARCHAR(500),
-    [ProjectUrl] NVARCHAR(500),
-    [GitHubUrl] NVARCHAR(500),
-    [Technologies] NVARCHAR(500),
-    [Category] NVARCHAR(100),
-    [Featured] BIT DEFAULT 0,
-    [CreatedAt] DATETIME2 DEFAULT GETDATE(),
-    [UpdatedAt] DATETIME2 DEFAULT GETDATE()
-);
+-- Create WorkExperience table
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'WorkExperience')
+BEGIN
+    CREATE TABLE WorkExperience (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Company NVARCHAR(MAX) NOT NULL,
+        Position NVARCHAR(MAX) NOT NULL,
+        StartDate DATETIME2 NOT NULL,
+        EndDate DATETIME2 NULL,
+        Description NVARCHAR(MAX) NOT NULL,
+        AchievementsJson NVARCHAR(MAX) NOT NULL DEFAULT '[]',
+        AboutId INT NULL
+    );
+    PRINT 'Created WorkExperience table';
+END
+ELSE
+    PRINT 'WorkExperience table already exists';
 
-CREATE TABLE [dbo].[SkillsCategories] (
-    [Id] INT IDENTITY(1,1) PRIMARY KEY,
-    [Name] NVARCHAR(100) NOT NULL,
-    [Description] NVARCHAR(500),
-    [Icon] NVARCHAR(100),
-    [Order] INT DEFAULT 0,
-    [CreatedAt] DATETIME2 DEFAULT GETDATE()
-);
+-- Add foreign key constraints
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_Education_Abouts_AboutId')
+BEGIN
+    ALTER TABLE Education ADD CONSTRAINT FK_Education_Abouts_AboutId 
+    FOREIGN KEY (AboutId) REFERENCES Abouts(Id);
+    PRINT 'Added FK_Education_Abouts_AboutId constraint';
+END
 
-CREATE TABLE [dbo].[Videos] (
-    [Id] INT IDENTITY(1,1) PRIMARY KEY,
-    [Title] NVARCHAR(255) NOT NULL,
-    [Description] NVARCHAR(MAX),
-    [FileName] NVARCHAR(255) NOT NULL,
-    [FilePath] NVARCHAR(500) NOT NULL,
-    [FileSize] BIGINT,
-    [Duration] INT,
-    [UploadDate] DATETIME2 DEFAULT GETDATE(),
-    [IsPublic] BIT DEFAULT 1
-);
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_WorkExperience_Abouts_AboutId')
+BEGIN
+    ALTER TABLE WorkExperience ADD CONSTRAINT FK_WorkExperience_Abouts_AboutId 
+    FOREIGN KEY (AboutId) REFERENCES Abouts(Id);
+    PRINT 'Added FK_WorkExperience_Abouts_AboutId constraint';
+END
 
-CREATE TABLE [dbo].[HeroTemplates] (
-    [Id] INT IDENTITY(1,1) PRIMARY KEY,
-    [Name] NVARCHAR(100) NOT NULL,
-    [Template] NVARCHAR(MAX) NOT NULL,
-    [IsActive] BIT DEFAULT 0,
-    [CreatedAt] DATETIME2 DEFAULT GETDATE()
-);
+-- Create indexes
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_Education_AboutId' AND object_id = OBJECT_ID('Education'))
+BEGIN
+    CREATE INDEX IX_Education_AboutId ON Education(AboutId);
+    PRINT 'Created IX_Education_AboutId index';
+END
 
--- Insert default data
-INSERT INTO [dbo].[Admins] ([Username], [PasswordHash], [Email]) 
-VALUES ('admin', 'YOUR_HASHED_PASSWORD', 'admin@example.com');
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_WorkExperience_AboutId' AND object_id = OBJECT_ID('WorkExperience'))
+BEGIN
+    CREATE INDEX IX_WorkExperience_AboutId ON WorkExperience(AboutId);
+    PRINT 'Created IX_WorkExperience_AboutId index';
+END
 
-INSERT INTO [dbo].[HomePages] ([Title], [Subtitle], [AboutText], [ContactEmail]) 
-VALUES ('Cynthia Portfolio', 'Welcome to my portfolio', 'About me text here...', 'contact@example.com');
-
-INSERT INTO [dbo].[SkillsCategories] ([Name], [Description], [Order]) 
-VALUES 
-('Frontend', 'Frontend development skills', 1),
-('Backend', 'Backend development skills', 2),
-('Database', 'Database and data management', 3),
-('DevOps', 'DevOps and deployment', 4);
-
--- Insert a default hero template
-INSERT INTO [dbo].[HeroTemplates] ([Name], [Template], [IsActive]) 
-VALUES ('Default', '{"title": "Welcome", "subtitle": "My Portfolio"}', 1); 
+PRINT 'All missing tables and relationships have been created!'; 
