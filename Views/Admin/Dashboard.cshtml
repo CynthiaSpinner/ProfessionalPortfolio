@@ -1457,7 +1457,8 @@
         
         // Connect WebSocket when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            connectWebSocket();
+            // Temporarily disable WebSocket for Azure deployment
+            // connectWebSocket();
             console.log('DOMContentLoaded - checking form state');
             const form = document.getElementById('heroEditForm');
             console.log('Form display on load:', form.style.display);

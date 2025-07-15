@@ -155,6 +155,37 @@ namespace Portfolio.Controllers
             return View();
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> TestDatabase()
+        {
+            try
+            {
+                // Test database connection
+                var homePageCount = await _context.HomePages.CountAsync();
+                var adminCount = await _context.Admins.CountAsync();
+                var templateCount = await _context.HeroTemplates.CountAsync();
+                
+                return Json(new { 
+                    success = true, 
+                    message = "Database connection test successful",
+                    data = new {
+                        homePages = homePageCount,
+                        admins = adminCount,
+                        heroTemplates = templateCount
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Database connection test failed: {Message}", ex.Message);
+                return Json(new { 
+                    success = false, 
+                    message = $"Database connection test failed: {ex.Message}"
+                });
+            }
+        }
+
 
 
         [HttpPost]
@@ -335,6 +366,10 @@ namespace Portfolio.Controllers
         {
             try
             {
+                // Check if the table exists by trying to access it
+                var templateCount = await _context.HeroTemplates.CountAsync();
+                _logger.LogInformation($"Found {templateCount} hero templates in database");
+                
                 var templates = await _context.HeroTemplates
                     .OrderByDescending(t => t.CreatedAt)
                     .Select(t => new
@@ -355,10 +390,10 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving hero templates");
+                _logger.LogError(ex, "Error retrieving hero templates: {Message}", ex.Message);
                 return Json(new { 
                     success = false, 
-                    message = "An error occurred while retrieving hero templates.",
+                    message = $"An error occurred while retrieving hero templates: {ex.Message}",
                     data = new object[] { } 
                 });
             }
