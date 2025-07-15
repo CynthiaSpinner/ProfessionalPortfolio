@@ -31,9 +31,12 @@ const Navbar = () => {
           }}
         >
           <span>C</span>
-          <span className="gradient-text">ynthia </span>
+          <span className="gradient-text">ode</span>
           <span>S</span>
           <span className="gradient-text">pinner</span>
+          <span style={{ marginLeft: "8px", fontSize: "1.2rem", opacity: "0.8" }}>&</span>
+          <span style={{ marginLeft: "4px", fontSize: "1.2rem", opacity: "0.8" }}>D</span>
+          <span className="gradient-text" style={{ fontSize: "1.2rem", opacity: "0.8" }}>esign</span>
         </h1>
         <button
           className={`navbar-toggler ${isMenuOpen ? "menu-open" : ""}`}
