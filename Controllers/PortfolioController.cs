@@ -91,12 +91,18 @@ namespace Portfolio.Controllers
         {
             try
             {
+                // Check if table exists and has data
+                var projectCount = await _context.Projects.CountAsync();
+                Console.WriteLine($"Found {projectCount} projects in database");
+                
                 var projects = await _context.Projects.ToListAsync();
                 return Json(projects);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to load projects data" });
+                Console.WriteLine($"Error loading projects: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return StatusCode(500, new { error = $"Failed to load projects data: {ex.Message}" });
             }
         }
 
@@ -106,12 +112,18 @@ namespace Portfolio.Controllers
         {
             try
             {
+                // Check if table exists and has data
+                var skillsCount = await _context.SkillsCategories.CountAsync();
+                Console.WriteLine($"Found {skillsCount} skills categories in database");
+                
                 var skillsCategories = await _context.SkillsCategories.ToListAsync();
                 return Json(skillsCategories);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to load skills data" });
+                Console.WriteLine($"Error loading skills: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return StatusCode(500, new { error = $"Failed to load skills data: {ex.Message}" });
             }
         }
 
