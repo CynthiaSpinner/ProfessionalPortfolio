@@ -1118,34 +1118,8 @@
             try {
                 console.log('Loading templates...');
                 
-                // Check if we're authenticated by looking for the auth cookie
-                console.log('Checking authentication...');
-                console.log('Available cookies:', document.cookie);
-                
-                // Try multiple possible cookie names
-                const possibleCookieNames = [
-                    'Portfolio.Admin.Auth=',
-                    'Portfolio.Admin.Auth',
-                    '.AspNetCore.Cookies=',
-                    '.AspNetCore.Cookies'
-                ];
-                
-                let authCookie = null;
-                for (const cookieName of possibleCookieNames) {
-                    authCookie = document.cookie.split(';').find(c => c.trim().startsWith(cookieName));
-                    if (authCookie) {
-                        console.log('Auth cookie found with name:', cookieName);
-                        break;
-                    }
-                }
-                
-                console.log('Auth cookie found:', authCookie);
-                
-                if (!authCookie) {
-                    console.error('Authentication cookie not found - user may not be logged in');
-                    console.log('But continuing anyway - server will handle authentication...');
-                    // Continue anyway - the server will handle authentication
-                }
+                // Server handles authentication - no need to check cookies client-side
+                console.log('Loading templates - server will handle authentication...');
                 
                 const response = await fetch('/Admin/GetHeroTemplates');
                 
@@ -1380,7 +1354,19 @@
                     throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
                 }
                 
-                const result = await response.json();
+                // Get response text first to debug
+                const responseText = await response.text();
+                console.log('Template response text:', responseText);
+                
+                // Try to parse JSON
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (jsonError) {
+                    console.error('JSON parsing error:', jsonError);
+                    console.error('Response text that failed to parse:', responseText);
+                    throw new Error(`JSON parsing failed: ${jsonError.message}`);
+                }
                 
                 if (result.success) {
                     const template = result.data;
