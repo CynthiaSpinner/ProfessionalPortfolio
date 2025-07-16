@@ -1117,6 +1117,14 @@
         async function loadTemplates() {
             try {
                 console.log('Loading templates...');
+                
+                // Check if we're authenticated by looking for the auth cookie
+                const authCookie = document.cookie.split(';').find(c => c.trim().startsWith('Portfolio.Admin.Auth='));
+                if (!authCookie) {
+                    console.error('Authentication cookie not found - user may not be logged in');
+                    throw new Error('Authentication required. Please log in again.');
+                }
+                
                 const response = await fetch('/Admin/GetHeroTemplates');
                 
                 console.log('Template response status:', response.status);
@@ -1126,6 +1134,14 @@
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('HTTP Error loading templates:', response.status, errorText);
+                    console.error('Response headers:', Object.fromEntries(response.headers.entries()));
+                    
+                    // Check if it's an authentication redirect
+                    if (response.status === 302 || response.status === 401) {
+                        console.error('Authentication error - user may not be logged in');
+                        throw new Error('Authentication required. Please log in again.');
+                    }
+                    
                     throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
                 }
                 
