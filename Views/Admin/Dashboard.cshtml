@@ -840,8 +840,8 @@
                         // Reload templates to reflect changes
                         await loadTemplates();
                         
-                        // Frontend will automatically detect changes within 3 seconds
-                        console.log('Changes saved successfully - frontend will update automatically');
+                        // Frontend will automatically detect changes within 3 seconds via WebSocket
+                        console.log('Changes saved successfully - frontend will update automatically via WebSocket');
                     } else {
                         // Show error message
                         showNotification('Error!', result.message, 'error');
@@ -1119,6 +1119,9 @@
                 console.log('Loading templates...');
                 const response = await fetch('/Admin/GetHeroTemplates');
                 
+                console.log('Template response status:', response.status);
+                console.log('Template response headers:', response.headers);
+                
                 // Check if response is OK before trying to parse JSON
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -1126,7 +1129,20 @@
                     throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
                 }
                 
-                const result = await response.json();
+                // Get response text first to debug
+                const responseText = await response.text();
+                console.log('Template response text:', responseText);
+                
+                // Try to parse JSON
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (jsonError) {
+                    console.error('JSON parsing error:', jsonError);
+                    console.error('Response text that failed to parse:', responseText);
+                    throw new Error(`JSON parsing failed: ${jsonError.message}`);
+                }
+                
                 console.log('Templates response:', result);
                 
                 if (result.success) {
@@ -1139,6 +1155,8 @@
                 }
             } catch (error) {
                 console.error('Error loading templates:', error);
+                console.error('Error details:', error.message);
+                console.error('Error stack:', error.stack);
                 // Don't show alert for template loading errors as they're not critical
             }
         }
@@ -1494,8 +1512,8 @@
         
         // Connect WebSocket when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Temporarily disable WebSocket for Azure deployment
-            // connectWebSocket();
+            // Re-enable WebSocket for real-time updates
+            connectWebSocket();
             console.log('DOMContentLoaded - checking form state');
             const form = document.getElementById('heroEditForm');
             console.log('Form display on load:', form.style.display);
