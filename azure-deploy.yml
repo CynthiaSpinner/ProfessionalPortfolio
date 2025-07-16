@@ -52,6 +52,13 @@ jobs:
         echo "--- Publish wwwroot contents ---"
         ls -la ./publish/wwwroot/ || echo "Publish wwwroot not found"
     
+    - name: Ensure web.config is in publish output
+      run: |
+        echo "--- Checking web.config in publish output ---"
+        ls -la ./publish/web.config || echo "web.config not found in publish"
+        echo "--- Publish directory contents ---"
+        ls -la ./publish/ | head -20
+    
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
       with:

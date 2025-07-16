@@ -79,12 +79,21 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<PortfolioContext>();
     try
     {
-        context.Database.Migrate();
-        Console.WriteLine("Database migrations applied successfully.");
+        // Test database connection first
+        if (await context.Database.CanConnectAsync())
+        {
+            context.Database.Migrate();
+            Console.WriteLine("Database migrations applied successfully.");
+        }
+        else
+        {
+            Console.WriteLine("Database connection failed during startup, but app will continue.");
+        }
     }
     catch (Exception ex)
     {
         Console.WriteLine($"Error applying database migrations: {ex.Message}");
+        Console.WriteLine("App will continue without database migrations.");
     }
 }
 
