@@ -1486,11 +1486,62 @@
                 
                 ws.onerror = (error) => {
                     console.error('WebSocket error:', error);
+                    
+                    // Azure App Service WebSocket diagnostics
+                    console.log('🔍 Azure WebSocket Diagnostics:');
+                    console.log('  - Error Type:', error.type);
+                    console.log('  - Error Target:', error.target);
+                    console.log('  - Ready State:', ws.readyState);
+                    console.log('  - URL:', ws.url);
+                    console.log('  - Protocol:', ws.protocol);
+                    console.log('  - Extensions:', ws.extensions);
+                    
+                    // Check if it's an Azure App Service limitation
+                    if (ws.readyState === WebSocket.CLOSED) {
+                        console.log('⚠️  This might be an Azure App Service WebSocket limitation');
+                        console.log('💡 Try upgrading to Premium plan for better WebSocket support');
+                    }
                 };
                 
-                ws.onclose = () => {
+                ws.onclose = (event) => {
                     console.log('WebSocket connection closed');
+                    console.log('Close code:', event.code);
+                    console.log('Close reason:', event.reason);
                     wsReconnectAttempts++;
+                    
+                    // Azure App Service close code analysis
+                    console.log('🔍 Azure WebSocket Close Analysis:');
+                    console.log('  - Close Code:', event.code);
+                    console.log('  - Close Reason:', event.reason);
+                    console.log('  - Was Clean:', event.wasClean);
+                    
+                    // Interpret close codes
+                    switch(event.code) {
+                        case 1000:
+                            console.log('✅ Normal closure - WebSocket closed properly');
+                            break;
+                        case 1001:
+                            console.log('⚠️  Going away - Server or client is shutting down');
+                            break;
+                        case 1002:
+                            console.log('❌ Protocol error - Invalid WebSocket protocol');
+                            break;
+                        case 1003:
+                            console.log('❌ Unsupported data - Received unsupported data type');
+                            break;
+                        case 1006:
+                            console.log('❌ Abnormal closure - Connection lost without close frame');
+                            console.log('⚠️  This often indicates Azure App Service WebSocket limitations');
+                            break;
+                        case 1011:
+                            console.log('❌ Server error - Server encountered an error');
+                            break;
+                        case 1015:
+                            console.log('❌ TLS handshake failed - SSL/TLS negotiation failed');
+                            break;
+                        default:
+                            console.log('❓ Unknown close code:', event.code);
+                    }
                     
                     // Only reconnect if we haven't exceeded max attempts
                     if (wsReconnectAttempts < maxReconnectAttempts) {
@@ -1498,6 +1549,14 @@
                         setTimeout(connectWebSocket, 5000);
                     } else {
                         console.log('WebSocket: Max reconnection attempts reached');
+                        console.log('💡 Consider upgrading to Premium App Service plan for better WebSocket support');
+                        
+                        // Final diagnostic summary
+                        console.log('📊 Final WebSocket Diagnostic Summary:');
+                        console.log('  - Total Attempts:', wsReconnectAttempts);
+                        console.log('  - Last Close Code:', event.code);
+                        console.log('  - Last Close Reason:', event.reason);
+                        console.log('  - Recommendation: Upgrade to Azure App Service Premium plan');
                     }
                 };
             } catch (error) {
