@@ -1122,7 +1122,10 @@
                 const authCookie = document.cookie.split(';').find(c => c.trim().startsWith('Portfolio.Admin.Auth='));
                 if (!authCookie) {
                     console.error('Authentication cookie not found - user may not be logged in');
-                    throw new Error('Authentication required. Please log in again.');
+                    console.log('Available cookies:', document.cookie);
+                    console.log('Redirecting to login page...');
+                    window.location.href = '/Admin/Login';
+                    return; // Don't throw error, just redirect
                 }
                 
                 const response = await fetch('/Admin/GetHeroTemplates');
