@@ -1571,8 +1571,9 @@
         
         // Connect WebSocket when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Re-enable WebSocket for real-time updates
-            connectWebSocket();
+            // Disable WebSocket for admin dashboard since it's served by the same backend
+            // The admin dashboard can broadcast messages directly without connecting to itself
+            console.log('Admin dashboard: WebSocket disabled - broadcasting directly to connected clients');
             console.log('DOMContentLoaded - checking form state');
             const form = document.getElementById('heroEditForm');
             console.log('Form display on load:', form.style.display);
