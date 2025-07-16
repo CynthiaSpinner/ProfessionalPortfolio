@@ -119,8 +119,7 @@ app.UseAuthorization();
 app.UseWebSockets(new WebSocketOptions
 {
     KeepAliveInterval = TimeSpan.FromMinutes(2),
-    ReceiveBufferSize = 4 * 1024,
-    CloseTimeout = TimeSpan.FromSeconds(10)
+    ReceiveBufferSize = 4 * 1024
 });
 
 // WebSocket endpoint for real-time updates
