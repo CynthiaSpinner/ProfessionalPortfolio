@@ -131,45 +131,43 @@ app.UseWebSockets(new WebSocketOptions
     ReceiveBufferSize = 4 * 1024
 });
 
-// WebSocket endpoint for real-time updates
-app.Map("/ws/portfolio", async context =>
-{
-    if (context.WebSockets.IsWebSocketRequest)
-    {
-        try
-        {
-            using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-            var webSocketService = context.RequestServices.GetRequiredService<WebSocketService>();
-            var connectionId = Guid.NewGuid().ToString();
-            
-            Console.WriteLine($"WebSocket connection established: {connectionId}");
-            webSocketService.AddConnection(connectionId, webSocket);
-            
-            try
-            {
-                await HandleWebSocketConnection(webSocket, webSocketService, connectionId);
-            }
-            finally
-            {
-                webSocketService.RemoveConnection(connectionId);
-                Console.WriteLine($"WebSocket connection closed: {connectionId}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"WebSocket connection error: {ex.Message}");
-            context.Response.StatusCode = 500;
-        }
-    }
-    else
-    {
-        context.Response.StatusCode = 400;
-    }
-});
-
 app.UseEndpoints(endpoints =>
 {
-
+    // WebSocket endpoint for real-time updates (Azure standard format)
+    endpoints.Map("/client/hubs/portfolio", async context =>
+    {
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            try
+            {
+                using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                var webSocketService = context.RequestServices.GetRequiredService<WebSocketService>();
+                var connectionId = Guid.NewGuid().ToString();
+                
+                Console.WriteLine($"WebSocket connection established: {connectionId}");
+                webSocketService.AddConnection(connectionId, webSocket);
+                
+                try
+                {
+                    await HandleWebSocketConnection(webSocket, webSocketService, connectionId);
+                }
+                finally
+                {
+                    webSocketService.RemoveConnection(connectionId);
+                    Console.WriteLine($"WebSocket connection closed: {connectionId}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"WebSocket connection error: {ex.Message}");
+                context.Response.StatusCode = 500;
+            }
+        }
+        else
+        {
+            context.Response.StatusCode = 400;
+        }
+    });
 
     // Redirect root to admin login
     endpoints.MapGet("/", context =>
