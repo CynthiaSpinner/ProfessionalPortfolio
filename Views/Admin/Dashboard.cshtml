@@ -1119,16 +1119,32 @@
                 console.log('Loading templates...');
                 
                 // Check if we're authenticated by looking for the auth cookie
-                const authCookie = document.cookie.split(';').find(c => c.trim().startsWith('Portfolio.Admin.Auth='));
                 console.log('Checking authentication...');
                 console.log('Available cookies:', document.cookie);
+                
+                // Try multiple possible cookie names
+                const possibleCookieNames = [
+                    'Portfolio.Admin.Auth=',
+                    'Portfolio.Admin.Auth',
+                    '.AspNetCore.Cookies=',
+                    '.AspNetCore.Cookies'
+                ];
+                
+                let authCookie = null;
+                for (const cookieName of possibleCookieNames) {
+                    authCookie = document.cookie.split(';').find(c => c.trim().startsWith(cookieName));
+                    if (authCookie) {
+                        console.log('Auth cookie found with name:', cookieName);
+                        break;
+                    }
+                }
+                
                 console.log('Auth cookie found:', authCookie);
                 
                 if (!authCookie) {
                     console.error('Authentication cookie not found - user may not be logged in');
-                    // Don't redirect immediately - let the server handle authentication
-                    console.log('Letting server handle authentication...');
-                    return; // Just return without redirecting
+                    console.log('But continuing anyway - server will handle authentication...');
+                    // Continue anyway - the server will handle authentication
                 }
                 
                 const response = await fetch('/Admin/GetHeroTemplates');
