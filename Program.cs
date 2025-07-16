@@ -115,27 +115,42 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Add WebSocket middleware
-app.UseWebSockets();
+// Add WebSocket middleware with Azure-friendly configuration
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromMinutes(2),
+    ReceiveBufferSize = 4 * 1024,
+    CloseTimeout = TimeSpan.FromSeconds(10)
+});
 
 // WebSocket endpoint for real-time updates
 app.Map("/ws/portfolio", async context =>
 {
     if (context.WebSockets.IsWebSocketRequest)
     {
-        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        var webSocketService = context.RequestServices.GetRequiredService<WebSocketService>();
-        var connectionId = Guid.NewGuid().ToString();
-        
-        webSocketService.AddConnection(connectionId, webSocket);
-        
         try
         {
-            await HandleWebSocketConnection(webSocket, webSocketService, connectionId);
+            using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            var webSocketService = context.RequestServices.GetRequiredService<WebSocketService>();
+            var connectionId = Guid.NewGuid().ToString();
+            
+            Console.WriteLine($"WebSocket connection established: {connectionId}");
+            webSocketService.AddConnection(connectionId, webSocket);
+            
+            try
+            {
+                await HandleWebSocketConnection(webSocket, webSocketService, connectionId);
+            }
+            finally
+            {
+                webSocketService.RemoveConnection(connectionId);
+                Console.WriteLine($"WebSocket connection closed: {connectionId}");
+            }
         }
-        finally
+        catch (Exception ex)
         {
-            webSocketService.RemoveConnection(connectionId);
+            Console.WriteLine($"WebSocket connection error: {ex.Message}");
+            context.Response.StatusCode = 500;
         }
     }
     else
