@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // For development, use mock data
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 const API_URL = process.env.REACT_APP_API_URL || "https://portfolio-app-1776-hkdfazazd5cqfzbk.centralus-01.azurewebsites.net/api";
 
@@ -14,6 +14,18 @@ const api = axios.create({
 
 // Mock data for development
 const mockData = {
+  hero: {
+    title: "Welcome to My Portfolio",
+    subtitle: "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
+    description: "Building innovative solutions with cutting-edge technologies.",
+    backgroundImageUrl: "",
+    backgroundVideoUrl: "",
+    primaryButtonText: "View Projects",
+    primaryButtonUrl: "/projects",
+    overlayColor: "#000000",
+    overlayOpacity: 0.5,
+    lastModified: new Date().toISOString()
+  },
   about: {
     title: "About Me",
     description:
@@ -37,6 +49,13 @@ const mockData = {
 
 // Portfolio API endpoints
 export const portfolioApi = {
+  // Hero section endpoints
+  getHeroSection: () =>
+    USE_MOCK_DATA
+      ? Promise.resolve({ data: mockData.hero })
+      : api.get("/portfolio/hero"),
+  updateHeroSection: (data) => api.put("/portfolio/hero", data),
+
   // About endpoints
   getAbout: () =>
     USE_MOCK_DATA
