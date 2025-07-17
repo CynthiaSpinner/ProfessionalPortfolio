@@ -20,4 +20,9 @@ export const PortfolioService = {
     const response = await portfolioApi.getHeroSection();
     return response.data;
   },
+
+  async getFeatures() {
+    const response = await portfolioApi.getFeatures();
+    return response.data;
+  },
 };

@@ -79,4 +79,10 @@ export const portfolioApi = {
       ? Promise.resolve({ data: mockData.skills })
       : api.get("/portfolio/skills"),
   updateSkills: (data) => api.put("/portfolio/skills", data),
+
+  // Features section endpoint
+  getFeatures: () =>
+    USE_MOCK_DATA
+      ? Promise.resolve({ data: { title: "Key Skills & Technologies", subtitle: "", description: "", features: [ { title: "Frontend Development", icon: "fas fa-code", description: "React, JavaScript, HTML5, CSS3, Bootstrap" }, { title: "Backend Development", icon: "fas fa-server", description: ".NET Core, C#, RESTful APIs, MySQL" }, { title: "Design & Tools", icon: "fas fa-palette", description: "Adobe Creative Suite, UI/UX Design, Git, Docker" } ] } })
+      : api.get("/portfolio/features"),
 };
