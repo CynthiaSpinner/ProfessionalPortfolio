@@ -80,6 +80,7 @@ const FeaturesSection = ({ featuresData }) => {
                 <HeadingGroup
                   title={feature.title}
                   subtitle={feature.subtitle}
+                  headingLevel="h4"
                 />
                 {feature.description && (
                   <p className="text-muted text-center mt-3" style={{ fontSize: '0.9rem' }}>

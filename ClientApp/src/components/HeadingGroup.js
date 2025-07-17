@@ -1,9 +1,11 @@
 import React from "react";
 
-const HeadingGroup = ({ title, subtitle, className = "" }) => {
+const HeadingGroup = ({ title, subtitle, className = "", headingLevel = "h2" }) => {
+  const HeadingTag = headingLevel;
+  
   return (
     <div className={`heading-group ${className}`}>
-      <h2 style={{ color: "#818cf8" }}>{title}</h2>
+      <HeadingTag style={{ color: "#818cf8" }}>{title}</HeadingTag>
       {subtitle && <p className="text-secondary">{subtitle}</p>}
     </div>
   );
