@@ -46,7 +46,11 @@ const FeaturesSection = () => {
             <Col md={4} key={idx}>
               <Card 
                 className={feature.link ? "clickable-card" : ""}
-                onClick={() => feature.link && window.location.href = feature.link}
+                onClick={() => {
+                  if (feature.link) {
+                    window.location.href = feature.link;
+                  }
+                }}
                 style={{ 
                   cursor: feature.link ? 'pointer' : 'default',
                   transition: 'all 0.3s ease',

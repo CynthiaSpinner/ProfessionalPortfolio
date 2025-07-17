@@ -157,29 +157,33 @@ namespace Portfolio.Controllers
                     {
                         title = "Key Skills & Technologies",
                         subtitle = "Explore my expertise across different domains",
-                        features: [
+                        features = new[]
+                        {
+                            new
                             {
-                                title: "Frontend Development",
-                                subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap",
-                                description: "Building responsive and interactive user interfaces with modern frameworks and best practices.",
-                                icon: "fas fa-code",
-                                link: "/projects?category=frontend"
+                                title = "Frontend Development",
+                                subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap",
+                                description = "Building responsive and interactive user interfaces with modern frameworks and best practices.",
+                                icon = "fas fa-code",
+                                link = "/projects?category=frontend"
                             },
+                            new
                             {
-                                title: "Backend Development",
-                                subtitle: ".NET Core, C#, RESTful APIs, SQL Server",
-                                description: "Creating robust server-side applications and APIs with enterprise-grade technologies.",
-                                icon: "fas fa-server",
-                                link: "/projects?category=backend"
+                                title = "Backend Development",
+                                subtitle = ".NET Core, C#, RESTful APIs, SQL Server",
+                                description = "Creating robust server-side applications and APIs with enterprise-grade technologies.",
+                                icon = "fas fa-server",
+                                link = "/projects?category=backend"
                             },
+                            new
                             {
-                                title: "Design & Tools",
-                                subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker",
-                                description: "Crafting beautiful designs and managing development workflows with professional tools.",
-                                icon: "fas fa-palette",
-                                link: "/projects?category=design"
+                                title = "Design & Tools",
+                                subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker",
+                                description = "Crafting beautiful designs and managing development workflows with professional tools.",
+                                icon = "fas fa-palette",
+                                link = "/projects?category=design"
                             }
-                        ],
+                        },
                         lastModified = DateTime.UtcNow
                     });
                 }
@@ -188,29 +192,33 @@ namespace Portfolio.Controllers
                 {
                     title = features.SectionTitle,
                     subtitle = features.SectionSubtitle,
-                    features: [
+                    features = new[]
+                    {
+                        new
                         {
-                            title: features.Feature1Title,
-                            subtitle: features.Feature1Subtitle,
-                            description: features.Feature1Description,
-                            icon: features.Feature1Icon,
-                            link: features.Feature1Link
+                            title = features.Feature1Title,
+                            subtitle = features.Feature1Subtitle,
+                            description = features.Feature1Description,
+                            icon = features.Feature1Icon,
+                            link = features.Feature1Link
                         },
+                        new
                         {
-                            title: features.Feature2Title,
-                            subtitle: features.Feature2Subtitle,
-                            description: features.Feature2Description,
-                            icon: features.Feature2Icon,
-                            link: features.Feature2Link
+                            title = features.Feature2Title,
+                            subtitle = features.Feature2Subtitle,
+                            description = features.Feature2Description,
+                            icon = features.Feature2Icon,
+                            link = features.Feature2Link
                         },
+                        new
                         {
-                            title: features.Feature3Title,
-                            subtitle: features.Feature3Subtitle,
-                            description: features.Feature3Description,
-                            icon: features.Feature3Icon,
-                            link: features.Feature3Link
+                            title = features.Feature3Title,
+                            subtitle = features.Feature3Subtitle,
+                            description = features.Feature3Description,
+                            icon = features.Feature3Icon,
+                            link = features.Feature3Link
                         }
-                    ],
+                    },
                     lastModified = features.UpdatedAt
                 });
             }
