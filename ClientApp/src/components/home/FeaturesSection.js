@@ -11,7 +11,7 @@ const FeaturesSection = () => {
     return data;
   }, []);
 
-  const { data: featuresData, loading, refetch: fetchFeaturesData } = usePortfolioData(fetchFeaturesData);
+  const { data: featuresData, loading, refetch: refetchFeatures } = usePortfolioData(fetchFeaturesData);
 
   // Use shared WebSocket hook
   useWebSocket('featuresDataUpdated', fetchFeaturesData);
@@ -44,14 +44,46 @@ const FeaturesSection = () => {
         <Row className="g-4">
           {featuresData?.features?.map((feature, idx) => (
             <Col md={4} key={idx}>
-              <Card>
+              <Card 
+                className={feature.link ? "clickable-card" : ""}
+                onClick={() => feature.link && window.location.href = feature.link}
+                style={{ 
+                  cursor: feature.link ? 'pointer' : 'default',
+                  transition: 'all 0.3s ease',
+                  height: '100%'
+                }}
+                onMouseEnter={(e) => {
+                  if (feature.link) {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 10px 25px rgba(129, 140, 248, 0.2)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (feature.link) {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '';
+                  }
+                }}
+              >
                 <div className="text-center mb-3">
                   {feature.icon && <i className={`${feature.icon} fa-2x mb-2`} style={{ color: "#818cf8" }}></i>}
                 </div>
                 <HeadingGroup
                   title={feature.title}
-                  subtitle={feature.description}
+                  subtitle={feature.subtitle}
                 />
+                {feature.description && (
+                  <p className="text-muted text-center mt-3" style={{ fontSize: '0.9rem' }}>
+                    {feature.description}
+                  </p>
+                )}
+                {feature.link && (
+                  <div className="text-center mt-3">
+                    <small className="text-primary" style={{ fontWeight: '500' }}>
+                      Click to explore →
+                    </small>
+                  </div>
+                )}
               </Card>
             </Col>
           ))}

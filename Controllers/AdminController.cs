@@ -509,18 +509,30 @@ namespace Portfolio.Controllers
 
                 // Update features section properties
                 featuresSection.SectionTitle = model.SectionTitle ?? "Key Skills & Technologies";
+                featuresSection.SectionSubtitle = model.SectionSubtitle ?? "Explore my expertise across different domains";
                 featuresSection.Feature1Title = model.Feature1Title ?? "Frontend Development";
                 featuresSection.Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap";
+                featuresSection.Feature1Description = model.Feature1Description ?? "Building responsive and interactive user interfaces with modern frameworks and best practices.";
+                featuresSection.Feature1Icon = model.Feature1Icon ?? "fas fa-code";
+                featuresSection.Feature1Link = model.Feature1Link ?? "/projects?category=frontend";
                 featuresSection.Feature2Title = model.Feature2Title ?? "Backend Development";
-                featuresSection.Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, MySQL";
+                featuresSection.Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, SQL Server";
+                featuresSection.Feature2Description = model.Feature2Description ?? "Creating robust server-side applications and APIs with enterprise-grade technologies.";
+                featuresSection.Feature2Icon = model.Feature2Icon ?? "fas fa-server";
+                featuresSection.Feature2Link = model.Feature2Link ?? "/projects?category=backend";
                 featuresSection.Feature3Title = model.Feature3Title ?? "Design & Tools";
                 featuresSection.Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker";
+                featuresSection.Feature3Description = model.Feature3Description ?? "Crafting beautiful designs and managing development workflows with professional tools.";
+                featuresSection.Feature3Icon = model.Feature3Icon ?? "fas fa-palette";
+                featuresSection.Feature3Link = model.Feature3Link ?? "/projects?category=design";
+                featuresSection.IsActive = model.IsActive;
+                featuresSection.DisplayOrder = model.DisplayOrder;
                 featuresSection.UpdatedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();
 
                 // Broadcast WebSocket message for real-time updates
-                _webSocketService.BroadcastMessage(new { type = "featuresDataUpdated" });
+                await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "featuresDataUpdated" }));
 
                 return Json(new { success = true, message = "Features section saved successfully!" });
             }
@@ -551,12 +563,24 @@ namespace Portfolio.Controllers
                 var featuresData = new
                 {
                     sectionTitle = featuresSection.SectionTitle,
+                    sectionSubtitle = featuresSection.SectionSubtitle,
                     feature1Title = featuresSection.Feature1Title,
                     feature1Subtitle = featuresSection.Feature1Subtitle,
+                    feature1Description = featuresSection.Feature1Description,
+                    feature1Icon = featuresSection.Feature1Icon,
+                    feature1Link = featuresSection.Feature1Link,
                     feature2Title = featuresSection.Feature2Title,
                     feature2Subtitle = featuresSection.Feature2Subtitle,
+                    feature2Description = featuresSection.Feature2Description,
+                    feature2Icon = featuresSection.Feature2Icon,
+                    feature2Link = featuresSection.Feature2Link,
                     feature3Title = featuresSection.Feature3Title,
                     feature3Subtitle = featuresSection.Feature3Subtitle,
+                    feature3Description = featuresSection.Feature3Description,
+                    feature3Icon = featuresSection.Feature3Icon,
+                    feature3Link = featuresSection.Feature3Link,
+                    isActive = featuresSection.IsActive,
+                    displayOrder = featuresSection.DisplayOrder,
                     updatedAt = featuresSection.UpdatedAt
                 };
 
@@ -618,12 +642,24 @@ namespace Portfolio.Controllers
         public class FeaturesSectionModel
         {
             public string? SectionTitle { get; set; }
+            public string? SectionSubtitle { get; set; }
             public string? Feature1Title { get; set; }
             public string? Feature1Subtitle { get; set; }
+            public string? Feature1Description { get; set; }
+            public string? Feature1Icon { get; set; }
+            public string? Feature1Link { get; set; }
             public string? Feature2Title { get; set; }
             public string? Feature2Subtitle { get; set; }
+            public string? Feature2Description { get; set; }
+            public string? Feature2Icon { get; set; }
+            public string? Feature2Link { get; set; }
             public string? Feature3Title { get; set; }
             public string? Feature3Subtitle { get; set; }
+            public string? Feature3Description { get; set; }
+            public string? Feature3Icon { get; set; }
+            public string? Feature3Link { get; set; }
+            public bool IsActive { get; set; } = true;
+            public int DisplayOrder { get; set; } = 1;
         }
     }
 }

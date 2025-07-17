@@ -321,8 +321,14 @@
                                                 <input type="text" class="form-control" id="feature1Title" name="Feature1Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="feature1Icon" class="form-label" style="color: #9ca3af !important;">Icon Class (FontAwesome)</label>
-                                                <input type="text" class="form-control" id="feature1Icon" name="Feature1Icon" maxlength="50" placeholder="fas fa-code" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <label for="feature1Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="feature1Icon" name="Feature1Icon" maxlength="100" placeholder="fas fa-code" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="openIconPicker('feature1Icon')" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important;">
+                                                        <i class="fas fa-icons"></i>
+                                                    </button>
+                                                </div>
+                                                <div id="feature1IconPreview" class="mt-2" style="color: #818cf8 !important; font-size: 1.2rem;"></div>
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -344,8 +350,14 @@
                                                 <input type="text" class="form-control" id="feature2Title" name="Feature2Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="feature2Icon" class="form-label" style="color: #9ca3af !important;">Icon Class (FontAwesome)</label>
-                                                <input type="text" class="form-control" id="feature2Icon" name="Feature2Icon" maxlength="50" placeholder="fas fa-server" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <label for="feature2Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="feature2Icon" name="Feature2Icon" maxlength="100" placeholder="fas fa-server" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="openIconPicker('feature2Icon')" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important;">
+                                                        <i class="fas fa-icons"></i>
+                                                    </button>
+                                                </div>
+                                                <div id="feature2IconPreview" class="mt-2" style="color: #818cf8 !important; font-size: 1.2rem;"></div>
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -367,8 +379,14 @@
                                                 <input type="text" class="form-control" id="feature3Title" name="Feature3Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="feature3Icon" class="form-label" style="color: #9ca3af !important;">Icon Class (FontAwesome)</label>
-                                                <input type="text" class="form-control" id="feature3Icon" name="Feature3Icon" maxlength="50" placeholder="fas fa-palette" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <label for="feature3Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="feature3Icon" name="Feature3Icon" maxlength="100" placeholder="fas fa-palette" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="openIconPicker('feature3Icon')" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important;">
+                                                        <i class="fas fa-icons"></i>
+                                                    </button>
+                                                </div>
+                                                <div id="feature3IconPreview" class="mt-2" style="color: #818cf8 !important; font-size: 1.2rem;"></div>
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -651,7 +669,7 @@
             try {
                 console.log('Loading features data...');
                 
-                const response = await fetch('/api/portfolio/features');
+                const response = await fetch('/Admin/GetFeaturesSection');
                 
                 console.log('Features response status:', response.status);
                 
@@ -668,24 +686,25 @@
                     console.log('Loaded features:', features);
                     
                     // Fill form fields
-                    document.getElementById('featuresTitle').value = features.title || '';
-                    document.getElementById('featuresSubtitle').value = features.subtitle || '';
-                    document.getElementById('featuresDescription').value = features.description || '';
+                    document.getElementById('featuresTitle').value = features.sectionTitle || '';
+                    document.getElementById('featuresSubtitle').value = features.sectionSubtitle || '';
+                    document.getElementById('featuresDescription').value = ''; // No description field in new structure
                     
                     // Fill feature cards
-                    if (features.features && features.features.length >= 3) {
-                        document.getElementById('feature1Title').value = features.features[0].title || '';
-                        document.getElementById('feature1Icon').value = features.features[0].icon || '';
-                        document.getElementById('feature1Description').value = features.features[0].description || '';
-                        
-                        document.getElementById('feature2Title').value = features.features[1].title || '';
-                        document.getElementById('feature2Icon').value = features.features[1].icon || '';
-                        document.getElementById('feature2Description').value = features.features[1].description || '';
-                        
-                        document.getElementById('feature3Title').value = features.features[2].title || '';
-                        document.getElementById('feature3Icon').value = features.features[2].icon || '';
-                        document.getElementById('feature3Description').value = features.features[2].description || '';
-                    }
+                    document.getElementById('feature1Title').value = features.feature1Title || '';
+                    document.getElementById('feature1Icon').value = features.feature1Icon || '';
+                    document.getElementById('feature1Description').value = features.feature1Description || '';
+                    
+                    document.getElementById('feature2Title').value = features.feature2Title || '';
+                    document.getElementById('feature2Icon').value = features.feature2Icon || '';
+                    document.getElementById('feature2Description').value = features.feature2Description || '';
+                    
+                    document.getElementById('feature3Title').value = features.feature3Title || '';
+                    document.getElementById('feature3Icon').value = features.feature3Icon || '';
+                    document.getElementById('feature3Description').value = features.feature3Description || '';
+                    
+                    // Update icon previews
+                    updateAllIconPreviews();
                     
                     console.log('Features form populated successfully');
                 } else {
@@ -1841,6 +1860,172 @@
             }
         }
         
+        // Icon picker functionality
+        let currentIconField = null;
+        
+        // Common FontAwesome icons for features
+        const commonIcons = [
+            { class: 'fas fa-code', name: 'Code' },
+            { class: 'fas fa-server', name: 'Server' },
+            { class: 'fas fa-palette', name: 'Design' },
+            { class: 'fas fa-mobile-alt', name: 'Mobile' },
+            { class: 'fas fa-database', name: 'Database' },
+            { class: 'fas fa-cloud', name: 'Cloud' },
+            { class: 'fas fa-shield-alt', name: 'Security' },
+            { class: 'fas fa-rocket', name: 'Performance' },
+            { class: 'fas fa-users', name: 'Team' },
+            { class: 'fas fa-lightbulb', name: 'Innovation' },
+            { class: 'fas fa-cogs', name: 'Tools' },
+            { class: 'fas fa-chart-line', name: 'Analytics' },
+            { class: 'fas fa-laptop-code', name: 'Development' },
+            { class: 'fas fa-paint-brush', name: 'Creative' },
+            { class: 'fas fa-network-wired', name: 'Networking' }
+        ];
+        
+        function openIconPicker(fieldId) {
+            currentIconField = fieldId;
+            
+            // Create modal if it doesn't exist
+            if (!document.getElementById('iconPickerModal')) {
+                createIconPickerModal();
+            }
+            
+            // Show modal
+            document.getElementById('iconPickerModal').style.display = 'block';
+        }
+        
+        function createIconPickerModal() {
+            const modal = document.createElement('div');
+            modal.id = 'iconPickerModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 999999;
+                display: none;
+                backdrop-filter: blur(5px);
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 10, 0.95);
+                border: 1px solid rgba(129, 140, 248, 0.3);
+                border-radius: 8px;
+                padding: 2rem;
+                max-width: 600px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                backdrop-filter: blur(10px);
+            `;
+            
+            modalContent.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h4 style="color: #818cf8; margin: 0;">Select Icon</h4>
+                    <button onclick="closeIconPicker()" style="background: none; border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <input type="text" id="iconSearch" placeholder="Search icons..." style="width: 100%; padding: 0.5rem; border: 1px solid rgba(129, 140, 248, 0.3); border-radius: 4px; background: rgba(0, 0, 0, 0.5); color: #818cf8;">
+                </div>
+                <div id="iconGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem;">
+                    ${commonIcons.map(icon => `
+                        <div class="icon-option" onclick="selectIcon('${icon.class}')" style="
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            padding: 1rem;
+                            border: 1px solid rgba(129, 140, 248, 0.2);
+                            border-radius: 6px;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            background: rgba(0, 0, 0, 0.3);
+                        " onmouseenter="this.style.borderColor='rgba(129, 140, 248, 0.6)'; this.style.background='rgba(129, 140, 248, 0.1)'" 
+                           onmouseleave="this.style.borderColor='rgba(129, 140, 248, 0.2)'; this.style.background='rgba(0, 0, 0, 0.3)'">
+                            <i class="${icon.class}" style="font-size: 2rem; color: #818cf8; margin-bottom: 0.5rem;"></i>
+                            <span style="color: #9ca3af; font-size: 0.8rem; text-align: center;">${icon.name}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <button onclick="closeIconPicker()" style="
+                        background: rgba(129, 140, 248, 0.2);
+                        border: 1px solid rgba(129, 140, 248, 0.3);
+                        color: #818cf8;
+                        padding: 0.5rem 1rem;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    ">Cancel</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Add search functionality
+            document.getElementById('iconSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const iconOptions = document.querySelectorAll('.icon-option');
+                
+                iconOptions.forEach(option => {
+                    const iconName = option.querySelector('span').textContent.toLowerCase();
+                    const iconClass = option.querySelector('i').className.toLowerCase();
+                    
+                    if (iconName.includes(searchTerm) || iconClass.includes(searchTerm)) {
+                        option.style.display = 'flex';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeIconPicker();
+                }
+            });
+        }
+        
+        function selectIcon(iconClass) {
+            if (currentIconField) {
+                document.getElementById(currentIconField).value = iconClass;
+                updateIconPreview(currentIconField, iconClass);
+                closeIconPicker();
+            }
+        }
+        
+        function closeIconPicker() {
+            const modal = document.getElementById('iconPickerModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            currentIconField = null;
+        }
+        
+        function updateIconPreview(fieldId, iconClass) {
+            const preview = document.getElementById(fieldId + 'Preview');
+            if (preview && iconClass) {
+                preview.innerHTML = `<i class="${iconClass}"></i>`;
+            }
+        }
+        
+        // Update icon previews when form loads
+        function updateAllIconPreviews() {
+            ['feature1Icon', 'feature2Icon', 'feature3Icon'].forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && field.value) {
+                    updateIconPreview(fieldId, field.value);
+                }
+            });
+        }
+        
         // Connect WebSocket when page loads
         document.addEventListener('DOMContentLoaded', function() {
             // Disable WebSocket for admin dashboard since it's served by the same backend
@@ -1852,6 +2037,7 @@
             console.log('Form computed display on load:', window.getComputedStyle(form).display);
             
             loadTemplates();
+            updateAllIconPreviews();
         });
     </script>
 }

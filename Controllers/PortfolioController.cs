@@ -155,26 +155,62 @@ namespace Portfolio.Controllers
                     // Return default features if none exist
                     return Json(new
                     {
-                        sectionTitle = "Key Skills & Technologies",
-                        feature1Title = "Frontend Development",
-                        feature1Subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap",
-                        feature2Title = "Backend Development",
-                        feature2Subtitle = ".NET Core, C#, RESTful APIs, MySQL",
-                        feature3Title = "Design & Tools",
-                        feature3Subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker",
+                        title = "Key Skills & Technologies",
+                        subtitle = "Explore my expertise across different domains",
+                        features: [
+                            {
+                                title: "Frontend Development",
+                                subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap",
+                                description: "Building responsive and interactive user interfaces with modern frameworks and best practices.",
+                                icon: "fas fa-code",
+                                link: "/projects?category=frontend"
+                            },
+                            {
+                                title: "Backend Development",
+                                subtitle: ".NET Core, C#, RESTful APIs, SQL Server",
+                                description: "Creating robust server-side applications and APIs with enterprise-grade technologies.",
+                                icon: "fas fa-server",
+                                link: "/projects?category=backend"
+                            },
+                            {
+                                title: "Design & Tools",
+                                subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker",
+                                description: "Crafting beautiful designs and managing development workflows with professional tools.",
+                                icon: "fas fa-palette",
+                                link: "/projects?category=design"
+                            }
+                        ],
                         lastModified = DateTime.UtcNow
                     });
                 }
 
                 return Json(new
                 {
-                    sectionTitle = features.SectionTitle,
-                    feature1Title = features.Feature1Title,
-                    feature1Subtitle = features.Feature1Subtitle,
-                    feature2Title = features.Feature2Title,
-                    feature2Subtitle = features.Feature2Subtitle,
-                    feature3Title = features.Feature3Title,
-                    feature3Subtitle = features.Feature3Subtitle,
+                    title = features.SectionTitle,
+                    subtitle = features.SectionSubtitle,
+                    features: [
+                        {
+                            title: features.Feature1Title,
+                            subtitle: features.Feature1Subtitle,
+                            description: features.Feature1Description,
+                            icon: features.Feature1Icon,
+                            link: features.Feature1Link
+                        },
+                        {
+                            title: features.Feature2Title,
+                            subtitle: features.Feature2Subtitle,
+                            description: features.Feature2Description,
+                            icon: features.Feature2Icon,
+                            link: features.Feature2Link
+                        },
+                        {
+                            title: features.Feature3Title,
+                            subtitle: features.Feature3Subtitle,
+                            description: features.Feature3Description,
+                            icon: features.Feature3Icon,
+                            link: features.Feature3Link
+                        }
+                    ],
                     lastModified = features.UpdatedAt
                 });
             }

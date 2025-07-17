@@ -22,7 +22,7 @@ const HeroSection = () => {
     return data;
   }, []);
 
-  const { data: heroData = defaultHeroData, loading, refetch: fetchHeroData } = usePortfolioData(fetchHeroData);
+  const { data: heroData = defaultHeroData, loading, refetch: refetchHero } = usePortfolioData(fetchHeroData);
 
   // Use shared WebSocket hook
   useWebSocket('heroDataUpdated', fetchHeroData);
