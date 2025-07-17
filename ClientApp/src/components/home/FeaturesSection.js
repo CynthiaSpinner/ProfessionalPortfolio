@@ -4,8 +4,8 @@ import HeadingGroup from "../HeadingGroup";
 import Card from "../Card";
 
 const FeaturesSection = ({ featuresData }) => {
-  // Use provided data - no fallback, should always have real data
-  const data = featuresData;
+  // Use provided data - handle undefined gracefully
+  const data = featuresData || {};
 
   return (
     <section className="features-section py-5">

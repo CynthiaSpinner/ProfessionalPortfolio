@@ -47,6 +47,9 @@ const mockData = {
   },
 };
 
+// Export the api instance for direct use
+export { api };
+
 // Portfolio API endpoints
 export const portfolioApi = {
   // Hero section endpoints

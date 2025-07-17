@@ -454,6 +454,10 @@
                                     <i class="fas fa-times"></i>
                                     Cancel
                                 </button>
+                                <button type="button" class="btn btn-danger" onclick="deleteFeaturesTemplate()" id="deleteFeaturesBtn" style="display: none;">
+                                    <i class="fas fa-trash"></i>
+                                    Delete Template
+                                </button>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i>
                                     Save Changes
@@ -736,23 +740,45 @@
                     const features = result.data;
                     console.log('Loaded features:', features);
                     
-                    // Fill form fields
-                    document.getElementById('featuresTitle').value = features.sectionTitle || '';
-                    document.getElementById('featuresSubtitle').value = features.sectionSubtitle || '';
-                    document.getElementById('featuresDescription').value = ''; // No description field in new structure
+                    // Fill form fields with null checks
+                    const featuresTitleEl = document.getElementById('featuresTitle');
+                    const featuresSubtitleEl = document.getElementById('featuresSubtitle');
+                    const feature1TitleEl = document.getElementById('feature1Title');
+                    const feature1SubtitleEl = document.getElementById('feature1Subtitle');
+                    const feature1IconEl = document.getElementById('feature1Icon');
+                    const feature1LinkEl = document.getElementById('feature1Link');
+                    const feature1DescriptionEl = document.getElementById('feature1Description');
+                    const feature2TitleEl = document.getElementById('feature2Title');
+                    const feature2SubtitleEl = document.getElementById('feature2Subtitle');
+                    const feature2IconEl = document.getElementById('feature2Icon');
+                    const feature2LinkEl = document.getElementById('feature2Link');
+                    const feature2DescriptionEl = document.getElementById('feature2Description');
+                    const feature3TitleEl = document.getElementById('feature3Title');
+                    const feature3SubtitleEl = document.getElementById('feature3Subtitle');
+                    const feature3IconEl = document.getElementById('feature3Icon');
+                    const feature3LinkEl = document.getElementById('feature3Link');
+                    const feature3DescriptionEl = document.getElementById('feature3Description');
                     
-                    // Fill feature cards
-                    document.getElementById('feature1Title').value = features.feature1Title || '';
-                    document.getElementById('feature1Icon').value = features.feature1Icon || '';
-                    document.getElementById('feature1Description').value = features.feature1Description || '';
+                    if (featuresTitleEl) featuresTitleEl.value = features.sectionTitle || '';
+                    if (featuresSubtitleEl) featuresSubtitleEl.value = features.sectionSubtitle || '';
                     
-                    document.getElementById('feature2Title').value = features.feature2Title || '';
-                    document.getElementById('feature2Icon').value = features.feature2Icon || '';
-                    document.getElementById('feature2Description').value = features.feature2Description || '';
+                    if (feature1TitleEl) feature1TitleEl.value = features.feature1Title || '';
+                    if (feature1SubtitleEl) feature1SubtitleEl.value = features.feature1Subtitle || '';
+                    if (feature1IconEl) feature1IconEl.value = features.feature1Icon || '';
+                    if (feature1LinkEl) feature1LinkEl.value = features.feature1Link || '';
+                    if (feature1DescriptionEl) feature1DescriptionEl.value = features.feature1Description || '';
                     
-                    document.getElementById('feature3Title').value = features.feature3Title || '';
-                    document.getElementById('feature3Icon').value = features.feature3Icon || '';
-                    document.getElementById('feature3Description').value = features.feature3Description || '';
+                    if (feature2TitleEl) feature2TitleEl.value = features.feature2Title || '';
+                    if (feature2SubtitleEl) feature2SubtitleEl.value = features.feature2Subtitle || '';
+                    if (feature2IconEl) feature2IconEl.value = features.feature2Icon || '';
+                    if (feature2LinkEl) feature2LinkEl.value = features.feature2Link || '';
+                    if (feature2DescriptionEl) feature2DescriptionEl.value = features.feature2Description || '';
+                    
+                    if (feature3TitleEl) feature3TitleEl.value = features.feature3Title || '';
+                    if (feature3SubtitleEl) feature3SubtitleEl.value = features.feature3Subtitle || '';
+                    if (feature3IconEl) feature3IconEl.value = features.feature3Icon || '';
+                    if (feature3LinkEl) feature3LinkEl.value = features.feature3Link || '';
+                    if (feature3DescriptionEl) feature3DescriptionEl.value = features.feature3Description || '';
                     
                     // Update icon previews
                     updateAllIconPreviews();
@@ -2140,12 +2166,19 @@
             updateIconPreview('feature2Icon', template.feature2Icon);
             updateIconPreview('feature3Icon', template.feature3Icon);
 
+            // Show delete button for existing templates
+            document.getElementById('deleteFeaturesBtn').style.display = 'inline-flex';
+
             closeFeaturesTemplateDropdown();
         }
 
         function clearFeaturesTemplateSelection() {
             selectedFeaturesTemplateId = null;
             document.getElementById('featuresTemplateNickname').value = '';
+            
+            // Hide delete button when clearing selection
+            document.getElementById('deleteFeaturesBtn').style.display = 'none';
+            
             closeFeaturesTemplateDropdown();
         }
 
@@ -2174,6 +2207,46 @@
             setTimeout(() => {
                 dropdown.style.display = 'none';
             }, 300);
+        }
+
+        // Delete features template
+        async function deleteFeaturesTemplate() {
+            if (!selectedFeaturesTemplateId) {
+                showNotification('Error!', 'No template selected for deletion.', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this template? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('id', selectedFeaturesTemplateId);
+
+                const response = await fetch('/Admin/DeleteFeaturesTemplate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Success!', 'Features template deleted successfully!', 'success');
+                    
+                    // Clear form and reload templates
+                    clearFeaturesTemplateSelection();
+                    await loadFeaturesTemplates();
+                    
+                    // Hide delete button
+                    document.getElementById('deleteFeaturesBtn').style.display = 'none';
+                } else {
+                    showNotification('Error!', result.message || 'Failed to delete template.', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting features template:', error);
+                showNotification('Error!', 'An unexpected error occurred while deleting the template.', 'error');
+            }
         }
 
         // Features template dropdown event listeners

@@ -2,8 +2,8 @@ import React from "react";
 import Header from "../Header";
 
 const HeroSection = ({ heroData }) => {
-  // Use provided data - no fallback, should always have real data
-  const data = heroData;
+  // Use provided data - handle undefined gracefully
+  const data = heroData || {};
 
   return (
     <Header

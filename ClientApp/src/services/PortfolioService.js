@@ -1,4 +1,4 @@
-import { portfolioApi } from './api';
+import { portfolioApi, api } from './api';
 
 export const PortfolioService = {
   async getProjects() {
@@ -27,7 +27,7 @@ export const PortfolioService = {
   },
 
   async getHomepageData() {
-    const response = await portfolioApi.get('/api/portfolio/homepage');
+    const response = await api.get('/api/portfolio/homepage');
     return response.data;
   },
 };
