@@ -11,7 +11,7 @@ const FeaturesSection = () => {
     return data;
   }, []);
 
-  const { data: featuresData, loading, refetch: refetchFeatures } = usePortfolioData(fetchFeaturesData);
+  const { data: featuresData, loading } = usePortfolioData(fetchFeaturesData);
 
   // Use shared WebSocket hook
   useWebSocket('featuresDataUpdated', fetchFeaturesData);

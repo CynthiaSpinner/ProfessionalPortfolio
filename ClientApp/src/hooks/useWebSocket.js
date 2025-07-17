@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 export const useWebSocket = (messageType, onMessage) => {
   const wsRef = useRef(null);
@@ -15,7 +15,7 @@ export const useWebSocket = (messageType, onMessage) => {
     }
   };
 
-  const connectWebSocket = () => {
+  const connectWebSocket = useCallback(() => {
     try {
       wsRef.current = new WebSocket(getWebSocketUrl());
       
@@ -85,5 +85,5 @@ export const useWebSocket = (messageType, onMessage) => {
         clearInterval(fallbackPollingIntervalRef.current);
       }
     };
-  }, [messageType, onMessage]);
+  }, [messageType, onMessage, connectWebSocket]);
 }; 

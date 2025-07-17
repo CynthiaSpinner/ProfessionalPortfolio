@@ -21,7 +21,7 @@ export const usePortfolioData = (fetchFunction, dependencies = []) => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, ...dependencies]);
+  }, [fetchData, dependencies]);
 
   return { data, loading, error, refetch: fetchData };
 }; 
