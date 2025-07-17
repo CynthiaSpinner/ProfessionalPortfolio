@@ -68,7 +68,7 @@ export const useWebSocket = (messageType, onMessage) => {
         onMessage();
       }, 5000);
     }
-  };
+  }, [messageType, onMessage]);
 
   useEffect(() => {
     connectWebSocket();
