@@ -9,9 +9,9 @@ export const useWebSocket = (messageType, onMessage) => {
 
   const getWebSocketUrl = () => {
     if (process.env.NODE_ENV === 'production') {
-      return `wss://portfolio-app-1776-hkdfazazd5cqfzbk.centralus-01.azurewebsites.net/ws/portfolio`;
+      return `wss://portfolio-app-1776-hkdfazazd5cqfzbk.centralus-01.azurewebsites.net/client/hubs/portfolio`;
     } else {
-      return `ws://localhost:7094/ws/portfolio`;
+      return `ws://localhost:7094/client/hubs/portfolio`;
     }
   };
 

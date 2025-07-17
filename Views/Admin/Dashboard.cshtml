@@ -449,19 +449,21 @@
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="d-flex gap-2 justify-content-end">
-                                <button type="button" class="btn btn-secondary" onclick="toggleFeaturesEdit()">
-                                    <i class="fas fa-times"></i>
-                                    Cancel
-                                </button>
-                                <button type="button" class="btn btn-danger" onclick="deleteFeaturesTemplate()" id="deleteFeaturesBtn" style="display: none;">
+                            <div class="d-flex gap-2 justify-content-between">
+                                <button type="button" class="btn btn-danger btn-block" onclick="deleteFeaturesTemplate()" id="deleteFeaturesBtn" style="display: none;">
                                     <i class="fas fa-trash"></i>
                                     Delete Template
                                 </button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i>
-                                    Save Changes
-                                </button>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-secondary" onclick="toggleFeaturesEdit()">
+                                        <i class="fas fa-times"></i>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Save Changes
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

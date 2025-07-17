@@ -233,20 +233,15 @@ namespace Portfolio.Controllers
             }
         }
 
+
         // GET: api/portfolio/homepage - Consolidated endpoint for all homepage data
         [HttpGet("api/portfolio/homepage")]
         public async Task<IActionResult> GetHomepageData()
         {
             try
             {
-                // Load only the data that has admin editing capabilities
-                var homePageTask = _homePageService.GetHomePageAsync();
-                var featuresTask = _context.FeaturesSections.FirstOrDefaultAsync();
-
-                await Task.WhenAll(homePageTask, featuresTask);
-
-                var homePage = await homePageTask;
-                var features = await featuresTask;
+                var homePage = await _homePageService.GetHomePageAsync();
+                var features = await _context.FeaturesSections.FirstOrDefaultAsync();
 
                 // Build hero data - with fallback
                 var heroData = homePage == null ? new
@@ -259,7 +254,7 @@ namespace Portfolio.Controllers
                     primaryButtonText = "View Projects",
                     primaryButtonUrl = "/projects",
                     overlayColor = "#000000",
-                    overlayOpacity = 0.5,
+                    overlayOpacity = 0.5f,
                     lastModified = DateTime.UtcNow
                 } : new
                 {
@@ -271,7 +266,7 @@ namespace Portfolio.Controllers
                     primaryButtonText = homePage.HeaderPrimaryButtonText,
                     primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
                     overlayColor = homePage.HeaderOverlayColor,
-                    overlayOpacity = homePage.HeaderOverlayOpacity,
+                    overlayOpacity = homePage.HeaderOverlayOpacity ?? 0.5f,
                     lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
                 };
 
