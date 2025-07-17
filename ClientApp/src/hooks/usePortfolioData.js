@@ -35,7 +35,7 @@ export const usePortfolioData = (fetchFunction, dependencies = [], fallbackData 
     return () => {
       isMountedRef.current = false;
     };
-  }, [fetchFunction, ...dependencies]); // Only depend on fetchFunction and explicit dependencies
+  }, [fetchData]); // Only depend on fetchData
 
   // DISABLED: Auto-retry on error - causing infinite loops
   // useEffect(() => {

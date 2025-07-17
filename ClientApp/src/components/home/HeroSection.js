@@ -1,7 +1,5 @@
-import React, { useCallback } from "react";
+import React from "react";
 import Header from "../Header";
-import { PortfolioService } from "../../services/PortfolioService";
-import { useWebSocket, usePortfolioData } from "../../hooks";
 
 const HeroSection = ({ heroData }) => {
   const defaultHeroData = {

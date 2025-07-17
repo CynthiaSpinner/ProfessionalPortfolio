@@ -261,42 +261,48 @@ namespace Portfolio.Controllers
             try
             {
                 // Load only the data that has admin editing capabilities
-                var tasks = new[]
-                {
-                    _homePageService.GetHomePageAsync(),
-                    _context.FeaturesSections.FirstOrDefaultAsync()
-                };
+                var homePageTask = _homePageService.GetHomePageAsync();
+                var featuresTask = _context.FeaturesSections.FirstOrDefaultAsync();
 
-                var results = await Task.WhenAll(tasks);
-                var homePage = results[0] as HomePage;
-                var features = results[1] as FeaturesSection;
+                await Task.WhenAll(homePageTask, featuresTask);
+
+                var homePage = await homePageTask;
+                var features = await featuresTask;
 
                 // Build hero data
-                var heroData = homePage == null ? new
+                object heroData;
+                if (homePage == null)
                 {
-                    title = "Welcome to My Portfolio",
-                    subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
-                    description = "",
-                    backgroundImageUrl = "",
-                    backgroundVideoUrl = "",
-                    primaryButtonText = "View Projects",
-                    primaryButtonUrl = "/projects",
-                    overlayColor = "#000000",
-                    overlayOpacity = 0.5,
-                    lastModified = DateTime.UtcNow
-                } : new
+                    heroData = new
+                    {
+                        title = "Welcome to My Portfolio",
+                        subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
+                        description = "",
+                        backgroundImageUrl = "",
+                        backgroundVideoUrl = "",
+                        primaryButtonText = "View Projects",
+                        primaryButtonUrl = "/projects",
+                        overlayColor = "#000000",
+                        overlayOpacity = 0.5,
+                        lastModified = DateTime.UtcNow
+                    };
+                }
+                else
                 {
-                    title = homePage.HeaderTitle,
-                    subtitle = homePage.HeaderSubtitle,
-                    description = homePage.HeaderDescription,
-                    backgroundImageUrl = homePage.HeaderBackgroundImageUrl,
-                    backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
-                    primaryButtonText = homePage.HeaderPrimaryButtonText,
-                    primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
-                    overlayColor = homePage.HeaderOverlayColor,
-                    overlayOpacity = homePage.HeaderOverlayOpacity,
-                    lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
-                };
+                    heroData = new
+                    {
+                        title = homePage.HeaderTitle,
+                        subtitle = homePage.HeaderSubtitle,
+                        description = homePage.HeaderDescription,
+                        backgroundImageUrl = homePage.HeaderBackgroundImageUrl,
+                        backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
+                        primaryButtonText = homePage.HeaderPrimaryButtonText,
+                        primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
+                        overlayColor = homePage.HeaderOverlayColor,
+                        overlayOpacity = homePage.HeaderOverlayOpacity,
+                        lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
+                    };
+                }
 
                 // Build features data
                 var featuresData = features == null ? new
@@ -369,9 +375,9 @@ namespace Portfolio.Controllers
                 {
                     hero = heroData,
                     features = featuresData,
-                    projects = null, // Frontend handles mock data
-                    skills = null,   // Frontend handles mock data
-                    about = null,    // Frontend handles mock data
+                    projects = new object[0], // Empty array instead of null
+                    skills = new object[0],   // Empty array instead of null
+                    about = (object)null,     // Explicit null cast
                     lastModified = DateTime.UtcNow
                 });
             }

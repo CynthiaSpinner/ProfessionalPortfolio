@@ -56,7 +56,7 @@ const Home = () => {
     about: null
   };
 
-  const { data: homepageData, loading, error } = usePortfolioData(fetchHomepageData, [], fallbackData);
+  const { data: homepageData, loading } = usePortfolioData(fetchHomepageData, [], fallbackData);
 
   if (loading) {
     return (

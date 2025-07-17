@@ -1,9 +1,7 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "../HeadingGroup";
 import Card from "../Card";
-import { PortfolioService } from "../../services/PortfolioService";
-import { useWebSocket, usePortfolioData } from "../../hooks";
 
 const FeaturesSection = ({ featuresData }) => {
   const fallbackFeatures = {
