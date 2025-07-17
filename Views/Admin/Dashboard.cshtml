@@ -1144,7 +1144,7 @@
                 }
             });
 
-            // Features form submission
+            // Features form submission - exactly like Hero section
             featuresForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
@@ -1155,43 +1155,35 @@
                 submitButton.disabled = true;
                 
                 try {
-                    const formData = new FormData(featuresForm);
+                    // Get nickname from template field
+                    const nickname = document.getElementById('featuresTemplateNickname').value.trim();
                     
-                    const response = await fetch('/Admin/SaveFeaturesSection', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                        }
-                    });
-                    
-                    // Debug: Log response details
-                    console.log('Features response status:', response.status);
-                    console.log('Features response headers:', response.headers);
-                    
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Features response error text:', errorText);
-                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    if (!nickname) {
+                        showNotification('Error!', 'Please enter a nickname for the template.', 'error');
+                        return;
                     }
                     
-                    const result = await response.json();
+                    // Handle template saving/updating like Hero section
+                    const result = await handleFeaturesTemplateSave(nickname);
                     
                     if (result.success) {
                         // Show success message
-                        showNotification('Success!', 'Features section updated successfully!', 'success');
+                        showNotification('Success!', result.message, 'success');
                         
                         // Hide the form
                         toggleFeaturesEdit();
                         
-                        // Frontend will automatically detect changes within 3 seconds via WebSocket
-                        console.log('Features changes saved successfully - frontend will update automatically via WebSocket');
+                        // Reload templates
+                        await loadFeaturesTemplates();
+                        
+                        // Frontend will automatically detect changes via WebSocket
+                        console.log('Features template saved successfully - frontend will update automatically via WebSocket');
                     } else {
                         // Show error message
                         showNotification('Error!', result.message, 'error');
                     }
                 } catch (error) {
-                    console.error('Error saving features:', error);
+                    console.error('Error saving features template:', error);
                     console.error('Error details:', error.message);
                     console.error('Error stack:', error.stack);
                     showNotification('Error!', `An unexpected error occurred: ${error.message}`, 'error');
@@ -1290,6 +1282,108 @@
             } catch (error) {
                 console.error('Error handling template save:', error);
                 return { success: false, message: 'An unexpected error occurred while saving template.' };
+            }
+        }
+
+        // Handle Features template saving/updating - exactly like Hero section
+        async function handleFeaturesTemplateSave(nickname) {
+            try {
+                // Check if template already exists
+                const existingTemplate = featuresTemplates.find(t => t.nickname.toLowerCase() === nickname.toLowerCase());
+                
+                if (existingTemplate) {
+                    // Update existing template
+                    const formData = new FormData();
+                    formData.append('Id', existingTemplate.id);
+                    formData.append('Nickname', nickname);
+                    formData.append('SectionTitle', document.getElementById('featuresTitle').value || '');
+                    formData.append('SectionSubtitle', document.getElementById('featuresSubtitle').value || '');
+                    formData.append('Feature1Title', document.getElementById('feature1Title').value || '');
+                    formData.append('Feature1Subtitle', document.getElementById('feature1Subtitle').value || '');
+                    formData.append('Feature1Description', document.getElementById('feature1Description').value || '');
+                    formData.append('Feature1Icon', document.getElementById('feature1Icon').value || '');
+                    formData.append('Feature1Link', document.getElementById('feature1Link').value || '');
+                    formData.append('Feature2Title', document.getElementById('feature2Title').value || '');
+                    formData.append('Feature2Subtitle', document.getElementById('feature2Subtitle').value || '');
+                    formData.append('Feature2Description', document.getElementById('feature2Description').value || '');
+                    formData.append('Feature2Icon', document.getElementById('feature2Icon').value || '');
+                    formData.append('Feature2Link', document.getElementById('feature2Link').value || '');
+                    formData.append('Feature3Title', document.getElementById('feature3Title').value || '');
+                    formData.append('Feature3Subtitle', document.getElementById('feature3Subtitle').value || '');
+                    formData.append('Feature3Description', document.getElementById('feature3Description').value || '');
+                    formData.append('Feature3Icon', document.getElementById('feature3Icon').value || '');
+                    formData.append('Feature3Link', document.getElementById('feature3Link').value || '');
+                    formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+                    
+                    const response = await fetch('/Admin/SaveFeaturesTemplate', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    // Debug: Log response details
+                    console.log('Update features template response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Update features template error text:', errorText);
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        return { success: true, updated: true, message: result.message };
+                    } else {
+                        return { success: false, message: result.message };
+                    }
+                } else {
+                    // Create new template
+                    const formData = new FormData();
+                    formData.append('Nickname', nickname);
+                    formData.append('SectionTitle', document.getElementById('featuresTitle').value || '');
+                    formData.append('SectionSubtitle', document.getElementById('featuresSubtitle').value || '');
+                    formData.append('Feature1Title', document.getElementById('feature1Title').value || '');
+                    formData.append('Feature1Subtitle', document.getElementById('feature1Subtitle').value || '');
+                    formData.append('Feature1Description', document.getElementById('feature1Description').value || '');
+                    formData.append('Feature1Icon', document.getElementById('feature1Icon').value || '');
+                    formData.append('Feature1Link', document.getElementById('feature1Link').value || '');
+                    formData.append('Feature2Title', document.getElementById('feature2Title').value || '');
+                    formData.append('Feature2Subtitle', document.getElementById('feature2Subtitle').value || '');
+                    formData.append('Feature2Description', document.getElementById('feature2Description').value || '');
+                    formData.append('Feature2Icon', document.getElementById('feature2Icon').value || '');
+                    formData.append('Feature2Link', document.getElementById('feature2Link').value || '');
+                    formData.append('Feature3Title', document.getElementById('feature3Title').value || '');
+                    formData.append('Feature3Subtitle', document.getElementById('feature3Subtitle').value || '');
+                    formData.append('Feature3Description', document.getElementById('feature3Description').value || '');
+                    formData.append('Feature3Icon', document.getElementById('feature3Icon').value || '');
+                    formData.append('Feature3Link', document.getElementById('feature3Link').value || '');
+                    formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+                    
+                    const response = await fetch('/Admin/SaveFeaturesTemplate', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    // Debug: Log response details
+                    console.log('Save features template response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Save features template error text:', errorText);
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        return { success: true, updated: false, message: result.message };
+                    } else {
+                        return { success: false, message: result.message };
+                    }
+                }
+            } catch (error) {
+                console.error('Error handling features template save:', error);
+                return { success: false, message: 'An unexpected error occurred while saving features template.' };
             }
         }
 
@@ -2109,11 +2203,15 @@
 
         async function loadFeaturesTemplates() {
             try {
+                console.log('Loading features templates...');
                 const response = await fetch('/Admin/GetFeaturesTemplates');
                 const result = await response.json();
                 
+                console.log('Features templates response:', result);
+                
                 if (result.success) {
                     featuresTemplates = result.data || [];
+                    console.log('Loaded features templates:', featuresTemplates);
                     updateFeaturesTemplateDropdown();
                 } else {
                     console.error('Failed to load features templates:', result.message);
@@ -2136,9 +2234,14 @@
         }
 
         function selectFeaturesTemplate(templateId) {
+            console.log('selectFeaturesTemplate called with ID:', templateId);
             const template = featuresTemplates.find(t => t.id === templateId);
-            if (!template) return;
+            if (!template) {
+                console.log('Template not found for ID:', templateId);
+                return;
+            }
 
+            console.log('Template found:', template);
             selectedFeaturesTemplateId = templateId;
             document.getElementById('featuresTemplateNickname').value = template.nickname;
             
@@ -2167,7 +2270,13 @@
             updateIconPreview('feature3Icon', template.feature3Icon);
 
             // Show delete button for existing templates
-            document.getElementById('deleteFeaturesBtn').style.display = 'inline-flex';
+            const deleteBtn = document.getElementById('deleteFeaturesBtn');
+            if (deleteBtn) {
+                deleteBtn.style.display = 'inline-flex';
+                console.log('Delete button shown for template ID:', templateId);
+            } else {
+                console.error('Delete button element not found');
+            }
 
             closeFeaturesTemplateDropdown();
         }
@@ -2223,6 +2332,10 @@
             try {
                 const formData = new FormData();
                 formData.append('id', selectedFeaturesTemplateId);
+                
+                // Add anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                formData.append('__RequestVerificationToken', token);
 
                 const response = await fetch('/Admin/DeleteFeaturesTemplate', {
                     method: 'POST',
