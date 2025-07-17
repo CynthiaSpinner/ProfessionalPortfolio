@@ -27,7 +27,7 @@ export const PortfolioService = {
   },
 
   async getHomepageData() {
-    const response = await api.get('/api/portfolio/homepage');
+    const response = await api.get('/portfolio/homepage');
     return response.data;
   },
 };
