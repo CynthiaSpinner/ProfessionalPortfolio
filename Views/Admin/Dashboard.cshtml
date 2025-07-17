@@ -270,40 +270,127 @@
                 </div>
                 <div class="card-body">
                     <p class="text-muted" style="color: #9ca3af !important;">Manage the Key Skills & Technologies section with its three feature cards.</p>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title" style="color: #818cf8 !important;">Frontend Development</h6>
-                                    <button class="btn btn-primary btn-sm" onclick="editFeature('frontend')">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-primary" onclick="toggleFeaturesEdit()" id="editFeaturesBtn">
+                            <i class="fas fa-edit"></i>
+                            Edit Features
+                        </button>
+                    </div>
+                    
+                    <!-- Features Edit Form (Hidden by default) -->
+                    <div id="featuresEditForm" style="display: none !important; margin-top: 2rem;">
+                        <form id="featuresForm" asp-action="SaveFeaturesSection" asp-controller="Admin" method="post">
+                            @Html.AntiForgeryToken()
+                            
+                            <!-- Section Header -->
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Section Header</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="featuresTitle" class="form-label" style="color: #9ca3af !important;">Section Title</label>
+                                                <input type="text" class="form-control" id="featuresTitle" name="Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="featuresSubtitle" class="form-label" style="color: #9ca3af !important;">Section Subtitle</label>
+                                                <input type="text" class="form-control" id="featuresSubtitle" name="Subtitle" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="featuresDescription" class="form-label" style="color: #9ca3af !important;">Section Description</label>
+                                            <textarea class="form-control" id="featuresDescription" name="Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title" style="color: #818cf8 !important;">Backend Development</h6>
-                                    <button class="btn btn-primary btn-sm" onclick="editFeature('backend')">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
+
+                            <!-- Feature Cards -->
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Feature Cards</h5>
+                                
+                                <!-- Feature 1 -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0" style="color: #818cf8 !important;">Feature 1</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature1Title" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="feature1Title" name="Feature1Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature1Icon" class="form-label" style="color: #9ca3af !important;">Icon Class (FontAwesome)</label>
+                                                <input type="text" class="form-control" id="feature1Icon" name="Feature1Icon" maxlength="50" placeholder="fas fa-code" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="feature1Description" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                            <textarea class="form-control" id="feature1Description" name="Feature1Description" maxlength="300" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Feature 2 -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0" style="color: #818cf8 !important;">Feature 2</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature2Title" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="feature2Title" name="Feature2Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature2Icon" class="form-label" style="color: #9ca3af !important;">Icon Class (FontAwesome)</label>
+                                                <input type="text" class="form-control" id="feature2Icon" name="Feature2Icon" maxlength="50" placeholder="fas fa-server" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="feature2Description" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                            <textarea class="form-control" id="feature2Description" name="Feature2Description" maxlength="300" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Feature 3 -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0" style="color: #818cf8 !important;">Feature 3</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature3Title" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="feature3Title" name="Feature3Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature3Icon" class="form-label" style="color: #9ca3af !important;">Icon Class (FontAwesome)</label>
+                                                <input type="text" class="form-control" id="feature3Icon" name="Feature3Icon" maxlength="50" placeholder="fas fa-palette" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="feature3Description" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                            <textarea class="form-control" id="feature3Description" name="Feature3Description" maxlength="300" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title" style="color: #818cf8 !important;">Design & Tools</h6>
-                                    <button class="btn btn-primary btn-sm" onclick="editFeature('design')">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
-                                </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn btn-secondary" onclick="toggleFeaturesEdit()">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Save Changes
+                                </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -509,6 +596,108 @@
         function editFeature(featureId) {
             // TODO: Implement feature editing functionality
             console.log(`Editing feature: ${featureId}`);
+        }
+
+        // Toggle features edit form
+        function toggleFeaturesEdit() {
+            const form = document.getElementById('featuresEditForm');
+            const editButton = document.getElementById('editFeaturesBtn');
+            
+            console.log('toggleFeaturesEdit called');
+            console.log('Form display before:', form.style.display);
+            console.log('Form element:', form);
+            console.log('Edit button:', editButton);
+            
+            if (form.style.display === 'none' || form.style.display === '') {
+                // Show form, hide edit button
+                editButton.style.opacity = '0';
+                editButton.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    editButton.style.display = 'none';
+                    form.style.display = 'block';
+                    form.style.opacity = '0';
+                    form.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        form.style.opacity = '1';
+                        form.style.transform = 'translateY(0)';
+                    }, 50);
+                }, 200);
+                
+                // Load current features data
+                loadFeaturesData();
+            } else {
+                // Hide form, show edit button
+                form.style.opacity = '0';
+                form.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    form.style.display = 'none';
+                    editButton.style.display = 'inline-flex';
+                    editButton.style.opacity = '0';
+                    editButton.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        editButton.style.opacity = '1';
+                        editButton.style.transform = 'translateY(0)';
+                    }, 50);
+                }, 200);
+            }
+        }
+
+        // Load features data from API
+        async function loadFeaturesData() {
+            try {
+                console.log('Loading features data...');
+                
+                const response = await fetch('/api/portfolio/features');
+                
+                console.log('Features response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error loading features:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const features = result.data;
+                    console.log('Loaded features:', features);
+                    
+                    // Fill form fields
+                    document.getElementById('featuresTitle').value = features.title || '';
+                    document.getElementById('featuresSubtitle').value = features.subtitle || '';
+                    document.getElementById('featuresDescription').value = features.description || '';
+                    
+                    // Fill feature cards
+                    if (features.features && features.features.length >= 3) {
+                        document.getElementById('feature1Title').value = features.features[0].title || '';
+                        document.getElementById('feature1Icon').value = features.features[0].icon || '';
+                        document.getElementById('feature1Description').value = features.features[0].description || '';
+                        
+                        document.getElementById('feature2Title').value = features.features[1].title || '';
+                        document.getElementById('feature2Icon').value = features.features[1].icon || '';
+                        document.getElementById('feature2Description').value = features.features[1].description || '';
+                        
+                        document.getElementById('feature3Title').value = features.features[2].title || '';
+                        document.getElementById('feature3Icon').value = features.features[2].icon || '';
+                        document.getElementById('feature3Description').value = features.features[2].description || '';
+                    }
+                    
+                    console.log('Features form populated successfully');
+                } else {
+                    console.error('Error loading features:', result.message);
+                    showNotification('Error!', result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading features:', error);
+                console.error('Error details:', error.message);
+                console.error('Error stack:', error.stack);
+                showNotification('Error!', `An unexpected error occurred: ${error.message}`, 'error');
+            }
         }
 
         // Toggle background type
@@ -781,6 +970,7 @@
         // Initialize form submission
         function initializeFormSubmission() {
             const heroForm = document.getElementById('heroForm');
+            const featuresForm = document.getElementById('featuresForm');
             
             heroForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -848,6 +1038,64 @@
                     }
                 } catch (error) {
                     console.error('Error saving:', error);
+                    console.error('Error details:', error.message);
+                    console.error('Error stack:', error.stack);
+                    showNotification('Error!', `An unexpected error occurred: ${error.message}`, 'error');
+                } finally {
+                    // Restore button state
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }
+            });
+
+            // Features form submission
+            featuresForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitButton = featuresForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitButton.disabled = true;
+                
+                try {
+                    const formData = new FormData(featuresForm);
+                    
+                    const response = await fetch('/Admin/SaveFeaturesSection', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+                    
+                    // Debug: Log response details
+                    console.log('Features response status:', response.status);
+                    console.log('Features response headers:', response.headers);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Features response error text:', errorText);
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Show success message
+                        showNotification('Success!', 'Features section updated successfully!', 'success');
+                        
+                        // Hide the form
+                        toggleFeaturesEdit();
+                        
+                        // Frontend will automatically detect changes within 3 seconds via WebSocket
+                        console.log('Features changes saved successfully - frontend will update automatically via WebSocket');
+                    } else {
+                        // Show error message
+                        showNotification('Error!', result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error saving features:', error);
                     console.error('Error details:', error.message);
                     console.error('Error stack:', error.stack);
                     showNotification('Error!', `An unexpected error occurred: ${error.message}`, 'error');
