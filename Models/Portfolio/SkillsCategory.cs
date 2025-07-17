@@ -10,6 +10,7 @@ namespace Portfolio.Models.Portfolio
 
         [Required]
         [StringLength(100)]
+        [Column("Name")]
         public string Title { get; set; }
 
         [StringLength(500)]

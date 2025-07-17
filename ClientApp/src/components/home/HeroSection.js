@@ -3,7 +3,7 @@ import Header from "../Header";
 import { PortfolioService } from "../../services/PortfolioService";
 import { useWebSocket, usePortfolioData } from "../../hooks";
 
-const HeroSection = () => {
+const HeroSection = ({ heroData }) => {
   const defaultHeroData = {
     title: "Welcome to My Portfolio",
     subtitle: "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
@@ -17,37 +17,20 @@ const HeroSection = () => {
     lastModified: null
   };
 
-  const fetchHeroData = useCallback(async () => {
-    const data = await PortfolioService.getHeroSection();
-    return data;
-  }, []);
-
-  const { data: heroData = defaultHeroData, loading } = usePortfolioData(fetchHeroData);
-
-  // Use shared WebSocket hook
-  useWebSocket('heroDataUpdated', fetchHeroData);
-
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading hero section...</span>
-        </div>
-      </div>
-    );
-  }
+  // Use provided data or fallback to default
+  const data = heroData || defaultHeroData;
 
   return (
     <Header
-      title={heroData.title}
-      subtitle={heroData.subtitle}
-      description={heroData.description}
-      backgroundImageUrl={heroData.backgroundImageUrl}
-      backgroundVideoUrl={heroData.backgroundVideoUrl}
-      overlayColor={heroData.overlayColor}
-      overlayOpacity={heroData.overlayOpacity}
-      primaryButtonText={heroData.primaryButtonText}
-      primaryButtonUrl={heroData.primaryButtonUrl}
+      title={data.title}
+      subtitle={data.subtitle}
+      description={data.description}
+      backgroundImageUrl={data.backgroundImageUrl}
+      backgroundVideoUrl={data.backgroundVideoUrl}
+      overlayColor={data.overlayColor}
+      overlayOpacity={data.overlayOpacity}
+      primaryButtonText={data.primaryButtonText}
+      primaryButtonUrl={data.primaryButtonUrl}
       showButtons={true}
     />
   );

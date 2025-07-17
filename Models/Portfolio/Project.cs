@@ -24,6 +24,7 @@ namespace Portfolio.Models.Portfolio
         public string ProjectUrl { get; set; } = string.Empty;
 
         [Required]
+        [Column("GitHubUrl")]
         public string GithubUrl { get; set; } = string.Empty;
 
         [Column(TypeName = "json")]

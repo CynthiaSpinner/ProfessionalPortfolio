@@ -5,44 +5,51 @@ import Card from "../Card";
 import { PortfolioService } from "../../services/PortfolioService";
 import { useWebSocket, usePortfolioData } from "../../hooks";
 
-const FeaturesSection = () => {
-  const fetchFeaturesData = useCallback(async () => {
-    const data = await PortfolioService.getFeatures();
-    return data;
-  }, []);
+const FeaturesSection = ({ featuresData }) => {
+  const fallbackFeatures = {
+    title: "Key Skills & Technologies",
+    subtitle: "Explore my expertise across different domains",
+    features: [
+      {
+        title: "Frontend Development",
+        subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap",
+        description: "Building responsive and interactive user interfaces with modern frameworks and best practices.",
+        icon: "fas fa-code",
+        link: "/projects?category=frontend"
+      },
+      {
+        title: "Backend Development", 
+        subtitle: ".NET Core, C#, RESTful APIs, SQL Server",
+        description: "Creating robust server-side applications and APIs with enterprise-grade technologies.",
+        icon: "fas fa-server",
+        link: "/projects?category=backend"
+      },
+      {
+        title: "Design & Tools",
+        subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker",
+        description: "Crafting beautiful designs and managing development workflows with professional tools.",
+        icon: "fas fa-palette",
+        link: "/projects?category=design"
+      }
+    ]
+  };
 
-  const { data: featuresData, loading } = usePortfolioData(fetchFeaturesData);
-
-  // Use shared WebSocket hook
-  useWebSocket('featuresDataUpdated', fetchFeaturesData);
-
-  if (loading) {
-    return (
-      <section className="features-section py-5">
-        <Container>
-          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading features section...</span>
-            </div>
-          </div>
-        </Container>
-      </section>
-    );
-  }
+  // Use provided data or fallback to default
+  const data = featuresData || fallbackFeatures;
 
   return (
     <section className="features-section py-5">
       <Container>
         <HeadingGroup
-          title={featuresData?.title || "Key Skills & Technologies"}
-          subtitle={featuresData?.subtitle}
+          title={data?.title || "Key Skills & Technologies"}
+          subtitle={data?.subtitle}
           className="text-center mb-5"
         />
-        {featuresData?.description && (
-          <p className="text-center mb-4 text-muted">{featuresData.description}</p>
+        {data?.description && (
+          <p className="text-center mb-4 text-muted">{data.description}</p>
         )}
         <Row className="g-4">
-          {featuresData?.features?.map((feature, idx) => (
+          {data?.features?.map((feature, idx) => (
             <Col md={4} key={idx}>
               <Card 
                 className={feature.link ? "clickable-card" : ""}

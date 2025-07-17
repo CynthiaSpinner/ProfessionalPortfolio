@@ -15,19 +15,50 @@ export const PortfolioProvider = ({ children }) => {
   const fetchPortfolioData = async () => {
     try {
       setLoading(true);
-      const [aboutData, projectsData, skillsData] = await Promise.all([
-        portfolioApi.getAbout(),
-        portfolioApi.getProjects(),
-        portfolioApi.getSkills(),
-      ]);
-
-      setAbout(aboutData.data);
-      setProjects(projectsData.data);
-      setSkills(skillsData.data);
       setError(null);
+      
+      // Add timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout')), 10000); // 10 second timeout
+      });
+
+      // Load each endpoint individually to handle failures gracefully
+      try {
+        const aboutData = await Promise.race([
+          portfolioApi.getAbout(),
+          timeoutPromise
+        ]);
+        setAbout(aboutData.data);
+      } catch (err) {
+        console.warn("Failed to load about data:", err.message);
+        setAbout(null);
+      }
+
+      try {
+        const projectsData = await Promise.race([
+          portfolioApi.getProjects(),
+          timeoutPromise
+        ]);
+        setProjects(projectsData.data);
+      } catch (err) {
+        console.warn("Failed to load projects data:", err.message);
+        setProjects([]);
+      }
+
+      try {
+        const skillsData = await Promise.race([
+          portfolioApi.getSkills(),
+          timeoutPromise
+        ]);
+        setSkills(skillsData.data);
+      } catch (err) {
+        console.warn("Failed to load skills data:", err.message);
+        setSkills(null);
+      }
+
     } catch (err) {
+      console.error("Unexpected error in fetchPortfolioData:", err);
       setError("Failed to fetch portfolio data");
-      console.error("Error fetching portfolio data:", err);
     } finally {
       setLoading(false);
     }

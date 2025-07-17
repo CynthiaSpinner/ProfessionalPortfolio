@@ -102,6 +102,19 @@ namespace Portfolio.Controllers
             {
                 Console.WriteLine($"Error loading projects: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                
+                // Check if it's a database connection issue
+                if (ex.Message.Contains("connection") || ex.Message.Contains("timeout"))
+                {
+                    return StatusCode(503, new { error = "Database connection error. Please try again later." });
+                }
+                
+                // Check if it's a table/column issue
+                if (ex.Message.Contains("Invalid column name") || ex.Message.Contains("table") || ex.Message.Contains("object"))
+                {
+                    return StatusCode(500, new { error = "Database schema issue. Please run database migrations." });
+                }
+                
                 return StatusCode(500, new { error = $"Failed to load projects data: {ex.Message}" });
             }
         }
@@ -123,6 +136,19 @@ namespace Portfolio.Controllers
             {
                 Console.WriteLine($"Error loading skills: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                
+                // Check if it's a database connection issue
+                if (ex.Message.Contains("connection") || ex.Message.Contains("timeout"))
+                {
+                    return StatusCode(503, new { error = "Database connection error. Please try again later." });
+                }
+                
+                // Check if it's a table/column issue
+                if (ex.Message.Contains("Invalid column name") || ex.Message.Contains("table") || ex.Message.Contains("object"))
+                {
+                    return StatusCode(500, new { error = "Database schema issue. Please run database migrations." });
+                }
+                
                 return StatusCode(500, new { error = $"Failed to load skills data: {ex.Message}" });
             }
         }
@@ -225,6 +251,135 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = "Failed to load features data" });
+            }
+        }
+
+        // GET: api/portfolio/homepage - Consolidated endpoint for all homepage data
+        [HttpGet("api/portfolio/homepage")]
+        public async Task<IActionResult> GetHomepageData()
+        {
+            try
+            {
+                // Load only the data that has admin editing capabilities
+                var tasks = new[]
+                {
+                    _homePageService.GetHomePageAsync(),
+                    _context.FeaturesSections.FirstOrDefaultAsync()
+                };
+
+                var results = await Task.WhenAll(tasks);
+                var homePage = results[0] as HomePage;
+                var features = results[1] as FeaturesSection;
+
+                // Build hero data
+                var heroData = homePage == null ? new
+                {
+                    title = "Welcome to My Portfolio",
+                    subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
+                    description = "",
+                    backgroundImageUrl = "",
+                    backgroundVideoUrl = "",
+                    primaryButtonText = "View Projects",
+                    primaryButtonUrl = "/projects",
+                    overlayColor = "#000000",
+                    overlayOpacity = 0.5,
+                    lastModified = DateTime.UtcNow
+                } : new
+                {
+                    title = homePage.HeaderTitle,
+                    subtitle = homePage.HeaderSubtitle,
+                    description = homePage.HeaderDescription,
+                    backgroundImageUrl = homePage.HeaderBackgroundImageUrl,
+                    backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
+                    primaryButtonText = homePage.HeaderPrimaryButtonText,
+                    primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
+                    overlayColor = homePage.HeaderOverlayColor,
+                    overlayOpacity = homePage.HeaderOverlayOpacity,
+                    lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
+                };
+
+                // Build features data
+                var featuresData = features == null ? new
+                {
+                    title = "Key Skills & Technologies",
+                    subtitle = "Explore my expertise across different domains",
+                    features = new[]
+                    {
+                        new
+                        {
+                            title = "Frontend Development",
+                            subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap",
+                            description = "Building responsive and interactive user interfaces with modern frameworks and best practices.",
+                            icon = "fas fa-code",
+                            link = "/projects?category=frontend"
+                        },
+                        new
+                        {
+                            title = "Backend Development",
+                            subtitle = ".NET Core, C#, RESTful APIs, SQL Server",
+                            description = "Creating robust server-side applications and APIs with enterprise-grade technologies.",
+                            icon = "fas fa-server",
+                            link = "/projects?category=backend"
+                        },
+                        new
+                        {
+                            title = "Design & Tools",
+                            subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker",
+                            description = "Crafting beautiful designs and managing development workflows with professional tools.",
+                            icon = "fas fa-palette",
+                            link = "/projects?category=design"
+                        }
+                    },
+                    lastModified = DateTime.UtcNow
+                } : new
+                {
+                    title = features.SectionTitle,
+                    subtitle = features.SectionSubtitle,
+                    features = new[]
+                    {
+                        new
+                        {
+                            title = features.Feature1Title,
+                            subtitle = features.Feature1Subtitle,
+                            description = features.Feature1Description,
+                            icon = features.Feature1Icon,
+                            link = features.Feature1Link
+                        },
+                        new
+                        {
+                            title = features.Feature2Title,
+                            subtitle = features.Feature2Subtitle,
+                            description = features.Feature2Description,
+                            icon = features.Feature2Icon,
+                            link = features.Feature2Link
+                        },
+                        new
+                        {
+                            title = features.Feature3Title,
+                            subtitle = features.Feature3Subtitle,
+                            description = features.Feature3Description,
+                            icon = features.Feature3Icon,
+                            link = features.Feature3Link
+                        }
+                    },
+                    lastModified = features.UpdatedAt
+                };
+
+                return Json(new
+                {
+                    hero = heroData,
+                    features = featuresData,
+                    projects = null, // Frontend handles mock data
+                    skills = null,   // Frontend handles mock data
+                    about = null,    // Frontend handles mock data
+                    lastModified = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading homepage data: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return StatusCode(500, new { error = "Failed to load homepage data" });
             }
         }
     }
