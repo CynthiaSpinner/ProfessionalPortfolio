@@ -601,6 +601,132 @@ namespace Portfolio.Controllers
             }
         }
 
+        // GET: Admin/GetFeaturesTemplates
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetFeaturesTemplates()
+        {
+            try
+            {
+                var templates = await _context.FeaturesTemplates
+                    .OrderByDescending(t => t.UpdatedAt ?? t.CreatedAt)
+                    .ToListAsync();
+                return Json(new { success = true, data = templates });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving features templates");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // POST: Admin/SaveFeaturesTemplate
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveFeaturesTemplate([FromForm] FeaturesTemplateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                FeaturesTemplate template;
+                if (model.Id == null || model.Id == 0)
+                {
+                    // Create new template
+                    template = new FeaturesTemplate
+                    {
+                        Nickname = model.Nickname ?? "New Template",
+                        SectionTitle = model.SectionTitle ?? "Key Skills & Technologies",
+                        SectionSubtitle = model.SectionSubtitle ?? "Explore my expertise across different domains",
+                        Feature1Title = model.Feature1Title ?? "Frontend Development",
+                        Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap",
+                        Feature1Description = model.Feature1Description ?? "Building responsive and interactive user interfaces with modern frameworks and best practices.",
+                        Feature1Icon = model.Feature1Icon ?? "fas fa-code",
+                        Feature1Link = model.Feature1Link ?? "/projects?category=frontend",
+                        Feature2Title = model.Feature2Title ?? "Backend Development",
+                        Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, SQL Server",
+                        Feature2Description = model.Feature2Description ?? "Creating robust server-side applications and APIs with enterprise-grade technologies.",
+                        Feature2Icon = model.Feature2Icon ?? "fas fa-server",
+                        Feature2Link = model.Feature2Link ?? "/projects?category=backend",
+                        Feature3Title = model.Feature3Title ?? "Design & Tools",
+                        Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker",
+                        Feature3Description = model.Feature3Description ?? "Crafting beautiful designs and managing development workflows with professional tools.",
+                        Feature3Icon = model.Feature3Icon ?? "fas fa-palette",
+                        Feature3Link = model.Feature3Link ?? "/projects?category=design",
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.FeaturesTemplates.Add(template);
+                }
+                else
+                {
+                    // Update existing template
+                    template = await _context.FeaturesTemplates.FindAsync(model.Id);
+                    if (template == null)
+                    {
+                        return Json(new { success = false, message = "Template not found" });
+                    }
+
+                    template.Nickname = model.Nickname ?? template.Nickname;
+                    template.SectionTitle = model.SectionTitle ?? template.SectionTitle;
+                    template.SectionSubtitle = model.SectionSubtitle ?? template.SectionSubtitle;
+                    template.Feature1Title = model.Feature1Title ?? template.Feature1Title;
+                    template.Feature1Subtitle = model.Feature1Subtitle ?? template.Feature1Subtitle;
+                    template.Feature1Description = model.Feature1Description ?? template.Feature1Description;
+                    template.Feature1Icon = model.Feature1Icon ?? template.Feature1Icon;
+                    template.Feature1Link = model.Feature1Link ?? template.Feature1Link;
+                    template.Feature2Title = model.Feature2Title ?? template.Feature2Title;
+                    template.Feature2Subtitle = model.Feature2Subtitle ?? template.Feature2Subtitle;
+                    template.Feature2Description = model.Feature2Description ?? template.Feature2Description;
+                    template.Feature2Icon = model.Feature2Icon ?? template.Feature2Icon;
+                    template.Feature2Link = model.Feature2Link ?? template.Feature2Link;
+                    template.Feature3Title = model.Feature3Title ?? template.Feature3Title;
+                    template.Feature3Subtitle = model.Feature3Subtitle ?? template.Feature3Subtitle;
+                    template.Feature3Description = model.Feature3Description ?? template.Feature3Description;
+                    template.Feature3Icon = model.Feature3Icon ?? template.Feature3Icon;
+                    template.Feature3Link = model.Feature3Link ?? template.Feature3Link;
+                    template.UpdatedAt = DateTime.UtcNow;
+                }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, data = template });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving features template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // DELETE: Admin/DeleteFeaturesTemplate
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteFeaturesTemplate(int id)
+        {
+            try
+            {
+                var template = await _context.FeaturesTemplates.FindAsync(id);
+                if (template == null)
+                {
+                    return Json(new { success = false, message = "Template not found" });
+                }
+
+                _context.FeaturesTemplates.Remove(template);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Features template deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting features template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         public class LoginModel
         {
             public string? Username { get; set; }
@@ -660,6 +786,29 @@ namespace Portfolio.Controllers
             public string? Feature3Link { get; set; }
             public bool IsActive { get; set; } = true;
             public int DisplayOrder { get; set; } = 1;
+        }
+
+        public class FeaturesTemplateModel
+        {
+            public int? Id { get; set; }
+            public string? Nickname { get; set; }
+            public string? SectionTitle { get; set; }
+            public string? SectionSubtitle { get; set; }
+            public string? Feature1Title { get; set; }
+            public string? Feature1Subtitle { get; set; }
+            public string? Feature1Description { get; set; }
+            public string? Feature1Icon { get; set; }
+            public string? Feature1Link { get; set; }
+            public string? Feature2Title { get; set; }
+            public string? Feature2Subtitle { get; set; }
+            public string? Feature2Description { get; set; }
+            public string? Feature2Icon { get; set; }
+            public string? Feature2Link { get; set; }
+            public string? Feature3Title { get; set; }
+            public string? Feature3Subtitle { get; set; }
+            public string? Feature3Description { get; set; }
+            public string? Feature3Icon { get; set; }
+            public string? Feature3Link { get; set; }
         }
     }
 }

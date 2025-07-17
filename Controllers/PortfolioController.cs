@@ -269,75 +269,33 @@ namespace Portfolio.Controllers
                 var homePage = await homePageTask;
                 var features = await featuresTask;
 
-                // Build hero data
-                object heroData;
+                // Build hero data - must have data
                 if (homePage == null)
                 {
-                    heroData = new
-                    {
-                        title = "Welcome to My Portfolio",
-                        subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
-                        description = "",
-                        backgroundImageUrl = "",
-                        backgroundVideoUrl = "",
-                        primaryButtonText = "View Projects",
-                        primaryButtonUrl = "/projects",
-                        overlayColor = "#000000",
-                        overlayOpacity = 0.5,
-                        lastModified = DateTime.UtcNow
-                    };
-                }
-                else
-                {
-                    heroData = new
-                    {
-                        title = homePage.HeaderTitle,
-                        subtitle = homePage.HeaderSubtitle,
-                        description = homePage.HeaderDescription,
-                        backgroundImageUrl = homePage.HeaderBackgroundImageUrl,
-                        backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
-                        primaryButtonText = homePage.HeaderPrimaryButtonText,
-                        primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
-                        overlayColor = homePage.HeaderOverlayColor,
-                        overlayOpacity = homePage.HeaderOverlayOpacity,
-                        lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
-                    };
+                    return StatusCode(404, new { error = "No hero data found. Please create hero content in the admin dashboard." });
                 }
 
-                // Build features data
-                var featuresData = features == null ? new
+                var heroData = new
                 {
-                    title = "Key Skills & Technologies",
-                    subtitle = "Explore my expertise across different domains",
-                    features = new[]
-                    {
-                        new
-                        {
-                            title = "Frontend Development",
-                            subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap",
-                            description = "Building responsive and interactive user interfaces with modern frameworks and best practices.",
-                            icon = "fas fa-code",
-                            link = "/projects?category=frontend"
-                        },
-                        new
-                        {
-                            title = "Backend Development",
-                            subtitle = ".NET Core, C#, RESTful APIs, SQL Server",
-                            description = "Creating robust server-side applications and APIs with enterprise-grade technologies.",
-                            icon = "fas fa-server",
-                            link = "/projects?category=backend"
-                        },
-                        new
-                        {
-                            title = "Design & Tools",
-                            subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker",
-                            description = "Crafting beautiful designs and managing development workflows with professional tools.",
-                            icon = "fas fa-palette",
-                            link = "/projects?category=design"
-                        }
-                    },
-                    lastModified = DateTime.UtcNow
-                } : new
+                    title = homePage.HeaderTitle,
+                    subtitle = homePage.HeaderSubtitle,
+                    description = homePage.HeaderDescription,
+                    backgroundImageUrl = homePage.HeaderBackgroundImageUrl,
+                    backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
+                    primaryButtonText = homePage.HeaderPrimaryButtonText,
+                    primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
+                    overlayColor = homePage.HeaderOverlayColor,
+                    overlayOpacity = homePage.HeaderOverlayOpacity,
+                    lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
+                };
+
+                // Build features data - must have data
+                if (features == null)
+                {
+                    return StatusCode(404, new { error = "No features data found. Please create features content in the admin dashboard." });
+                }
+
+                var featuresData = new
                 {
                     title = features.SectionTitle,
                     subtitle = features.SectionSubtitle,

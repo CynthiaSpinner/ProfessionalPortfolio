@@ -282,6 +282,31 @@
                         <form id="featuresForm" asp-action="SaveFeaturesSection" asp-controller="Admin" method="post">
                             @Html.AntiForgeryToken()
                             
+                            <!-- Template Section -->
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Template</h5>
+                                <div class="card" style="overflow: visible;">
+                                    <div class="card-body" style="overflow: visible;">
+                                        <div class="mb-3" style="position: relative;">
+                                            <label for="featuresTemplateNickname" class="form-label" style="color: #9ca3af !important;">Nickname</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="featuresTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <button class="btn btn-outline-secondary" type="button" id="featuresTemplateDropdownBtn" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important; padding: 0.375rem 0.5rem !important; min-width: auto !important; display: flex !important; align-items: center !important; justify-content: center !important; background: transparent !important; width: 40px !important; height: 38px !important; line-height: 1 !important;">
+                                                    <i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>
+                                                </button>
+                                            </div>
+                                            <!-- Dropdown menu inside the card -->
+                                            <div id="featuresCustomDropdownMenu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0, 0, 10, 0.95); border: 1px solid rgba(129, 140, 248, 0.3); border-top: none; backdrop-filter: blur(10px); z-index: 99999999 !important; border-radius: 0 0 4px 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateY(-10px) scale(0.95); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-top: -1px;">
+                                                <div class="dropdown-item" onclick="clearFeaturesTemplateSelection()" style="color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease;" onmouseenter="this.style.background='rgba(129, 140, 248, 0.1)';" onmouseleave="this.style.background='transparent';">Clear Selection</div>
+                                                <div id="featuresTemplateOptions">
+                                                    <!-- Template options will be loaded here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Section Header -->
                             <div class="mb-4">
                                 <h5 class="mb-3" style="color: #818cf8 !important;">Section Header</h5>
@@ -290,16 +315,12 @@
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label for="featuresTitle" class="form-label" style="color: #9ca3af !important;">Section Title</label>
-                                                <input type="text" class="form-control" id="featuresTitle" name="Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <input type="text" class="form-control" id="featuresTitle" name="SectionTitle" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label for="featuresSubtitle" class="form-label" style="color: #9ca3af !important;">Section Subtitle</label>
-                                                <input type="text" class="form-control" id="featuresSubtitle" name="Subtitle" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <input type="text" class="form-control" id="featuresSubtitle" name="SectionSubtitle" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="featuresDescription" class="form-label" style="color: #9ca3af !important;">Section Description</label>
-                                            <textarea class="form-control" id="featuresDescription" name="Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -321,19 +342,29 @@
                                                 <input type="text" class="form-control" id="feature1Title" name="Feature1Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
+                                                <label for="feature1Subtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="feature1Subtitle" name="Feature1Subtitle" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
                                                 <label for="feature1Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="feature1Icon" name="Feature1Icon" maxlength="100" placeholder="fas fa-code" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                    <input type="text" class="form-control" id="feature1Icon" name="Feature1Icon" maxlength="50" placeholder="fas fa-code" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                                     <button class="btn btn-outline-secondary" type="button" onclick="openIconPicker('feature1Icon')" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important;">
                                                         <i class="fas fa-icons"></i>
                                                     </button>
                                                 </div>
                                                 <div id="feature1IconPreview" class="mt-2" style="color: #818cf8 !important; font-size: 1.2rem;"></div>
                                             </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature1Link" class="form-label" style="color: #9ca3af !important;">Link</label>
+                                                <input type="text" class="form-control" id="feature1Link" name="Feature1Link" maxlength="200" placeholder="/projects?category=frontend" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="feature1Description" class="form-label" style="color: #9ca3af !important;">Description</label>
-                                            <textarea class="form-control" id="feature1Description" name="Feature1Description" maxlength="300" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                            <textarea class="form-control" id="feature1Description" name="Feature1Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -350,19 +381,29 @@
                                                 <input type="text" class="form-control" id="feature2Title" name="Feature2Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
+                                                <label for="feature2Subtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="feature2Subtitle" name="Feature2Subtitle" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
                                                 <label for="feature2Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="feature2Icon" name="Feature2Icon" maxlength="100" placeholder="fas fa-server" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                    <input type="text" class="form-control" id="feature2Icon" name="Feature2Icon" maxlength="50" placeholder="fas fa-server" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                                     <button class="btn btn-outline-secondary" type="button" onclick="openIconPicker('feature2Icon')" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important;">
                                                         <i class="fas fa-icons"></i>
                                                     </button>
                                                 </div>
                                                 <div id="feature2IconPreview" class="mt-2" style="color: #818cf8 !important; font-size: 1.2rem;"></div>
                                             </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature2Link" class="form-label" style="color: #9ca3af !important;">Link</label>
+                                                <input type="text" class="form-control" id="feature2Link" name="Feature2Link" maxlength="200" placeholder="/projects?category=backend" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="feature2Description" class="form-label" style="color: #9ca3af !important;">Description</label>
-                                            <textarea class="form-control" id="feature2Description" name="Feature2Description" maxlength="300" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                            <textarea class="form-control" id="feature2Description" name="Feature2Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -379,19 +420,29 @@
                                                 <input type="text" class="form-control" id="feature3Title" name="Feature3Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                             <div class="col-md-6 mb-3">
+                                                <label for="feature3Subtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="feature3Subtitle" name="Feature3Subtitle" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
                                                 <label for="feature3Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="feature3Icon" name="Feature3Icon" maxlength="100" placeholder="fas fa-palette" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                    <input type="text" class="form-control" id="feature3Icon" name="Feature3Icon" maxlength="50" placeholder="fas fa-palette" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                                     <button class="btn btn-outline-secondary" type="button" onclick="openIconPicker('feature3Icon')" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important;">
                                                         <i class="fas fa-icons"></i>
                                                     </button>
                                                 </div>
                                                 <div id="feature3IconPreview" class="mt-2" style="color: #818cf8 !important; font-size: 1.2rem;"></div>
                                             </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature3Link" class="form-label" style="color: #9ca3af !important;">Link</label>
+                                                <input type="text" class="form-control" id="feature3Link" name="Feature3Link" maxlength="200" placeholder="/projects?category=design" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="feature3Description" class="form-label" style="color: #9ca3af !important;">Description</label>
-                                            <textarea class="form-control" id="feature3Description" name="Feature3Description" maxlength="300" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                            <textarea class="form-control" id="feature3Description" name="Feature3Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -2026,6 +2077,136 @@
             });
         }
         
+        // Features template functionality
+        let featuresTemplates = [];
+        let selectedFeaturesTemplateId = null;
+
+        async function loadFeaturesTemplates() {
+            try {
+                const response = await fetch('/Admin/GetFeaturesTemplates');
+                const result = await response.json();
+                
+                if (result.success) {
+                    featuresTemplates = result.data || [];
+                    updateFeaturesTemplateDropdown();
+                } else {
+                    console.error('Failed to load features templates:', result.message);
+                }
+            } catch (error) {
+                console.error('Error loading features templates:', error);
+            }
+        }
+
+        function updateFeaturesTemplateDropdown() {
+            const dropdown = document.getElementById('featuresTemplateOptions');
+            if (!dropdown) return;
+
+            dropdown.innerHTML = featuresTemplates.map(template => `
+                <div class="dropdown-item" onclick="selectFeaturesTemplate(${template.id})" style="color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease; border-bottom: 1px solid rgba(129, 140, 248, 0.1);" onmouseenter="this.style.background='rgba(129, 140, 248, 0.1)';" onmouseleave="this.style.background='transparent';">
+                    <div style="font-weight: 500;">${template.nickname}</div>
+                    <div style="font-size: 0.8rem; color: #6b7280;">${template.sectionTitle}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectFeaturesTemplate(templateId) {
+            const template = featuresTemplates.find(t => t.id === templateId);
+            if (!template) return;
+
+            selectedFeaturesTemplateId = templateId;
+            document.getElementById('featuresTemplateNickname').value = template.nickname;
+            
+            // Populate form fields
+            document.getElementById('featuresTitle').value = template.sectionTitle;
+            document.getElementById('featuresSubtitle').value = template.sectionSubtitle;
+            document.getElementById('feature1Title').value = template.feature1Title;
+            document.getElementById('feature1Subtitle').value = template.feature1Subtitle;
+            document.getElementById('feature1Description').value = template.feature1Description;
+            document.getElementById('feature1Icon').value = template.feature1Icon;
+            document.getElementById('feature1Link').value = template.feature1Link;
+            document.getElementById('feature2Title').value = template.feature2Title;
+            document.getElementById('feature2Subtitle').value = template.feature2Subtitle;
+            document.getElementById('feature2Description').value = template.feature2Description;
+            document.getElementById('feature2Icon').value = template.feature2Icon;
+            document.getElementById('feature2Link').value = template.feature2Link;
+            document.getElementById('feature3Title').value = template.feature3Title;
+            document.getElementById('feature3Subtitle').value = template.feature3Subtitle;
+            document.getElementById('feature3Description').value = template.feature3Description;
+            document.getElementById('feature3Icon').value = template.feature3Icon;
+            document.getElementById('feature3Link').value = template.feature3Link;
+
+            // Update icon previews
+            updateIconPreview('feature1Icon', template.feature1Icon);
+            updateIconPreview('feature2Icon', template.feature2Icon);
+            updateIconPreview('feature3Icon', template.feature3Icon);
+
+            closeFeaturesTemplateDropdown();
+        }
+
+        function clearFeaturesTemplateSelection() {
+            selectedFeaturesTemplateId = null;
+            document.getElementById('featuresTemplateNickname').value = '';
+            closeFeaturesTemplateDropdown();
+        }
+
+        function toggleFeaturesTemplateDropdown() {
+            const dropdown = document.getElementById('featuresCustomDropdownMenu');
+            const button = document.getElementById('featuresTemplateDropdownBtn');
+            
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                dropdown.style.display = 'block';
+                dropdown.style.opacity = '1';
+                dropdown.style.transform = 'translateY(0) scale(1)';
+                button.innerHTML = '<i class="fas fa-chevron-up" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>';
+            } else {
+                closeFeaturesTemplateDropdown();
+            }
+        }
+
+        function closeFeaturesTemplateDropdown() {
+            const dropdown = document.getElementById('featuresCustomDropdownMenu');
+            const button = document.getElementById('featuresTemplateDropdownBtn');
+            
+            dropdown.style.opacity = '0';
+            dropdown.style.transform = 'translateY(-10px) scale(0.95)';
+            button.innerHTML = '<i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>';
+            
+            setTimeout(() => {
+                dropdown.style.display = 'none';
+            }, 300);
+        }
+
+        // Features template dropdown event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const featuresTemplateBtn = document.getElementById('featuresTemplateDropdownBtn');
+            const featuresTemplateInput = document.getElementById('featuresTemplateNickname');
+            
+            if (featuresTemplateBtn) {
+                featuresTemplateBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleFeaturesTemplateDropdown();
+                });
+            }
+            
+            if (featuresTemplateInput) {
+                featuresTemplateInput.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleFeaturesTemplateDropdown();
+                });
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const dropdown = document.getElementById('featuresCustomDropdownMenu');
+                const button = document.getElementById('featuresTemplateDropdownBtn');
+                const input = document.getElementById('featuresTemplateNickname');
+                
+                if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target) && !input.contains(e.target)) {
+                    closeFeaturesTemplateDropdown();
+                }
+            });
+        });
+
         // Connect WebSocket when page loads
         document.addEventListener('DOMContentLoaded', function() {
             // Disable WebSocket for admin dashboard since it's served by the same backend
@@ -2037,6 +2218,7 @@
             console.log('Form computed display on load:', window.getComputedStyle(form).display);
             
             loadTemplates();
+            loadFeaturesTemplates();
             updateAllIconPreviews();
         });
     </script>
