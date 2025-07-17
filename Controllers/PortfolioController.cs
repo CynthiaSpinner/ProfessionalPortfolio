@@ -141,5 +141,47 @@ namespace Portfolio.Controllers
                 return StatusCode(500, new { error = "Failed to load about data" });
             }
         }
+
+        // GET: api/portfolio/features
+        [HttpGet("api/portfolio/features")]
+        public async Task<IActionResult> GetFeatures()
+        {
+            try
+            {
+                var features = await _context.FeaturesSections.FirstOrDefaultAsync();
+                
+                if (features == null)
+                {
+                    // Return default features if none exist
+                    return Json(new
+                    {
+                        sectionTitle = "Key Skills & Technologies",
+                        feature1Title = "Frontend Development",
+                        feature1Subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap",
+                        feature2Title = "Backend Development",
+                        feature2Subtitle = ".NET Core, C#, RESTful APIs, MySQL",
+                        feature3Title = "Design & Tools",
+                        feature3Subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker",
+                        lastModified = DateTime.UtcNow
+                    });
+                }
+
+                return Json(new
+                {
+                    sectionTitle = features.SectionTitle,
+                    feature1Title = features.Feature1Title,
+                    feature1Subtitle = features.Feature1Subtitle,
+                    feature2Title = features.Feature2Title,
+                    feature2Subtitle = features.Feature2Subtitle,
+                    feature3Title = features.Feature3Title,
+                    feature3Subtitle = features.Feature3Subtitle,
+                    lastModified = features.UpdatedAt
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to load features data" });
+            }
+        }
     }
 }

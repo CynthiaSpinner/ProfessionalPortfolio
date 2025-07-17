@@ -485,6 +485,98 @@ namespace Portfolio.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveFeaturesSection([FromForm] FeaturesSectionModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                // Get existing features section or create new one
+                var featuresSection = await _context.FeaturesSections.FirstOrDefaultAsync();
+                
+                if (featuresSection == null)
+                {
+                    featuresSection = new FeaturesSection();
+                    _context.FeaturesSections.Add(featuresSection);
+                }
+
+                // Update features section properties
+                featuresSection.SectionTitle = model.SectionTitle ?? "Key Skills & Technologies";
+                featuresSection.Feature1Title = model.Feature1Title ?? "Frontend Development";
+                featuresSection.Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap";
+                featuresSection.Feature2Title = model.Feature2Title ?? "Backend Development";
+                featuresSection.Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, MySQL";
+                featuresSection.Feature3Title = model.Feature3Title ?? "Design & Tools";
+                featuresSection.Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker";
+                featuresSection.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                // Broadcast WebSocket message for real-time updates
+                _webSocketService.BroadcastMessage(new { type = "featuresDataUpdated" });
+
+                return Json(new { success = true, message = "Features section saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving features section");
+                return Json(new { success = false, message = "An error occurred while saving the features section." });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetFeaturesSection()
+        {
+            try
+            {
+                var featuresSection = await _context.FeaturesSections.FirstOrDefaultAsync();
+                
+                if (featuresSection == null)
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = "Features section not found.",
+                        data = (object)null 
+                    });
+                }
+
+                var featuresData = new
+                {
+                    sectionTitle = featuresSection.SectionTitle,
+                    feature1Title = featuresSection.Feature1Title,
+                    feature1Subtitle = featuresSection.Feature1Subtitle,
+                    feature2Title = featuresSection.Feature2Title,
+                    feature2Subtitle = featuresSection.Feature2Subtitle,
+                    feature3Title = featuresSection.Feature3Title,
+                    feature3Subtitle = featuresSection.Feature3Subtitle,
+                    updatedAt = featuresSection.UpdatedAt
+                };
+
+                return Json(new { 
+                    success = true, 
+                    message = "Features section retrieved successfully.",
+                    data = featuresData 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving features section: {Message}", ex.Message);
+                return Json(new { 
+                    success = false, 
+                    message = $"An error occurred while retrieving the features section: {ex.Message}",
+                    data = (object)null 
+                });
+            }
+        }
+
         public class LoginModel
         {
             public string? Username { get; set; }
@@ -521,6 +613,17 @@ namespace Portfolio.Controllers
             public int ImageOverlayOpacity { get; set; } = 50;
             public string? VideoOverlayColor { get; set; }
             public int VideoOverlayOpacity { get; set; } = 50;
+        }
+
+        public class FeaturesSectionModel
+        {
+            public string? SectionTitle { get; set; }
+            public string? Feature1Title { get; set; }
+            public string? Feature1Subtitle { get; set; }
+            public string? Feature2Title { get; set; }
+            public string? Feature2Subtitle { get; set; }
+            public string? Feature3Title { get; set; }
+            public string? Feature3Subtitle { get; set; }
         }
     }
 }
