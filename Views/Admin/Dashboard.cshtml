@@ -296,7 +296,7 @@
                                                 </button>
                                             </div>
                                             <!-- Dropdown menu inside the card -->
-                                            <div id="featuresCustomDropdownMenu" style="display: none; position: absolute; top: 100%; right: 0; width: 40px; background: rgba(0, 0, 10, 0.95); border: 1px solid rgba(129, 140, 248, 0.3); border-top: none; backdrop-filter: blur(10px); z-index: 99999999 !important; border-bottom-left-radius: 4px !important; border-bottom-right-radius: 4px !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateY(-10px) scale(0.95); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-top: -1px;">
+                                            <div id="featuresCustomDropdownMenu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0, 0, 10, 0.95); border: 1px solid rgba(129, 140, 248, 0.3); border-top: none; backdrop-filter: blur(10px); z-index: 99999999 !important; border-bottom-left-radius: 4px !important; border-bottom-right-radius: 4px !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateY(-10px) scale(0.95); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-top: -1px;">
                                                 <div class="dropdown-item" onclick="clearFeaturesTemplateSelection()" style="color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease;" onmouseenter="this.style.background='rgba(129, 140, 248, 0.1)';" onmouseleave="this.style.background='transparent';">Clear Selection</div>
                                                 <div id="featuresTemplateOptions">
                                                     <!-- Template options will be loaded here -->
@@ -1165,12 +1165,43 @@
                         return;
                     }
                     
-                    // Handle template saving/updating like Hero section
-                    const result = await handleFeaturesTemplateSave(nickname);
+                    // Step 1: Handle template saving/updating like Hero section
+                    const templateResult = await handleFeaturesTemplateSave(nickname);
+                    
+                    if (!templateResult.success) {
+                        showNotification('Error!', templateResult.message, 'error');
+                        return;
+                    }
+                    
+                    // Step 2: Save to frontend (like Hero section does)
+                    const formData = new FormData(featuresForm);
+                    
+                    const response = await fetch('/Admin/SaveFeaturesSection', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+                    
+                    // Debug: Log response details
+                    console.log('Features section response status:', response.status);
+                    console.log('Features section response headers:', response.headers);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Features section response error text:', errorText);
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
                     
                     if (result.success) {
                         // Show success message
-                        showNotification('Success!', result.message, 'success');
+                        const message = nickname && templateResult ? 
+                            `Template "${nickname}" ${templateResult.updated ? 'updated' : 'saved'} and features section updated successfully!` :
+                            'Features section updated successfully!';
+                        showNotification('Success!', message, 'success');
                         
                         // Hide the form
                         toggleFeaturesEdit();
@@ -1179,7 +1210,7 @@
                         await loadFeaturesTemplates();
                         
                         // Frontend will automatically detect changes via WebSocket
-                        console.log('Features template saved successfully - frontend will update automatically via WebSocket');
+                        console.log('Features changes saved successfully - frontend will update automatically via WebSocket');
                     } else {
                         // Show error message
                         showNotification('Error!', result.message, 'error');

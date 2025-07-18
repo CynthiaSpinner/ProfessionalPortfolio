@@ -611,6 +611,14 @@ namespace Portfolio.Controllers
             {
                 Console.WriteLine($"GetFeaturesTemplate: Loading template with ID {id}");
                 
+                // First check if the table exists and has data
+                var templateCount = await _context.FeaturesTemplates.CountAsync();
+                Console.WriteLine($"GetFeaturesTemplate: Total templates in database: {templateCount}");
+                
+                // Get all template IDs for debugging
+                var allTemplateIds = await _context.FeaturesTemplates.Select(t => t.Id).ToListAsync();
+                Console.WriteLine($"GetFeaturesTemplate: Available template IDs: [{string.Join(", ", allTemplateIds)}]");
+                
                 var template = await _context.FeaturesTemplates.FindAsync(id);
                 
                 if (template == null)
@@ -618,7 +626,7 @@ namespace Portfolio.Controllers
                     Console.WriteLine($"GetFeaturesTemplate: Template with ID {id} not found");
                     return Json(new { 
                         success = false, 
-                        message = "Template not found.",
+                        message = $"Template with ID {id} not found. Available IDs: [{string.Join(", ", allTemplateIds)}]",
                         data = (object)null 
                     });
                 }
@@ -651,6 +659,8 @@ namespace Portfolio.Controllers
                     createdAt = template.CreatedAt,
                     updatedAt = template.UpdatedAt
                 };
+                
+                Console.WriteLine($"GetFeaturesTemplate: Returning template data for {template.Nickname}");
                 
                 return Json(new { 
                     success = true, 
@@ -799,7 +809,39 @@ namespace Portfolio.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, data = template });
+                
+                // Return properly formatted data like GetFeaturesTemplate
+                var templateData = new
+                {
+                    id = template.Id,
+                    nickname = template.Nickname,
+                    sectionTitle = template.SectionTitle,
+                    sectionSubtitle = template.SectionSubtitle,
+                    sectionDescription = template.SectionDescription,
+                    feature1Title = template.Feature1Title,
+                    feature1Subtitle = template.Feature1Subtitle,
+                    feature1Description = template.Feature1Description,
+                    feature1Icon = template.Feature1Icon,
+                    feature1Link = template.Feature1Link,
+                    feature2Title = template.Feature2Title,
+                    feature2Subtitle = template.Feature2Subtitle,
+                    feature2Description = template.Feature2Description,
+                    feature2Icon = template.Feature2Icon,
+                    feature2Link = template.Feature2Link,
+                    feature3Title = template.Feature3Title,
+                    feature3Subtitle = template.Feature3Subtitle,
+                    feature3Description = template.Feature3Description,
+                    feature3Icon = template.Feature3Icon,
+                    feature3Link = template.Feature3Link,
+                    createdAt = template.CreatedAt,
+                    updatedAt = template.UpdatedAt
+                };
+                
+                return Json(new { 
+                    success = true, 
+                    message = $"Features template '{template.Nickname}' saved successfully!",
+                    data = templateData 
+                });
             }
             catch (Exception ex)
             {
