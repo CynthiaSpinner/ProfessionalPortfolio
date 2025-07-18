@@ -2224,73 +2224,155 @@
         }
 
         function updateFeaturesTemplateDropdown() {
-            const dropdown = document.getElementById('featuresTemplateOptions');
-            if (!dropdown) return;
-
-            dropdown.innerHTML = featuresTemplates.map(template => `
-                <div class="dropdown-item" onclick="selectFeaturesTemplate(${template.id})" style="color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease; border-bottom: 1px solid rgba(129, 140, 248, 0.1);" onmouseenter="this.style.background='rgba(129, 140, 248, 0.1)';" onmouseleave="this.style.background='transparent';">
-                    <div style="font-weight: 500;">${template.nickname}</div>
-                    <div style="font-size: 0.8rem; color: #6b7280;">${template.sectionTitle}</div>
-                </div>
-            `).join('');
-        }
-
-        function selectFeaturesTemplate(templateId) {
-            console.log('selectFeaturesTemplate called with ID:', templateId);
-            const template = featuresTemplates.find(t => t.id === templateId);
-            if (!template) {
-                console.log('Template not found for ID:', templateId);
-                return;
-            }
-
-            console.log('Template found:', template);
-            selectedFeaturesTemplateId = templateId;
-            document.getElementById('featuresTemplateNickname').value = template.nickname;
+            console.log('Updating features template dropdown with templates:', featuresTemplates);
+            const templateOptions = document.getElementById('featuresTemplateOptions');
+            console.log('Features template options element:', templateOptions);
+            templateOptions.innerHTML = '';
             
-            // Populate form fields
-            document.getElementById('featuresTitle').value = template.sectionTitle;
-            document.getElementById('featuresSubtitle').value = template.sectionSubtitle;
-            document.getElementById('feature1Title').value = template.feature1Title;
-            document.getElementById('feature1Subtitle').value = template.feature1Subtitle;
-            document.getElementById('feature1Description').value = template.feature1Description;
-            document.getElementById('feature1Icon').value = template.feature1Icon;
-            document.getElementById('feature1Link').value = template.feature1Link;
-            document.getElementById('feature2Title').value = template.feature2Title;
-            document.getElementById('feature2Subtitle').value = template.feature2Subtitle;
-            document.getElementById('feature2Description').value = template.feature2Description;
-            document.getElementById('feature2Icon').value = template.feature2Icon;
-            document.getElementById('feature2Link').value = template.feature2Link;
-            document.getElementById('feature3Title').value = template.feature3Title;
-            document.getElementById('feature3Subtitle').value = template.feature3Subtitle;
-            document.getElementById('feature3Description').value = template.feature3Description;
-            document.getElementById('feature3Icon').value = template.feature3Icon;
-            document.getElementById('feature3Link').value = template.feature3Link;
-
-            // Update icon previews
-            updateIconPreview('feature1Icon', template.feature1Icon);
-            updateIconPreview('feature2Icon', template.feature2Icon);
-            updateIconPreview('feature3Icon', template.feature3Icon);
-
-            // Show delete button for existing templates
-            const deleteBtn = document.getElementById('deleteFeaturesBtn');
-            if (deleteBtn) {
-                deleteBtn.style.display = 'inline-flex';
-                console.log('Delete button shown for template ID:', templateId);
-            } else {
-                console.error('Delete button element not found');
-            }
-
-            closeFeaturesTemplateDropdown();
+            featuresTemplates.forEach((template, idx) => {
+                console.log('Creating option for features template:', template);
+                const option = document.createElement('div');
+                option.className = 'dropdown-item';
+                option.style.cssText = 'color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease; border-top: 1px solid rgba(129, 140, 248, 0.2);';
+                option.textContent = `${template.nickname} (${template.sectionTitle})`;
+                option.onclick = function(e) {
+                    e.preventDefault();
+                    selectFeaturesTemplate(template.id, template.nickname);
+                    // Close dropdown after selection with smooth animation
+                    closeFeaturesDropdownSmoothly();
+                };
+                
+                // Add hover effect
+                option.onmouseenter = function() {
+                    this.style.background = 'rgba(129, 140, 248, 0.1)';
+                };
+                option.onmouseleave = function() {
+                    this.style.background = 'transparent';
+                };
+                
+                templateOptions.appendChild(option);
+            });
+            console.log('Features template dropdown updated');
         }
 
+        // Select features template from dropdown
+        async function selectFeaturesTemplate(templateId, templateNickname) {
+            // Update the input field with the selected nickname
+            document.getElementById('featuresTemplateNickname').value = templateNickname;
+            
+            // Load the template data
+            await loadFeaturesTemplateById(templateId);
+        }
+
+        // Load features template by ID
+        async function loadFeaturesTemplateById(templateId) {
+            try {
+                const response = await fetch(`/Admin/GetFeaturesTemplate?id=${templateId}`);
+                
+                // Check if response is OK before trying to parse JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error loading features template:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+                }
+                
+                // Get response text first to debug
+                const responseText = await response.text();
+                console.log('Features template response text:', responseText);
+                
+                // Try to parse JSON
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (jsonError) {
+                    console.error('JSON parsing error:', jsonError);
+                    console.error('Response text that failed to parse:', responseText);
+                    throw new Error(`JSON parsing failed: ${jsonError.message}`);
+                }
+                
+                if (result.success) {
+                    const template = result.data;
+                    
+                    // Set selected template ID
+                    selectedFeaturesTemplateId = templateId;
+                    
+                    // Fill form fields
+                    document.getElementById('featuresTitle').value = template.sectionTitle || '';
+                    document.getElementById('featuresSubtitle').value = template.sectionSubtitle || '';
+                    document.getElementById('feature1Title').value = template.feature1Title || '';
+                    document.getElementById('feature1Subtitle').value = template.feature1Subtitle || '';
+                    document.getElementById('feature1Description').value = template.feature1Description || '';
+                    document.getElementById('feature1Icon').value = template.feature1Icon || '';
+                    document.getElementById('feature1Link').value = template.feature1Link || '';
+                    document.getElementById('feature2Title').value = template.feature2Title || '';
+                    document.getElementById('feature2Subtitle').value = template.feature2Subtitle || '';
+                    document.getElementById('feature2Description').value = template.feature2Description || '';
+                    document.getElementById('feature2Icon').value = template.feature2Icon || '';
+                    document.getElementById('feature2Link').value = template.feature2Link || '';
+                    document.getElementById('feature3Title').value = template.feature3Title || '';
+                    document.getElementById('feature3Subtitle').value = template.feature3Subtitle || '';
+                    document.getElementById('feature3Description').value = template.feature3Description || '';
+                    document.getElementById('feature3Icon').value = template.feature3Icon || '';
+                    document.getElementById('feature3Link').value = template.feature3Link || '';
+                    
+                    // Update icon previews
+                    updateIconPreview('feature1Icon', template.feature1Icon);
+                    updateIconPreview('feature2Icon', template.feature2Icon);
+                    updateIconPreview('feature3Icon', template.feature3Icon);
+                    
+                    // Show delete button for existing templates
+                    const deleteBtn = document.getElementById('deleteFeaturesBtn');
+                    if (deleteBtn) {
+                        deleteBtn.style.display = 'inline-flex';
+                        console.log('Delete button shown for template ID:', templateId);
+                    } else {
+                        console.error('Delete button element not found');
+                    }
+                    
+                    showNotification('Success!', `Features template "${template.nickname}" loaded successfully!`, 'success');
+                } else {
+                    showNotification('Error!', result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading features template:', error);
+                showNotification('Error!', 'An unexpected error occurred.', 'error');
+            }
+        }
+
+        // Clear features template selection
         function clearFeaturesTemplateSelection() {
             selectedFeaturesTemplateId = null;
             document.getElementById('featuresTemplateNickname').value = '';
             
+            // Clear all form fields
+            document.getElementById('featuresTitle').value = '';
+            document.getElementById('featuresSubtitle').value = '';
+            document.getElementById('feature1Title').value = '';
+            document.getElementById('feature1Subtitle').value = '';
+            document.getElementById('feature1Description').value = '';
+            document.getElementById('feature1Icon').value = '';
+            document.getElementById('feature1Link').value = '';
+            document.getElementById('feature2Title').value = '';
+            document.getElementById('feature2Subtitle').value = '';
+            document.getElementById('feature2Description').value = '';
+            document.getElementById('feature2Icon').value = '';
+            document.getElementById('feature2Link').value = '';
+            document.getElementById('feature3Title').value = '';
+            document.getElementById('feature3Subtitle').value = '';
+            document.getElementById('feature3Description').value = '';
+            document.getElementById('feature3Icon').value = '';
+            document.getElementById('feature3Link').value = '';
+            
+            // Clear icon previews
+            updateIconPreview('feature1Icon', '');
+            updateIconPreview('feature2Icon', '');
+            updateIconPreview('feature3Icon', '');
+            
             // Hide delete button when clearing selection
             document.getElementById('deleteFeaturesBtn').style.display = 'none';
             
-            closeFeaturesTemplateDropdown();
+            // Close dropdown after clearing with smooth animation
+            closeFeaturesDropdownSmoothly();
         }
 
         function toggleFeaturesTemplateDropdown() {
@@ -2308,6 +2390,19 @@
         }
 
         function closeFeaturesTemplateDropdown() {
+            const dropdown = document.getElementById('featuresCustomDropdownMenu');
+            const button = document.getElementById('featuresTemplateDropdownBtn');
+            
+            dropdown.style.opacity = '0';
+            dropdown.style.transform = 'translateY(-10px) scale(0.95)';
+            button.innerHTML = '<i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>';
+            
+            setTimeout(() => {
+                dropdown.style.display = 'none';
+            }, 300);
+        }
+
+        function closeFeaturesDropdownSmoothly() {
             const dropdown = document.getElementById('featuresCustomDropdownMenu');
             const button = document.getElementById('featuresTemplateDropdownBtn');
             

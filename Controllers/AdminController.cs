@@ -601,6 +601,36 @@ namespace Portfolio.Controllers
             }
         }
 
+        // GET: Admin/GetFeaturesTemplate
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetFeaturesTemplate(int id)
+        {
+            try
+            {
+                Console.WriteLine($"GetFeaturesTemplate: Loading template with ID {id}");
+                
+                var template = await _context.FeaturesTemplates.FindAsync(id);
+                
+                if (template == null)
+                {
+                    Console.WriteLine($"GetFeaturesTemplate: Template with ID {id} not found");
+                    return Json(new { success = false, message = "Template not found" });
+                }
+                
+                Console.WriteLine($"GetFeaturesTemplate: Found template - ID={template.Id}, Nickname={template.Nickname}");
+                
+                return Json(new { success = true, data = template });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"GetFeaturesTemplate: Error - {ex.Message}");
+                Console.WriteLine($"GetFeaturesTemplate: Stack trace - {ex.StackTrace}");
+                _logger.LogError(ex, "Error retrieving features template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         // GET: Admin/GetFeaturesTemplates
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -608,6 +638,8 @@ namespace Portfolio.Controllers
         {
             try
             {
+                Console.WriteLine("GetFeaturesTemplates: Starting query...");
+                
                 // Get all templates and handle null UpdatedAt values
                 var templates = await _context.FeaturesTemplates
                     .Select(t => new
@@ -639,10 +671,20 @@ namespace Portfolio.Controllers
                     .OrderByDescending(t => t.LastModified)
                     .ToListAsync();
                 
+                Console.WriteLine($"GetFeaturesTemplates: Found {templates.Count} templates");
+                
+                // Debug: Log each template
+                foreach (var template in templates)
+                {
+                    Console.WriteLine($"Template: ID={template.Id}, Nickname={template.Nickname}, UpdatedAt={template.UpdatedAt}");
+                }
+                
                 return Json(new { success = true, data = templates });
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"GetFeaturesTemplates: Error - {ex.Message}");
+                Console.WriteLine($"GetFeaturesTemplates: Stack trace - {ex.StackTrace}");
                 _logger.LogError(ex, "Error retrieving features templates");
                 
                 // Return empty array instead of error if table doesn't exist
