@@ -25,6 +25,7 @@ namespace Portfolio.Models.Portfolio
         [StringLength(100)]
         public string Feature1Title { get; set; } = string.Empty;
 
+        [Required]
         [StringLength(200)]
         public string Feature1Subtitle { get; set; } = string.Empty;
 
@@ -34,6 +35,7 @@ namespace Portfolio.Models.Portfolio
         [StringLength(50)]
         public string Feature1Icon { get; set; } = string.Empty;
 
+        [Required]
         [StringLength(200)]
         public string Feature1Link { get; set; } = string.Empty;
 
@@ -42,6 +44,7 @@ namespace Portfolio.Models.Portfolio
         [StringLength(100)]
         public string Feature2Title { get; set; } = string.Empty;
 
+        [Required]
         [StringLength(200)]
         public string Feature2Subtitle { get; set; } = string.Empty;
 
@@ -51,6 +54,7 @@ namespace Portfolio.Models.Portfolio
         [StringLength(50)]
         public string Feature2Icon { get; set; } = string.Empty;
 
+        [Required]
         [StringLength(200)]
         public string Feature2Link { get; set; } = string.Empty;
 
@@ -59,6 +63,7 @@ namespace Portfolio.Models.Portfolio
         [StringLength(100)]
         public string Feature3Title { get; set; } = string.Empty;
 
+        [Required]
         [StringLength(200)]
         public string Feature3Subtitle { get; set; } = string.Empty;
 
@@ -68,8 +73,9 @@ namespace Portfolio.Models.Portfolio
         [StringLength(50)]
         public string Feature3Icon { get; set; } = string.Empty;
 
+        [Required]
         [StringLength(200)]
-        public string Feature3Link { get; set; } = string.Empty;
+        public string Feature3Link { get; set; } = string.Empty
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
