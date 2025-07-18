@@ -642,46 +642,30 @@ namespace Portfolio.Controllers
             {
                 Console.WriteLine("GetFeaturesTemplates: Starting query...");
                 
-                // Try to get templates directly - Entity Framework will handle table existence
+                // Use the same approach as HeroTemplates - simple and direct
+                var templateCount = await _context.FeaturesTemplates.CountAsync();
+                Console.WriteLine($"GetFeaturesTemplates: Found {templateCount} templates in database");
+                
                 var templates = await _context.FeaturesTemplates
+                    .OrderByDescending(t => t.CreatedAt)
                     .Select(t => new
                     {
-                        t.Id,
-                        t.Nickname,
-                        t.SectionTitle,
-                        t.SectionSubtitle,
-                        t.SectionDescription,
-                        t.Feature1Title,
-                        t.Feature1Subtitle,
-                        t.Feature1Description,
-                        t.Feature1Icon,
-                        t.Feature1Link,
-                        t.Feature2Title,
-                        t.Feature2Subtitle,
-                        t.Feature2Description,
-                        t.Feature2Icon,
-                        t.Feature2Link,
-                        t.Feature3Title,
-                        t.Feature3Subtitle,
-                        t.Feature3Description,
-                        t.Feature3Icon,
-                        t.Feature3Link,
-                        t.CreatedAt,
-                        t.UpdatedAt,
-                        LastModified = t.UpdatedAt ?? t.CreatedAt
+                        id = t.Id,
+                        nickname = t.Nickname,
+                        sectionTitle = t.SectionTitle,
+                        sectionSubtitle = t.SectionSubtitle,
+                        createdAt = t.CreatedAt,
+                        updatedAt = t.UpdatedAt
                     })
-                    .OrderByDescending(t => t.LastModified)
                     .ToListAsync();
                 
-                Console.WriteLine($"GetFeaturesTemplates: Found {templates.Count} templates");
+                Console.WriteLine($"GetFeaturesTemplates: Processed {templates.Count} templates");
                 
-                // Debug: Log each template
-                foreach (var template in templates)
-                {
-                    Console.WriteLine($"Template: ID={template.Id}, Nickname={template.Nickname}, UpdatedAt={template.UpdatedAt}");
-                }
-                
-                return Json(new { success = true, data = templates });
+                return Json(new { 
+                    success = true, 
+                    message = "Features templates retrieved successfully.",
+                    data = templates 
+                });
             }
             catch (Exception ex)
             {
@@ -695,7 +679,11 @@ namespace Portfolio.Controllers
                     return Json(new { success = true, data = new List<object>() });
                 }
                 
-                return Json(new { success = false, message = ex.Message });
+                return Json(new { 
+                    success = false, 
+                    message = $"An error occurred while retrieving features templates: {ex.Message}",
+                    data = new object[] { } 
+                });
             }
         }
 
