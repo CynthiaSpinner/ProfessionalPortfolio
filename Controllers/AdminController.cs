@@ -642,18 +642,7 @@ namespace Portfolio.Controllers
             {
                 Console.WriteLine("GetFeaturesTemplates: Starting query...");
                 
-                // Check if the table exists first
-                var tableExists = await _context.Database
-                    .SqlQueryRaw<int>($"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'FeaturesTemplates'")
-                    .FirstOrDefaultAsync();
-                
-                if (tableExists == 0)
-                {
-                    Console.WriteLine("GetFeaturesTemplates: FeaturesTemplates table does not exist");
-                    return Json(new { success = true, data = new List<object>() });
-                }
-                
-                // Get all templates and handle null UpdatedAt values
+                // Try to get templates directly - Entity Framework will handle table existence
                 var templates = await _context.FeaturesTemplates
                     .Select(t => new
                     {
@@ -692,13 +681,6 @@ namespace Portfolio.Controllers
                     Console.WriteLine($"Template: ID={template.Id}, Nickname={template.Nickname}, UpdatedAt={template.UpdatedAt}");
                 }
                 
-                // Check if templates is null
-                if (templates == null)
-                {
-                    Console.WriteLine("GetFeaturesTemplates: Templates is null, returning empty array");
-                    return Json(new { success = true, data = new List<object>() });
-                }
-                
                 return Json(new { success = true, data = templates });
             }
             catch (Exception ex)
@@ -708,7 +690,7 @@ namespace Portfolio.Controllers
                 _logger.LogError(ex, "Error retrieving features templates");
                 
                 // Return empty array instead of error if table doesn't exist
-                if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("doesn't exist"))
+                if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("doesn't exist") || ex.Message.Contains("Invalid column name"))
                 {
                     return Json(new { success = true, data = new List<object>() });
                 }
