@@ -637,25 +637,25 @@ namespace Portfolio.Controllers
                 var templateData = new
                 {
                     id = template.Id,
-                    nickname = template.Nickname,
-                    sectionTitle = template.SectionTitle,
-                    sectionSubtitle = template.SectionSubtitle,
-                    sectionDescription = template.SectionDescription,
-                    feature1Title = template.Feature1Title,
-                    feature1Subtitle = template.Feature1Subtitle,
-                    feature1Description = template.Feature1Description,
-                    feature1Icon = template.Feature1Icon,
-                    feature1Link = template.Feature1Link,
-                    feature2Title = template.Feature2Title,
-                    feature2Subtitle = template.Feature2Subtitle,
-                    feature2Description = template.Feature2Description,
-                    feature2Icon = template.Feature2Icon,
-                    feature2Link = template.Feature2Link,
-                    feature3Title = template.Feature3Title,
-                    feature3Subtitle = template.Feature3Subtitle,
-                    feature3Description = template.Feature3Description,
-                    feature3Icon = template.Feature3Icon,
-                    feature3Link = template.Feature3Link,
+                    nickname = template.Nickname ?? "",
+                    sectionTitle = template.SectionTitle ?? "",
+                    sectionSubtitle = template.SectionSubtitle ?? "",
+                    sectionDescription = template.SectionDescription ?? "",
+                    feature1Title = template.Feature1Title ?? "",
+                    feature1Subtitle = template.Feature1Subtitle ?? "",
+                    feature1Description = template.Feature1Description ?? "",
+                    feature1Icon = template.Feature1Icon ?? "",
+                    feature1Link = template.Feature1Link ?? "",
+                    feature2Title = template.Feature2Title ?? "",
+                    feature2Subtitle = template.Feature2Subtitle ?? "",
+                    feature2Description = template.Feature2Description ?? "",
+                    feature2Icon = template.Feature2Icon ?? "",
+                    feature2Link = template.Feature2Link ?? "",
+                    feature3Title = template.Feature3Title ?? "",
+                    feature3Subtitle = template.Feature3Subtitle ?? "",
+                    feature3Description = template.Feature3Description ?? "",
+                    feature3Icon = template.Feature3Icon ?? "",
+                    feature3Link = template.Feature3Link ?? "",
                     createdAt = template.CreatedAt,
                     updatedAt = template.UpdatedAt
                 };
@@ -750,6 +750,48 @@ namespace Portfolio.Controllers
                     return Json(new { success = false, message = string.Join(", ", errors) });
                 }
 
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(model.SectionTitle))
+                {
+                    return Json(new { success = false, message = "Section Title is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature1Title))
+                {
+                    return Json(new { success = false, message = "Feature 1 Title is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature1Subtitle))
+                {
+                    return Json(new { success = false, message = "Feature 1 Subtitle is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature1Link))
+                {
+                    return Json(new { success = false, message = "Feature 1 Link is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature2Title))
+                {
+                    return Json(new { success = false, message = "Feature 2 Title is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature2Subtitle))
+                {
+                    return Json(new { success = false, message = "Feature 2 Subtitle is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature2Link))
+                {
+                    return Json(new { success = false, message = "Feature 2 Link is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature3Title))
+                {
+                    return Json(new { success = false, message = "Feature 3 Title is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature3Subtitle))
+                {
+                    return Json(new { success = false, message = "Feature 3 Subtitle is required." });
+                }
+                if (string.IsNullOrWhiteSpace(model.Feature3Link))
+                {
+                    return Json(new { success = false, message = "Feature 3 Link is required." });
+                }
+
                 FeaturesTemplate template;
                 if (model.Id == null || model.Id == 0)
                 {
@@ -757,23 +799,23 @@ namespace Portfolio.Controllers
                     template = new FeaturesTemplate
                     {
                         Nickname = model.Nickname ?? "New Template",
-                        SectionTitle = model.SectionTitle ?? "Key Skills & Technologies",
-                        SectionSubtitle = model.SectionSubtitle ?? "Explore my expertise across different domains",
-                        Feature1Title = model.Feature1Title ?? "Frontend Development",
-                        Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap",
-                        Feature1Description = model.Feature1Description ?? "Building responsive and interactive user interfaces with modern frameworks and best practices.",
-                        Feature1Icon = model.Feature1Icon ?? "fas fa-code",
-                        Feature1Link = model.Feature1Link ?? "/projects?category=frontend",
-                        Feature2Title = model.Feature2Title ?? "Backend Development",
-                        Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, SQL Server",
-                        Feature2Description = model.Feature2Description ?? "Creating robust server-side applications and APIs with enterprise-grade technologies.",
-                        Feature2Icon = model.Feature2Icon ?? "fas fa-server",
-                        Feature2Link = model.Feature2Link ?? "/projects?category=backend",
-                        Feature3Title = model.Feature3Title ?? "Design & Tools",
-                        Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker",
-                        Feature3Description = model.Feature3Description ?? "Crafting beautiful designs and managing development workflows with professional tools.",
-                        Feature3Icon = model.Feature3Icon ?? "fas fa-palette",
-                        Feature3Link = model.Feature3Link ?? "/projects?category=design",
+                        SectionTitle = model.SectionTitle,
+                        SectionSubtitle = model.SectionSubtitle ?? "", // Optional
+                        Feature1Title = model.Feature1Title,
+                        Feature1Subtitle = model.Feature1Subtitle,
+                        Feature1Description = model.Feature1Description ?? "", // Optional
+                        Feature1Icon = model.Feature1Icon ?? "", // Optional
+                        Feature1Link = model.Feature1Link,
+                        Feature2Title = model.Feature2Title,
+                        Feature2Subtitle = model.Feature2Subtitle,
+                        Feature2Description = model.Feature2Description ?? "", // Optional
+                        Feature2Icon = model.Feature2Icon ?? "", // Optional
+                        Feature2Link = model.Feature2Link,
+                        Feature3Title = model.Feature3Title,
+                        Feature3Subtitle = model.Feature3Subtitle,
+                        Feature3Description = model.Feature3Description ?? "", // Optional
+                        Feature3Icon = model.Feature3Icon ?? "", // Optional
+                        Feature3Link = model.Feature3Link,
                         CreatedAt = DateTime.UtcNow
                     };
                     _context.FeaturesTemplates.Add(template);
@@ -788,23 +830,23 @@ namespace Portfolio.Controllers
                     }
 
                     template.Nickname = model.Nickname ?? template.Nickname;
-                    template.SectionTitle = model.SectionTitle ?? template.SectionTitle;
-                    template.SectionSubtitle = model.SectionSubtitle ?? template.SectionSubtitle;
-                    template.Feature1Title = model.Feature1Title ?? template.Feature1Title;
-                    template.Feature1Subtitle = model.Feature1Subtitle ?? template.Feature1Subtitle;
-                    template.Feature1Description = model.Feature1Description ?? template.Feature1Description;
-                    template.Feature1Icon = model.Feature1Icon ?? template.Feature1Icon;
-                    template.Feature1Link = model.Feature1Link ?? template.Feature1Link;
-                    template.Feature2Title = model.Feature2Title ?? template.Feature2Title;
-                    template.Feature2Subtitle = model.Feature2Subtitle ?? template.Feature2Subtitle;
-                    template.Feature2Description = model.Feature2Description ?? template.Feature2Description;
-                    template.Feature2Icon = model.Feature2Icon ?? template.Feature2Icon;
-                    template.Feature2Link = model.Feature2Link ?? template.Feature2Link;
-                    template.Feature3Title = model.Feature3Title ?? template.Feature3Title;
-                    template.Feature3Subtitle = model.Feature3Subtitle ?? template.Feature3Subtitle;
-                    template.Feature3Description = model.Feature3Description ?? template.Feature3Description;
-                    template.Feature3Icon = model.Feature3Icon ?? template.Feature3Icon;
-                    template.Feature3Link = model.Feature3Link ?? template.Feature3Link;
+                    template.SectionTitle = model.SectionTitle;
+                    template.SectionSubtitle = model.SectionSubtitle ?? ""; // Optional
+                    template.Feature1Title = model.Feature1Title;
+                    template.Feature1Subtitle = model.Feature1Subtitle;
+                    template.Feature1Description = model.Feature1Description ?? ""; // Optional
+                    template.Feature1Icon = model.Feature1Icon ?? ""; // Optional
+                    template.Feature1Link = model.Feature1Link;
+                    template.Feature2Title = model.Feature2Title;
+                    template.Feature2Subtitle = model.Feature2Subtitle;
+                    template.Feature2Description = model.Feature2Description ?? ""; // Optional
+                    template.Feature2Icon = model.Feature2Icon ?? ""; // Optional
+                    template.Feature2Link = model.Feature2Link;
+                    template.Feature3Title = model.Feature3Title;
+                    template.Feature3Subtitle = model.Feature3Subtitle;
+                    template.Feature3Description = model.Feature3Description ?? ""; // Optional
+                    template.Feature3Icon = model.Feature3Icon ?? ""; // Optional
+                    template.Feature3Link = model.Feature3Link;
                     template.UpdatedAt = DateTime.UtcNow;
                 }
 
