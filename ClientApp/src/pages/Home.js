@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import "../styles/Home.css";
 import { HeroSection, FeaturesSection, CTASection } from "../components/home";
 import { PortfolioService } from "../services/PortfolioService";
-import { usePortfolioData } from "../hooks";
+import { usePortfolioData, useWebSocket } from "../hooks";
 
 const Home = () => {
   const fetchHomepageData = useCallback(async () => {
@@ -11,7 +11,10 @@ const Home = () => {
     return data;
   }, []);
 
-  const { data: homepageData, loading } = usePortfolioData(fetchHomepageData, []);
+  const { data: homepageData, loading, refetch } = usePortfolioData(fetchHomepageData, []);
+
+  // Set up WebSocket for real-time updates
+  useWebSocket('homepage', refetch);
 
   if (loading) {
     return (

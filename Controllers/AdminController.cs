@@ -608,14 +608,49 @@ namespace Portfolio.Controllers
         {
             try
             {
+                // Get all templates and handle null UpdatedAt values
                 var templates = await _context.FeaturesTemplates
-                    .OrderByDescending(t => t.UpdatedAt ?? t.CreatedAt)
+                    .Select(t => new
+                    {
+                        t.Id,
+                        t.Nickname,
+                        t.SectionTitle,
+                        t.SectionSubtitle,
+                        t.SectionDescription,
+                        t.Feature1Title,
+                        t.Feature1Subtitle,
+                        t.Feature1Description,
+                        t.Feature1Icon,
+                        t.Feature1Link,
+                        t.Feature2Title,
+                        t.Feature2Subtitle,
+                        t.Feature2Description,
+                        t.Feature2Icon,
+                        t.Feature2Link,
+                        t.Feature3Title,
+                        t.Feature3Subtitle,
+                        t.Feature3Description,
+                        t.Feature3Icon,
+                        t.Feature3Link,
+                        t.CreatedAt,
+                        t.UpdatedAt,
+                        LastModified = t.UpdatedAt ?? t.CreatedAt
+                    })
+                    .OrderByDescending(t => t.LastModified)
                     .ToListAsync();
+                
                 return Json(new { success = true, data = templates });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving features templates");
+                
+                // Return empty array instead of error if table doesn't exist
+                if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("doesn't exist"))
+                {
+                    return Json(new { success = true, data = new List<object>() });
+                }
+                
                 return Json(new { success = false, message = ex.Message });
             }
         }

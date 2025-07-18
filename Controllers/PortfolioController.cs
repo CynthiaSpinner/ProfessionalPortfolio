@@ -240,8 +240,13 @@ namespace Portfolio.Controllers
         {
             try
             {
+                Console.WriteLine("Starting homepage data fetch...");
+                
                 var homePage = await _homePageService.GetHomePageAsync();
+                Console.WriteLine($"HomePage fetched: {(homePage != null ? "Success" : "Null")}");
+                
                 var features = await _context.FeaturesSections.FirstOrDefaultAsync();
+                Console.WriteLine($"Features fetched: {(features != null ? "Success" : "Null")}");
 
                 // Build hero data - with fallback
                 var heroData = homePage == null ? new
@@ -351,7 +356,8 @@ namespace Portfolio.Controllers
             {
                 Console.WriteLine($"Error loading homepage data: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                return StatusCode(500, new { error = "Failed to load homepage data" });
+                Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+                return StatusCode(500, new { error = "Failed to load homepage data", details = ex.Message });
             }
         }
     }
