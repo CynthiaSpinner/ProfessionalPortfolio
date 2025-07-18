@@ -642,6 +642,17 @@ namespace Portfolio.Controllers
             {
                 Console.WriteLine("GetFeaturesTemplates: Starting query...");
                 
+                // Check if the table exists first
+                var tableExists = await _context.Database
+                    .SqlQueryRaw<int>($"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'FeaturesTemplates'")
+                    .FirstOrDefaultAsync();
+                
+                if (tableExists == 0)
+                {
+                    Console.WriteLine("GetFeaturesTemplates: FeaturesTemplates table does not exist");
+                    return Json(new { success = true, data = new List<object>() });
+                }
+                
                 // Get all templates and handle null UpdatedAt values
                 var templates = await _context.FeaturesTemplates
                     .Select(t => new

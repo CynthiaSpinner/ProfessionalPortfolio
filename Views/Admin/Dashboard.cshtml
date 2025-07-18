@@ -2380,8 +2380,7 @@
             // Hide delete button when clearing selection
             document.getElementById('deleteFeaturesBtn').style.display = 'none';
             
-            // Close dropdown after clearing with smooth animation
-            closeFeaturesDropdownSmoothly();
+            // Don't close dropdown - let user continue typing
         }
 
 
@@ -2467,13 +2466,16 @@
         function setupFeaturesDropdown() {
             const dropdownBtn = document.getElementById('featuresTemplateDropdownBtn');
             const dropdownMenu = document.getElementById('featuresCustomDropdownMenu');
+            const inputField = document.getElementById('featuresTemplateNickname');
             
             console.log('Setting up Features custom dropdown');
             console.log('Button:', dropdownBtn);
             console.log('Menu:', dropdownMenu);
+            console.log('Input:', inputField);
             
             let isOpen = false;
             
+            // Button click handler
             dropdownBtn.addEventListener('click', function(e) {
                 console.log('Features button clicked!');
                 e.preventDefault();
@@ -2486,8 +2488,6 @@
                 } else {
                     console.log('Opening Features dropdown');
                     const card = dropdownMenu.closest('.card');
-                    const inputField = document.getElementById('featuresTemplateNickname');
-                    const dropdownBtn = document.getElementById('featuresTemplateDropdownBtn');
                     // Reset to initial state first
                     dropdownMenu.style.opacity = '0';
                     dropdownMenu.style.transform = 'translateY(-10px) scale(0.95)';
@@ -2539,9 +2539,26 @@
                 }
             });
             
+            // Input field click handler - allow typing for new templates
+            inputField.addEventListener('click', function(e) {
+                console.log('Features input clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Clear the input to allow typing new nickname
+                this.value = '';
+                this.focus();
+                
+                // Hide delete button when creating new template
+                document.getElementById('deleteFeaturesBtn').style.display = 'none';
+                
+                // Clear all form fields
+                clearFeaturesTemplateSelection();
+            });
+            
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target) && isOpen) {
+                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target) && !inputField.contains(e.target) && isOpen) {
                     closeFeaturesDropdownSmoothly();
                     isOpen = false;
                 }
