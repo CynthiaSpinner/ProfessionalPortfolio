@@ -290,7 +290,7 @@
                                         <div class="mb-3" style="position: relative;">
                                             <label for="featuresTemplateNickname" class="form-label" style="color: #9ca3af !important;">Nickname</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" id="featuresTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <input type="text" class="form-control" id="featuresTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; background-color: rgba(50, 45, 60, 0.25) !important;">
                                                 <button class="btn btn-outline-secondary" type="button" id="featuresTemplateDropdownBtn" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important; padding: 0.375rem 0.5rem !important; min-width: auto !important; display: flex !important; align-items: center !important; justify-content: center !important; background: transparent !important; width: 40px !important; height: 38px !important; line-height: 1 !important;">
                                                     <i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>
                                                 </button>
@@ -2207,9 +2207,16 @@
             try {
                 console.log('Loading features templates...');
                 const response = await fetch('/Admin/GetFeaturesTemplates');
-                const result = await response.json();
+                console.log('Features templates response status:', response.status);
                 
-                console.log('Features templates response:', result);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Features templates error response:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Features templates result:', result);
                 
                 if (result.success) {
                     featuresTemplates = result.data || [];
@@ -2220,6 +2227,8 @@
                 }
             } catch (error) {
                 console.error('Error loading features templates:', error);
+                console.error('Error details:', error.message);
+                console.error('Error stack:', error.stack);
             }
         }
 
@@ -2375,40 +2384,35 @@
             closeFeaturesDropdownSmoothly();
         }
 
-        function toggleFeaturesTemplateDropdown() {
-            const dropdown = document.getElementById('featuresCustomDropdownMenu');
-            const button = document.getElementById('featuresTemplateDropdownBtn');
-            
-            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-                dropdown.style.display = 'block';
-                dropdown.style.opacity = '1';
-                dropdown.style.transform = 'translateY(0) scale(1)';
-                button.innerHTML = '<i class="fas fa-chevron-up" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>';
-            } else {
-                closeFeaturesTemplateDropdown();
-            }
-        }
 
-        function closeFeaturesTemplateDropdown() {
-            const dropdown = document.getElementById('featuresCustomDropdownMenu');
-            const button = document.getElementById('featuresTemplateDropdownBtn');
-            
-            dropdown.style.opacity = '0';
-            dropdown.style.transform = 'translateY(-10px) scale(0.95)';
-            button.innerHTML = '<i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>';
-            
-            setTimeout(() => {
-                dropdown.style.display = 'none';
-            }, 300);
-        }
 
         function closeFeaturesDropdownSmoothly() {
             const dropdown = document.getElementById('featuresCustomDropdownMenu');
             const button = document.getElementById('featuresTemplateDropdownBtn');
+            const inputField = document.getElementById('featuresTemplateNickname');
+            const inputGroup = inputField.closest('.input-group');
+            const card = dropdown.closest('.card');
             
+            // Smooth close animation
             dropdown.style.opacity = '0';
             dropdown.style.transform = 'translateY(-10px) scale(0.95)';
+            
+            // Reset button icon
             button.innerHTML = '<i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>';
+            
+            // Remove glow effects
+            inputGroup.style.boxShadow = 'none';
+            dropdown.style.boxShadow = 'none';
+            
+            // Reset button styling
+            button.style.borderBottomRightRadius = '';
+            button.style.borderRight = '';
+            
+            // Reset input group styling
+            inputGroup.style.borderRadius = '';
+            
+            // Remove expanded class from card
+            card.classList.remove('expanded-for-dropdown');
             
             setTimeout(() => {
                 dropdown.style.display = 'none';
@@ -2459,36 +2463,98 @@
             }
         }
 
-        // Features template dropdown event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            const featuresTemplateBtn = document.getElementById('featuresTemplateDropdownBtn');
-            const featuresTemplateInput = document.getElementById('featuresTemplateNickname');
+        // Setup Features custom dropdown (exactly like Hero)
+        function setupFeaturesDropdown() {
+            const dropdownBtn = document.getElementById('featuresTemplateDropdownBtn');
+            const dropdownMenu = document.getElementById('featuresCustomDropdownMenu');
             
-            if (featuresTemplateBtn) {
-                featuresTemplateBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    toggleFeaturesTemplateDropdown();
-                });
-            }
+            console.log('Setting up Features custom dropdown');
+            console.log('Button:', dropdownBtn);
+            console.log('Menu:', dropdownMenu);
             
-            if (featuresTemplateInput) {
-                featuresTemplateInput.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    toggleFeaturesTemplateDropdown();
-                });
-            }
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                const dropdown = document.getElementById('featuresCustomDropdownMenu');
-                const button = document.getElementById('featuresTemplateDropdownBtn');
-                const input = document.getElementById('featuresTemplateNickname');
+            let isOpen = false;
+            
+            dropdownBtn.addEventListener('click', function(e) {
+                console.log('Features button clicked!');
+                e.preventDefault();
+                e.stopPropagation();
                 
-                if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target) && !input.contains(e.target)) {
-                    closeFeaturesTemplateDropdown();
+                if (isOpen) {
+                    console.log('Closing Features dropdown');
+                    closeFeaturesDropdownSmoothly();
+                    isOpen = false;
+                } else {
+                    console.log('Opening Features dropdown');
+                    const card = dropdownMenu.closest('.card');
+                    const inputField = document.getElementById('featuresTemplateNickname');
+                    const dropdownBtn = document.getElementById('featuresTemplateDropdownBtn');
+                    // Reset to initial state first
+                    dropdownMenu.style.opacity = '0';
+                    dropdownMenu.style.transform = 'translateY(-10px) scale(0.95)';
+                    
+                    // Show dropdown and expand card
+                    dropdownMenu.style.display = 'block';
+                    card.classList.add('expanded-for-dropdown');
+                    
+                    // Remove individual glows from input and button
+                    inputField.style.boxShadow = 'none';
+                    dropdownBtn.style.boxShadow = 'none';
+                    // Remove input field focus border
+                    inputField.style.borderColor = 'rgba(129, 140, 248, 0.3)';
+                    inputField.style.outline = 'none';
+                    
+                    // Apply glow to input group (top, left, right only)
+                    const inputGroup = inputField.closest('.input-group');
+                    inputGroup.style.setProperty(
+                      'box-shadow',
+                      '-4px 0 8px -4px rgba(129,140,248,0.25), 4px 0 8px -4px rgba(129,140,248,0.25), 0 -4px 8px -4px rgba(129,140,248,0.25)',
+                      'important'
+                    );
+                    inputGroup.style.borderRadius = '4px 4px 0 0';
+                    // Remove bottom right radius from dropdown button and adjust border
+                    dropdownBtn.style.borderBottomRightRadius = '0';
+                    dropdownBtn.style.borderRight = '1px solid rgba(129, 140, 248, 0.3)';
+                    
+                    // Apply glow to dropdown (bottom, left, right only)
+                    dropdownMenu.style.setProperty(
+                      'box-shadow',
+                      '0 4px 8px -4px rgba(129,140,248,0.25), -4px 0 8px -4px rgba(129,140,248,0.25), 4px 0 8px -4px rgba(129,140,248,0.25)',
+                      'important'
+                    );
+                    dropdownMenu.style.border = '1px solid rgba(129, 140, 248, 0.3)';
+                    dropdownMenu.style.borderTop = 'none';
+                    dropdownMenu.style.borderRadius = '0 0 4px 4px';
+                    // Fix 1-pixel alignment with button
+                    dropdownMenu.style.right = '1px';
+                    
+                    // Force reflow to ensure display: block is applied
+                    dropdownMenu.offsetHeight;
+                    
+                    // Smooth open animation
+                    requestAnimationFrame(() => {
+                        dropdownMenu.style.opacity = '1';
+                        dropdownMenu.style.transform = 'translateY(0) scale(1)';
+                    });
+                    isOpen = true;
                 }
             });
-        });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target) && isOpen) {
+                    closeFeaturesDropdownSmoothly();
+                    isOpen = false;
+                }
+            });
+            
+            // Close dropdown when pressing Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isOpen) {
+                    closeFeaturesDropdownSmoothly();
+                    isOpen = false;
+                }
+            });
+        }
 
         // Connect WebSocket when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -2503,6 +2569,12 @@
             loadTemplates();
             loadFeaturesTemplates();
             updateAllIconPreviews();
+            
+            // Setup dropdowns after templates are loaded
+            setTimeout(() => {
+                setupCustomDropdown();
+                setupFeaturesDropdown();
+            }, 100);
         });
     </script>
 }

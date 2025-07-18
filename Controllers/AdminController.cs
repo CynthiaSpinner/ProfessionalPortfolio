@@ -604,6 +604,7 @@ namespace Portfolio.Controllers
         // GET: Admin/GetFeaturesTemplate
         [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("Admin/GetFeaturesTemplate")]
         public async Task<IActionResult> GetFeaturesTemplate(int id)
         {
             try
@@ -634,6 +635,7 @@ namespace Portfolio.Controllers
         // GET: Admin/GetFeaturesTemplates
         [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("Admin/GetFeaturesTemplates")]
         public async Task<IActionResult> GetFeaturesTemplates()
         {
             try
@@ -677,6 +679,13 @@ namespace Portfolio.Controllers
                 foreach (var template in templates)
                 {
                     Console.WriteLine($"Template: ID={template.Id}, Nickname={template.Nickname}, UpdatedAt={template.UpdatedAt}");
+                }
+                
+                // Check if templates is null
+                if (templates == null)
+                {
+                    Console.WriteLine("GetFeaturesTemplates: Templates is null, returning empty array");
+                    return Json(new { success = true, data = new List<object>() });
                 }
                 
                 return Json(new { success = true, data = templates });
