@@ -616,19 +616,58 @@ namespace Portfolio.Controllers
                 if (template == null)
                 {
                     Console.WriteLine($"GetFeaturesTemplate: Template with ID {id} not found");
-                    return Json(new { success = false, message = "Template not found" });
+                    return Json(new { 
+                        success = false, 
+                        message = "Template not found.",
+                        data = (object)null 
+                    });
                 }
                 
                 Console.WriteLine($"GetFeaturesTemplate: Found template - ID={template.Id}, Nickname={template.Nickname}");
+
+                // Create properly formatted template data like GetHeroTemplate does
+                var templateData = new
+                {
+                    id = template.Id,
+                    nickname = template.Nickname,
+                    sectionTitle = template.SectionTitle,
+                    sectionSubtitle = template.SectionSubtitle,
+                    sectionDescription = template.SectionDescription,
+                    feature1Title = template.Feature1Title,
+                    feature1Subtitle = template.Feature1Subtitle,
+                    feature1Description = template.Feature1Description,
+                    feature1Icon = template.Feature1Icon,
+                    feature1Link = template.Feature1Link,
+                    feature2Title = template.Feature2Title,
+                    feature2Subtitle = template.Feature2Subtitle,
+                    feature2Description = template.Feature2Description,
+                    feature2Icon = template.Feature2Icon,
+                    feature2Link = template.Feature2Link,
+                    feature3Title = template.Feature3Title,
+                    feature3Subtitle = template.Feature3Subtitle,
+                    feature3Description = template.Feature3Description,
+                    feature3Icon = template.Feature3Icon,
+                    feature3Link = template.Feature3Link,
+                    createdAt = template.CreatedAt,
+                    updatedAt = template.UpdatedAt
+                };
                 
-                return Json(new { success = true, data = template });
+                return Json(new { 
+                    success = true, 
+                    message = "Features template retrieved successfully.",
+                    data = templateData 
+                });
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"GetFeaturesTemplate: Error - {ex.Message}");
                 Console.WriteLine($"GetFeaturesTemplate: Stack trace - {ex.StackTrace}");
                 _logger.LogError(ex, "Error retrieving features template");
-                return Json(new { success = false, message = ex.Message });
+                return Json(new { 
+                    success = false, 
+                    message = $"An error occurred while retrieving the features template: {ex.Message}",
+                    data = (object)null 
+                });
             }
         }
 
