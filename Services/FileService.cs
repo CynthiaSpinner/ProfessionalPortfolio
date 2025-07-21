@@ -110,7 +110,7 @@ namespace Portfolio.Services
             return thumbnailPath;
         }
 
-        private async Task GenerateVideoThumbnailAsync(string videoPath)
+        private Task GenerateVideoThumbnailAsync(string videoPath)
         {
             // This is a placeholder for actual video thumbnail generation
             // In a real implementation, you would use a library like FFmpeg
@@ -128,6 +128,8 @@ namespace Portfolio.Services
                 }
                 image.Save(thumbnailPath, ImageFormat.Jpeg);
             }
+            
+            return Task.CompletedTask;
         }
 
         public Task<bool> DeleteFileAsync(string filePath)

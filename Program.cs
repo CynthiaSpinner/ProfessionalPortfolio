@@ -199,7 +199,7 @@ if (!Directory.Exists(Path.Combine(app.Environment.ContentRootPath, "wwwroot")))
 
 // Graceful shutdown handling
 var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
-lifetime.ApplicationStopping.Register(async () =>
+lifetime.ApplicationStopping.Register(() =>
 {
     Console.WriteLine("Application is shutting down...");
     

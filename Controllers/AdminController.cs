@@ -421,7 +421,7 @@ namespace Portfolio.Controllers
                     return Json(new { 
                         success = false, 
                         message = "Template not found.",
-                        data = (object)null 
+                        data = (object?)null 
                     });
                 }
 
@@ -454,7 +454,7 @@ namespace Portfolio.Controllers
                 return Json(new { 
                     success = false, 
                     message = $"An error occurred while retrieving the hero template: {ex.Message}",
-                    data = (object)null 
+                    data = (object?)null 
                 });
             }
         }
@@ -556,7 +556,7 @@ namespace Portfolio.Controllers
                     return Json(new { 
                         success = false, 
                         message = "Features section not found.",
-                        data = (object)null 
+                        data = (object?)null 
                     });
                 }
 
@@ -596,7 +596,7 @@ namespace Portfolio.Controllers
                 return Json(new { 
                     success = false, 
                     message = $"An error occurred while retrieving the features section: {ex.Message}",
-                    data = (object)null 
+                    data = (object?)null 
                 });
             }
         }
@@ -627,7 +627,7 @@ namespace Portfolio.Controllers
                     return Json(new { 
                         success = false, 
                         message = $"Template with ID {id} not found. Available IDs: [{string.Join(", ", allTemplateIds)}]",
-                        data = (object)null 
+                        data = (object?)null 
                     });
                 }
                 
@@ -676,7 +676,7 @@ namespace Portfolio.Controllers
                 return Json(new { 
                     success = false, 
                     message = $"An error occurred while retrieving the features template: {ex.Message}",
-                    data = (object)null 
+                    data = (object?)null 
                 });
             }
         }
@@ -1021,7 +1021,7 @@ namespace Portfolio.Controllers
                         subtitle = template.Subtitle ?? "",
                         buttonText = template.ButtonText ?? "",
                         buttonLink = template.ButtonLink ?? "",
-                        lastModified = template.UpdatedAt ?? template.CreatedAt
+                        lastModified = template.UpdatedAt.GetValueOrDefault(template.CreatedAt)
                     }
                 });
             }
@@ -1054,7 +1054,7 @@ namespace Portfolio.Controllers
                     {
                         id = t.Id,
                         nickname = t.Nickname ?? "",
-                        lastModified = t.UpdatedAt ?? t.CreatedAt
+                        lastModified = t.UpdatedAt.GetValueOrDefault(t.CreatedAt)
                     })
                     .OrderByDescending(t => t.lastModified)
                     .ToListAsync();

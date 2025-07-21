@@ -76,7 +76,7 @@ namespace Portfolio.Controllers
                     primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
                     overlayColor = homePage.HeaderOverlayColor,
                     overlayOpacity = homePage.HeaderOverlayOpacity,
-                    lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
+                    lastModified = homePage.UpdatedAt.GetValueOrDefault(homePage.CreatedAt)
                 });
             }
             catch (Exception)
@@ -272,7 +272,7 @@ namespace Portfolio.Controllers
                     primaryButtonUrl = homePage.HeaderPrimaryButtonUrl ?? "",
                     overlayColor = homePage.HeaderOverlayColor ?? "",
                     overlayOpacity = homePage.HeaderOverlayOpacity ?? 0.5f,
-                    lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
+                    lastModified = homePage.UpdatedAt.GetValueOrDefault(homePage.CreatedAt)
                 };
 
                 // Build features data - with fallback
