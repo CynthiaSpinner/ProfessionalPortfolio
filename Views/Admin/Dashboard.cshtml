@@ -642,6 +642,9 @@
                         form.style.transform = 'translateY(0)';
                     }, 50);
                 }, 200);
+                
+                // Load templates when form opens
+                loadTemplates();
             } else {
                 // Hide form, show edit button
                 form.style.opacity = '0';
@@ -781,8 +784,9 @@
                     }, 50);
                 }, 200);
                 
-                // Load current features data
+                // Load current features data and templates
                 loadFeaturesData();
+                loadFeaturesTemplates();
             } else {
                 // Hide form, show edit button
                 form.style.opacity = '0';
@@ -2355,8 +2359,9 @@
                     }, 50);
                 }, 200);
                 
-                // Load current CTA data
+                // Load current CTA data and templates
                 loadCTAData();
+                loadCTATemplates();
             } else {
                 // Hide form, show edit button
                 form.style.opacity = '0';
