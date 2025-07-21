@@ -917,6 +917,308 @@ namespace Portfolio.Controllers
             }
         }
 
+        // CTA Section Methods - Following same pattern as Hero and Features
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveCTASection([FromForm] CTASection model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                // Get existing CTA section or create new one
+                var ctaSection = await _context.CTASections.FirstOrDefaultAsync();
+                if (ctaSection == null)
+                {
+                    ctaSection = new CTASection
+                    {
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.CTASections.Add(ctaSection);
+                }
+
+                // Update CTA section properties
+                ctaSection.Title = model.Title ?? "";
+                ctaSection.Subtitle = model.Subtitle ?? "";
+                ctaSection.ButtonText = model.ButtonText ?? "";
+                ctaSection.ButtonLink = model.ButtonLink ?? "";
+                ctaSection.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                // Notify WebSocket clients
+                await _webSocketService.NotifyClientsAsync("cta", "CTA section updated");
+
+                return Json(new { success = true, message = "CTA section saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving CTA section");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetCTASection()
+        {
+            try
+            {
+                var ctaSection = await _context.CTASections.FirstOrDefaultAsync();
+                
+                if (ctaSection == null)
+                {
+                    return Json(new { success = false, message = "No CTA section found." });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        title = ctaSection.Title ?? "",
+                        subtitle = ctaSection.Subtitle ?? "",
+                        buttonText = ctaSection.ButtonText ?? "",
+                        buttonLink = ctaSection.ButtonLink ?? "",
+                        lastModified = ctaSection.UpdatedAt ?? ctaSection.CreatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CTA section");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("Admin/GetCTATemplate")]
+        public async Task<IActionResult> GetCTATemplate(int id)
+        {
+            try
+            {
+                var template = await _context.CTATemplates.FindAsync(id);
+                
+                if (template == null)
+                {
+                    return Json(new { success = false, message = "CTA template not found." });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        id = template.Id,
+                        nickname = template.Nickname ?? "",
+                        title = template.Title ?? "",
+                        subtitle = template.Subtitle ?? "",
+                        buttonText = template.ButtonText ?? "",
+                        buttonLink = template.ButtonLink ?? "",
+                        lastModified = template.UpdatedAt ?? template.CreatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CTA template: {Error}", ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("Admin/GetCTATemplates")]
+        public async Task<IActionResult> GetCTATemplates()
+        {
+            try
+            {
+                // Check if table exists
+                var tableExists = await _context.Database
+                    .SqlQueryRaw<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'CTATemplates'")
+                    .FirstOrDefaultAsync();
+
+                if (tableExists == 0)
+                {
+                    return Json(new { success = true, templates = new object[0] });
+                }
+
+                var templates = await _context.CTATemplates
+                    .Select(t => new
+                    {
+                        id = t.Id,
+                        nickname = t.Nickname ?? "",
+                        lastModified = t.UpdatedAt ?? t.CreatedAt
+                    })
+                    .OrderByDescending(t => t.lastModified)
+                    .ToListAsync();
+
+                return Json(new { success = true, templates });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CTA templates: {Error}", ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveCTATemplate([FromForm] CTATemplate model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(model.Title))
+                {
+                    return Json(new { success = false, message = "Title is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.Subtitle))
+                {
+                    return Json(new { success = false, message = "Subtitle is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.ButtonText))
+                {
+                    return Json(new { success = false, message = "Button text is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.ButtonLink))
+                {
+                    return Json(new { success = false, message = "Button link is required." });
+                }
+
+                // Check if template with this nickname already exists
+                var existingTemplate = await _context.CTATemplates
+                    .FirstOrDefaultAsync(t => t.Nickname == model.Nickname);
+                
+                if (existingTemplate != null)
+                {
+                    return Json(new { success = false, message = "A template with this nickname already exists. Please choose a different name." });
+                }
+
+                // Create new CTA template
+                var template = new CTATemplate
+                {
+                    Nickname = model.Nickname ?? "",
+                    Title = model.Title ?? "",
+                    Subtitle = model.Subtitle ?? "",
+                    ButtonText = model.ButtonText ?? "",
+                    ButtonLink = model.ButtonLink ?? "",
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.CTATemplates.Add(template);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "CTA template saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateCTATemplate([FromForm] CTATemplate model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(model.Title))
+                {
+                    return Json(new { success = false, message = "Title is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.Subtitle))
+                {
+                    return Json(new { success = false, message = "Subtitle is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.ButtonText))
+                {
+                    return Json(new { success = false, message = "Button text is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.ButtonLink))
+                {
+                    return Json(new { success = false, message = "Button link is required." });
+                }
+
+                // Find existing template by ID
+                var existingTemplate = await _context.CTATemplates.FindAsync(model.Id);
+                
+                if (existingTemplate == null)
+                {
+                    return Json(new { success = false, message = "Template not found." });
+                }
+
+                // Update template properties
+                existingTemplate.Nickname = model.Nickname ?? "";
+                existingTemplate.Title = model.Title ?? "";
+                existingTemplate.Subtitle = model.Subtitle ?? "";
+                existingTemplate.ButtonText = model.ButtonText ?? "";
+                existingTemplate.ButtonLink = model.ButtonLink ?? "";
+                existingTemplate.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "CTA template updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCTATemplate(int id)
+        {
+            try
+            {
+                var template = await _context.CTATemplates.FindAsync(id);
+                if (template == null)
+                {
+                    return Json(new { success = false, message = "Template not found" });
+                }
+
+                _context.CTATemplates.Remove(template);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "CTA template deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         public class LoginModel
         {
             public string? Username { get; set; }
@@ -1000,5 +1302,7 @@ namespace Portfolio.Controllers
             public string? Feature3Icon { get; set; }
             public string? Feature3Link { get; set; }
         }
+
+
     }
 }

@@ -479,11 +479,92 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted" style="color: #9ca3af !important;">Manage the CTA section content including title and subtitle.</p>
-                    <button class="btn btn-primary" onclick="editSection('cta')">
-                        <i class="fas fa-edit"></i>
-                        Edit CTA Section
-                    </button>
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage the CTA section content including title, subtitle, and action button.</p>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-primary" onclick="toggleCTAEdit()" id="editCTABtn">
+                            <i class="fas fa-edit"></i>
+                            Edit CTA
+                        </button>
+                    </div>
+                    
+                    <!-- CTA Edit Form (Hidden by default) -->
+                    <div id="ctaEditForm" style="display: none !important; margin-top: 2rem;">
+                        <form id="ctaForm" asp-action="SaveCTASection" asp-controller="Admin" method="post">
+                            @Html.AntiForgeryToken()
+                            
+                            <!-- Template Section -->
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Template</h5>
+                                <div class="card" style="overflow: visible;">
+                                    <div class="card-body" style="overflow: visible;">
+                                        <div class="mb-3" style="position: relative;">
+                                            <label for="ctaTemplateNickname" class="form-label" style="color: #9ca3af !important;">Nickname</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="ctaTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; background-color: rgba(50, 45, 60, 0.25) !important;">
+                                                <button class="btn btn-outline-secondary" type="button" id="ctaTemplateDropdownBtn" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important; padding: 0.375rem 0.5rem !important; min-width: auto !important; display: flex !important; align-items: center !important; justify-content: center !important; background: transparent !important; width: 40px !important; height: 38px !important; line-height: 1 !important;">
+                                                    <i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>
+                                                </button>
+                                            </div>
+                                            <!-- Dropdown menu inside the card -->
+                                            <div id="ctaCustomDropdownMenu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0, 0, 10, 0.95); border: 1px solid rgba(129, 140, 248, 0.3); border-top: none; backdrop-filter: blur(10px); z-index: 99999999 !important; border-radius: 0 0 4px 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateY(-10px) scale(0.95); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-top: -1px;">
+                                                <div class="dropdown-item" onclick="clearCTATemplateSelection()" style="color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease;" onmouseenter="this.style.background='rgba(129, 140, 248, 0.1)';" onmouseleave="this.style.background='transparent';">Clear Selection</div>
+                                                <div id="ctaTemplateOptions">
+                                                    <!-- Template options will be loaded here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CTA Content -->
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">CTA Content</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="ctaTitle" name="Title" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="ctaSubtitle" name="Subtitle" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaButtonText" class="form-label" style="color: #9ca3af !important;">Button Text</label>
+                                                <input type="text" class="form-control" id="ctaButtonText" name="ButtonText" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaButtonLink" class="form-label" style="color: #9ca3af !important;">Button Link</label>
+                                                <input type="text" class="form-control" id="ctaButtonLink" name="ButtonLink" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 justify-content-between">
+                                <button type="button" class="btn btn-danger btn-block" onclick="deleteCTATemplate()" id="deleteCTABtn">
+                                    <i class="fas fa-trash"></i>
+                                    Delete Template
+                                </button>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-secondary" onclick="toggleCTAEdit()">
+                                        <i class="fas fa-times"></i>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -1226,6 +1307,164 @@
                     submitButton.disabled = false;
                 }
             });
+
+            // CTA form submission - exactly like Hero and Features sections
+            const ctaForm = document.getElementById('ctaForm');
+            ctaForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitButton = ctaForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitButton.disabled = true;
+                
+                try {
+                    // Get nickname from template field
+                    const nickname = document.getElementById('ctaTemplateNickname').value.trim();
+                    
+                    if (!nickname) {
+                        showNotification('Error!', 'Please enter a nickname for the template.', 'error');
+                        return;
+                    }
+                    
+                    // Step 1: Handle template saving/updating like Hero section
+                    const templateResult = await handleCTATemplateSave(nickname);
+                    
+                    if (!templateResult.success) {
+                        showNotification('Error!', templateResult.message, 'error');
+                        return;
+                    }
+                    
+                    // Step 2: Save to frontend (like Hero section does)
+                    const formData = new FormData(ctaForm);
+                    
+                    const response = await fetch('/Admin/SaveCTASection', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+                    
+                    // Debug: Log response details
+                    console.log('CTA section response status:', response.status);
+                    console.log('CTA section response headers:', response.headers);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('CTA section response error text:', errorText);
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Show success message
+                        const message = nickname && templateResult ? 
+                            `Template "${nickname}" ${templateResult.updated ? 'updated' : 'saved'} and CTA section updated successfully!` :
+                            'CTA section updated successfully!';
+                        showNotification('Success!', message, 'success');
+                        
+                        // Hide the form
+                        toggleCTAEdit();
+                        
+                        // Reload templates
+                        await loadCTATemplates();
+                        
+                        // Frontend will automatically detect changes via WebSocket
+                        console.log('CTA changes saved successfully - frontend will update automatically via WebSocket');
+                    } else {
+                        // Show error message
+                        showNotification('Error!', result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error saving CTA template:', error);
+                    console.error('Error details:', error.message);
+                    console.error('Error stack:', error.stack);
+                    showNotification('Error!', `An unexpected error occurred: ${error.message}`, 'error');
+                } finally {
+                    // Restore button state
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }
+            });
+        }
+
+        // Handle CTA template saving/updating - exactly like Hero section
+        async function handleCTATemplateSave(nickname) {
+            try {
+                // Check if template already exists
+                const existingTemplate = ctaTemplates.find(t => t.nickname.toLowerCase() === nickname.toLowerCase());
+                
+                if (existingTemplate) {
+                    // Update existing template
+                    const formData = new FormData();
+                    formData.append('Id', existingTemplate.id);
+                    formData.append('Nickname', nickname);
+                    formData.append('Title', document.getElementById('ctaTitle').value || '');
+                    formData.append('Subtitle', document.getElementById('ctaSubtitle').value || '');
+                    formData.append('ButtonText', document.getElementById('ctaButtonText').value || '');
+                    formData.append('ButtonLink', document.getElementById('ctaButtonLink').value || '');
+                    formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+                    
+                    const response = await fetch('/Admin/UpdateCTATemplate', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    // Debug: Log response details
+                    console.log('Update CTA template response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Update CTA template error text:', errorText);
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        return { success: true, updated: true, message: result.message };
+                    } else {
+                        return { success: false, message: result.message };
+                    }
+                } else {
+                    // Create new template
+                    const formData = new FormData();
+                    formData.append('Nickname', nickname);
+                    formData.append('Title', document.getElementById('ctaTitle').value || '');
+                    formData.append('Subtitle', document.getElementById('ctaSubtitle').value || '');
+                    formData.append('ButtonText', document.getElementById('ctaButtonText').value || '');
+                    formData.append('ButtonLink', document.getElementById('ctaButtonLink').value || '');
+                    formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+                    
+                    const response = await fetch('/Admin/SaveCTATemplate', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    // Debug: Log response details
+                    console.log('Save CTA template response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Save CTA template error text:', errorText);
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        return { success: true, updated: false, message: result.message };
+                    } else {
+                        return { success: false, message: result.message };
+                    }
+                }
+            } catch (error) {
+                console.error('Error handling CTA template save:', error);
+                return { success: false, message: 'An unexpected error occurred while saving CTA template.' };
+            }
         }
 
         // Handle template saving/updating
@@ -2085,6 +2324,304 @@
             { class: 'fas fa-paint-brush', name: 'Creative' },
             { class: 'fas fa-network-wired', name: 'Networking' }
         ];
+
+        // CTA Section Functions - Following same pattern as Hero and Features
+        let ctaTemplates = [];
+
+        // Toggle CTA edit form
+        function toggleCTAEdit() {
+            const form = document.getElementById('ctaEditForm');
+            const editButton = document.getElementById('editCTABtn');
+            
+            console.log('toggleCTAEdit called');
+            console.log('Form display before:', form.style.display);
+            console.log('Form element:', form);
+            console.log('Edit button:', editButton);
+            
+            if (form.style.display === 'none' || form.style.display === '') {
+                // Show form, hide edit button
+                editButton.style.opacity = '0';
+                editButton.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    editButton.style.display = 'none';
+                    form.style.display = 'block';
+                    form.style.opacity = '0';
+                    form.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        form.style.opacity = '1';
+                        form.style.transform = 'translateY(0)';
+                    }, 50);
+                }, 200);
+                
+                // Load current CTA data
+                loadCTAData();
+            } else {
+                // Hide form, show edit button
+                form.style.opacity = '0';
+                form.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    form.style.display = 'none';
+                    editButton.style.display = 'inline-flex';
+                    editButton.style.opacity = '0';
+                    editButton.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        editButton.style.opacity = '1';
+                        editButton.style.transform = 'translateY(0)';
+                    }, 50);
+                }, 200);
+            }
+        }
+
+        // Load CTA data from API
+        async function loadCTAData() {
+            try {
+                console.log('Loading CTA data...');
+                
+                const response = await fetch('/Admin/GetCTASection');
+                
+                console.log('CTA response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error loading CTA:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const cta = result.data;
+                    console.log('Loaded CTA:', cta);
+                    
+                    // Fill form fields with null checks
+                    const ctaTitleEl = document.getElementById('ctaTitle');
+                    const ctaSubtitleEl = document.getElementById('ctaSubtitle');
+                    const ctaButtonTextEl = document.getElementById('ctaButtonText');
+                    const ctaButtonLinkEl = document.getElementById('ctaButtonLink');
+                    
+                    if (ctaTitleEl) ctaTitleEl.value = cta.title || '';
+                    if (ctaSubtitleEl) ctaSubtitleEl.value = cta.subtitle || '';
+                    if (ctaButtonTextEl) ctaButtonTextEl.value = cta.buttonText || '';
+                    if (ctaButtonLinkEl) ctaButtonLinkEl.value = cta.buttonLink || '';
+                    
+                    console.log('CTA form populated successfully');
+                } else {
+                    console.error('Error loading CTA:', result.message);
+                }
+            } catch (error) {
+                console.error('Error loading CTA:', error);
+            }
+        }
+
+        // Load CTA templates for dropdown
+        async function loadCTATemplates() {
+            try {
+                console.log('Loading CTA templates...');
+                
+                const response = await fetch('/Admin/GetCTATemplates');
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error loading CTA templates:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    ctaTemplates = result.templates || [];
+                    console.log('Loaded CTA templates:', ctaTemplates);
+                    updateCTATemplateDropdown();
+                } else {
+                    console.error('Error loading CTA templates:', result.message);
+                }
+            } catch (error) {
+                console.error('Error loading CTA templates:', error);
+            }
+        }
+
+        // Update CTA template dropdown
+        function updateCTATemplateDropdown() {
+            const dropdown = document.getElementById('ctaTemplateOptions');
+            if (!dropdown) return;
+            
+            dropdown.innerHTML = '';
+            
+            ctaTemplates.forEach(template => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.style.cssText = 'color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease;';
+                item.onmouseenter = function() { this.style.background = 'rgba(129, 140, 248, 0.1)'; };
+                item.onmouseleave = function() { this.style.background = 'transparent'; };
+                item.onclick = () => selectCTATemplate(template.id);
+                item.textContent = template.nickname;
+                dropdown.appendChild(item);
+            });
+        }
+
+        // Select CTA template
+        async function selectCTATemplate(templateId) {
+            try {
+                console.log('Selecting CTA template:', templateId);
+                
+                const response = await fetch(`/Admin/GetCTATemplate?id=${templateId}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error loading CTA template:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const template = result.data;
+                    console.log('Selected CTA template:', template);
+                    
+                    // Fill form fields
+                    document.getElementById('ctaTemplateNickname').value = template.nickname || '';
+                    document.getElementById('ctaTitle').value = template.title || '';
+                    document.getElementById('ctaSubtitle').value = template.subtitle || '';
+                    document.getElementById('ctaButtonText').value = template.buttonText || '';
+                    document.getElementById('ctaButtonLink').value = template.buttonLink || '';
+                    
+                    // Close dropdown
+                    closeCTADropdown();
+                    
+                    console.log('CTA template selected successfully');
+                } else {
+                    console.error('Error loading CTA template:', result.message);
+                }
+            } catch (error) {
+                console.error('Error selecting CTA template:', error);
+            }
+        }
+
+        // Clear CTA template selection
+        function clearCTATemplateSelection() {
+            document.getElementById('ctaTemplateNickname').value = '';
+            document.getElementById('ctaTitle').value = '';
+            document.getElementById('ctaSubtitle').value = '';
+            document.getElementById('ctaButtonText').value = '';
+            document.getElementById('ctaButtonLink').value = '';
+        }
+
+        // Delete CTA template
+        async function deleteCTATemplate() {
+            const nickname = document.getElementById('ctaTemplateNickname').value.trim();
+            
+            if (!nickname) {
+                showNotification('Error', 'Please select a template to delete.', 'error');
+                return;
+            }
+            
+            const existingTemplate = ctaTemplates.find(t => t.nickname.toLowerCase() === nickname.toLowerCase());
+            
+            if (!existingTemplate) {
+                showNotification('Error', 'Template not found.', 'error');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete the template "${nickname}"?`)) {
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('id', existingTemplate.id);
+                formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+                
+                const response = await fetch('/Admin/DeleteCTATemplate', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Success', 'CTA template deleted successfully!', 'success');
+                    clearCTATemplateSelection();
+                    await loadCTATemplates();
+                } else {
+                    showNotification('Error', result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting CTA template:', error);
+                showNotification('Error', 'An error occurred while deleting the CTA template.', 'error');
+            }
+        }
+
+        // Setup CTA dropdown functionality
+        function setupCTADropdown() {
+            const dropdownBtn = document.getElementById('ctaTemplateDropdownBtn');
+            const dropdownMenu = document.getElementById('ctaCustomDropdownMenu');
+            const nicknameInput = document.getElementById('ctaTemplateNickname');
+            
+            if (!dropdownBtn || !dropdownMenu || !nicknameInput) return;
+            
+            // Button click to toggle dropdown
+            dropdownBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+                    dropdownMenu.style.display = 'block';
+                    setTimeout(() => {
+                        dropdownMenu.style.opacity = '1';
+                        dropdownMenu.style.transform = 'translateY(0) scale(1)';
+                    }, 10);
+                } else {
+                    closeCTADropdown();
+                }
+            });
+            
+            // Input click to open dropdown
+            nicknameInput.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                dropdownMenu.style.display = 'block';
+                setTimeout(() => {
+                    dropdownMenu.style.opacity = '1';
+                    dropdownMenu.style.transform = 'translateY(0) scale(1)';
+                }, 10);
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdownBtn.contains(e.target) && !nicknameInput.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    closeCTADropdown();
+                }
+            });
+            
+            // Close dropdown on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeCTADropdown();
+                }
+            });
+        }
+
+        // Close CTA dropdown
+        function closeCTADropdown() {
+            const dropdownMenu = document.getElementById('ctaCustomDropdownMenu');
+            if (dropdownMenu) {
+                dropdownMenu.style.opacity = '0';
+                dropdownMenu.style.transform = 'translateY(-10px) scale(0.95)';
+                setTimeout(() => {
+                    dropdownMenu.style.display = 'none';
+                }, 300);
+            }
+        }
         
         function openIconPicker(fieldId) {
             currentIconField = fieldId;
@@ -2621,12 +3158,14 @@
             
             loadTemplates();
             loadFeaturesTemplates();
+            loadCTATemplates();
             updateAllIconPreviews();
             
             // Setup dropdowns after templates are loaded
             setTimeout(() => {
                 setupCustomDropdown();
                 setupFeaturesDropdown();
+                setupCTADropdown();
             }, 100);
         });
     </script>

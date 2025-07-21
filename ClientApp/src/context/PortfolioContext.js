@@ -25,7 +25,7 @@ export const PortfolioProvider = ({ children }) => {
       // Load each endpoint individually to handle failures gracefully
       try {
         const aboutData = await Promise.race([
-          portfolioApi.getAbout(),
+        portfolioApi.getAbout(),
           timeoutPromise
         ]);
         setAbout(aboutData.data);
@@ -36,7 +36,7 @@ export const PortfolioProvider = ({ children }) => {
 
       try {
         const projectsData = await Promise.race([
-          portfolioApi.getProjects(),
+        portfolioApi.getProjects(),
           timeoutPromise
         ]);
         setProjects(projectsData.data);
@@ -47,10 +47,10 @@ export const PortfolioProvider = ({ children }) => {
 
       try {
         const skillsData = await Promise.race([
-          portfolioApi.getSkills(),
+        portfolioApi.getSkills(),
           timeoutPromise
-        ]);
-        setSkills(skillsData.data);
+      ]);
+      setSkills(skillsData.data);
       } catch (err) {
         console.warn("Failed to load skills data:", err.message);
         setSkills(null);
