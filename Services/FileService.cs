@@ -88,13 +88,13 @@ namespace Portfolio.Services
             return Path.Combine("uploads", "videos", subdirectory, fileName).Replace("\\", "/");
         }
 
-        public async Task<Stream> GetVideoStreamAsync(string filePath)
+        public Task<Stream> GetVideoStreamAsync(string filePath)
         {
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath);
             if (!File.Exists(fullPath))
                 throw new FileNotFoundException("Video file not found");
 
-            return new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            return Task.FromResult<Stream>(new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true));
         }
 
         public async Task<string> GetVideoThumbnailAsync(string videoPath)
@@ -130,25 +130,25 @@ namespace Portfolio.Services
             }
         }
 
-        public async Task<bool> DeleteFileAsync(string filePath)
+        public Task<bool> DeleteFileAsync(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
-                return false;
+                return Task.FromResult(false);
 
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath);
             if (File.Exists(fullPath))
             {
                 File.Delete(fullPath);
-                return true;
+                return Task.FromResult(true);
             }
 
-            return false;
+            return Task.FromResult(false);
         }
 
-        public async Task<bool> DeleteVideoAsync(string videoPath)
+        public Task<bool> DeleteVideoAsync(string videoPath)
         {
             if (string.IsNullOrEmpty(videoPath))
-                return false;
+                return Task.FromResult(false);
 
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", videoPath);
             var thumbnailPath = videoPath.Replace(Path.GetExtension(videoPath), "_thumb.jpg");
@@ -166,27 +166,27 @@ namespace Portfolio.Services
                 File.Delete(fullThumbnailPath);
             }
 
-            return deleted;
+            return Task.FromResult(deleted);
         }
 
-        public async Task<string> GetFileUrlAsync(string filePath)
+        public Task<string> GetFileUrlAsync(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
-                return string.Empty;
+                return Task.FromResult(string.Empty);
 
             var baseUrl = _configuration["BaseUrl"] ?? "https://localhost:5001";
-            return $"{baseUrl}/{filePath}";
+            return Task.FromResult($"{baseUrl}/{filePath}");
         }
 
-        public async Task<bool> ValidateFileSizeAsync(IFormFile file, long maxSize)
+        public Task<bool> ValidateFileSizeAsync(IFormFile file, long maxSize)
         {
-            return file.Length <= maxSize;
+            return Task.FromResult(file.Length <= maxSize);
         }
 
-        public async Task<bool> ValidateFileTypeAsync(IFormFile file, string[] allowedTypes)
+        public Task<bool> ValidateFileTypeAsync(IFormFile file, string[] allowedTypes)
         {
             var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
-            return allowedTypes.Contains(fileExtension);
+            return Task.FromResult(allowedTypes.Contains(fileExtension));
         }
     }
 }

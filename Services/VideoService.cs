@@ -61,7 +61,7 @@ namespace Portfolio.Services
             return true;
         }
 
-        public async Task<Video> GetVideoByIdAsync(int videoId)
+        public async Task<Video?> GetVideoByIdAsync(int videoId)
         {
             return await _context.Videos.FindAsync(videoId);
         }

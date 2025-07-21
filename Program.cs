@@ -126,8 +126,7 @@ app.UseAuthorization();
 // Add WebSocket middleware with Azure-friendly configuration
 app.UseWebSockets(new WebSocketOptions
 {
-    KeepAliveInterval = TimeSpan.FromMinutes(2),
-    ReceiveBufferSize = 4 * 1024
+    KeepAliveInterval = TimeSpan.FromMinutes(2)
 });
 
 app.UseEndpoints(endpoints =>
@@ -200,7 +199,7 @@ if (!Directory.Exists(Path.Combine(app.Environment.ContentRootPath, "wwwroot")))
 
 // Graceful shutdown handling
 var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
-lifetime.ApplicationStopping.Register(() =>
+lifetime.ApplicationStopping.Register(async () =>
 {
     Console.WriteLine("Application is shutting down...");
     

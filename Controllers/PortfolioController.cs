@@ -263,14 +263,14 @@ namespace Portfolio.Controllers
                     lastModified = DateTime.UtcNow
                 } : new
                 {
-                    title = homePage.HeaderTitle,
-                    subtitle = homePage.HeaderSubtitle,
-                    description = homePage.HeaderDescription,
-                    backgroundImageUrl = homePage.HeaderBackgroundImageUrl,
-                    backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
-                    primaryButtonText = homePage.HeaderPrimaryButtonText,
-                    primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
-                    overlayColor = homePage.HeaderOverlayColor,
+                    title = homePage.HeaderTitle ?? "",
+                    subtitle = homePage.HeaderSubtitle ?? "",
+                    description = homePage.HeaderDescription ?? "",
+                    backgroundImageUrl = homePage.HeaderBackgroundImageUrl ?? "",
+                    backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl ?? "",
+                    primaryButtonText = homePage.HeaderPrimaryButtonText ?? "",
+                    primaryButtonUrl = homePage.HeaderPrimaryButtonUrl ?? "",
+                    overlayColor = homePage.HeaderOverlayColor ?? "",
                     overlayOpacity = homePage.HeaderOverlayOpacity ?? 0.5f,
                     lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
                 };
@@ -310,36 +310,36 @@ namespace Portfolio.Controllers
                     lastModified = DateTime.UtcNow
                 } : new
                 {
-                    title = features.SectionTitle,
-                    subtitle = features.SectionSubtitle,
+                    title = features.SectionTitle ?? "",
+                    subtitle = features.SectionSubtitle ?? "",
                     features = new[]
                     {
                         new
                         {
-                            title = features.Feature1Title,
-                            subtitle = features.Feature1Subtitle,
-                            description = features.Feature1Description,
-                            icon = features.Feature1Icon,
-                            link = features.Feature1Link
+                            title = features.Feature1Title ?? "",
+                            subtitle = features.Feature1Subtitle ?? "",
+                            description = features.Feature1Description ?? "",
+                            icon = features.Feature1Icon ?? "",
+                            link = features.Feature1Link ?? ""
                         },
                         new
                         {
-                            title = features.Feature2Title,
-                            subtitle = features.Feature2Subtitle,
-                            description = features.Feature2Description,
-                            icon = features.Feature2Icon,
-                            link = features.Feature2Link
+                            title = features.Feature2Title ?? "",
+                            subtitle = features.Feature2Subtitle ?? "",
+                            description = features.Feature2Description ?? "",
+                            icon = features.Feature2Icon ?? "",
+                            link = features.Feature2Link ?? ""
                         },
                         new
                         {
-                            title = features.Feature3Title,
-                            subtitle = features.Feature3Subtitle,
-                            description = features.Feature3Description,
-                            icon = features.Feature3Icon,
-                            link = features.Feature3Link
+                            title = features.Feature3Title ?? "",
+                            subtitle = features.Feature3Subtitle ?? "",
+                            description = features.Feature3Description ?? "",
+                            icon = features.Feature3Icon ?? "",
+                            link = features.Feature3Link ?? ""
                         }
                     },
-                    lastModified = features.UpdatedAt
+                    lastModified = features.UpdatedAt ?? DateTime.UtcNow
                 };
 
                 return Json(new

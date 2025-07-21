@@ -297,7 +297,7 @@ namespace Portfolio.Controllers
                 // Create new hero template
                 var template = new HeroTemplate
                 {
-                    Nickname = model.Nickname,
+                    Nickname = model.Nickname ?? "",
                     HeaderTitle = model.HeaderTitle ?? "",
                     HeaderSubtitle = model.HeaderSubtitle ?? "",
                     HeaderDescription = model.HeaderDescription ?? "",
@@ -344,7 +344,7 @@ namespace Portfolio.Controllers
                 }
 
                 // Update template properties
-                existingTemplate.Nickname = model.Nickname;
+                existingTemplate.Nickname = model.Nickname ?? "";
                 existingTemplate.HeaderTitle = model.HeaderTitle ?? "";
                 existingTemplate.HeaderSubtitle = model.HeaderSubtitle ?? "";
                 existingTemplate.HeaderDescription = model.HeaderDescription ?? "";
@@ -799,23 +799,23 @@ namespace Portfolio.Controllers
                     template = new FeaturesTemplate
                     {
                         Nickname = model.Nickname ?? "New Template",
-                        SectionTitle = model.SectionTitle,
+                        SectionTitle = model.SectionTitle ?? "",
                         SectionSubtitle = model.SectionSubtitle ?? "", // Optional
-                        Feature1Title = model.Feature1Title,
-                        Feature1Subtitle = model.Feature1Subtitle,
+                        Feature1Title = model.Feature1Title ?? "",
+                        Feature1Subtitle = model.Feature1Subtitle ?? "",
                         Feature1Description = model.Feature1Description ?? "", // Optional
                         Feature1Icon = model.Feature1Icon ?? "", // Optional
-                        Feature1Link = model.Feature1Link,
-                        Feature2Title = model.Feature2Title,
-                        Feature2Subtitle = model.Feature2Subtitle,
+                        Feature1Link = model.Feature1Link ?? "",
+                        Feature2Title = model.Feature2Title ?? "",
+                        Feature2Subtitle = model.Feature2Subtitle ?? "",
                         Feature2Description = model.Feature2Description ?? "", // Optional
                         Feature2Icon = model.Feature2Icon ?? "", // Optional
-                        Feature2Link = model.Feature2Link,
-                        Feature3Title = model.Feature3Title,
-                        Feature3Subtitle = model.Feature3Subtitle,
+                        Feature2Link = model.Feature2Link ?? "",
+                        Feature3Title = model.Feature3Title ?? "",
+                        Feature3Subtitle = model.Feature3Subtitle ?? "",
                         Feature3Description = model.Feature3Description ?? "", // Optional
                         Feature3Icon = model.Feature3Icon ?? "", // Optional
-                        Feature3Link = model.Feature3Link,
+                        Feature3Link = model.Feature3Link ?? "",
                         CreatedAt = DateTime.UtcNow
                     };
                     _context.FeaturesTemplates.Add(template);
@@ -830,23 +830,23 @@ namespace Portfolio.Controllers
                     }
 
                     template.Nickname = model.Nickname ?? template.Nickname;
-                    template.SectionTitle = model.SectionTitle;
+                    template.SectionTitle = model.SectionTitle ?? template.SectionTitle;
                     template.SectionSubtitle = model.SectionSubtitle ?? ""; // Optional
-                    template.Feature1Title = model.Feature1Title;
-                    template.Feature1Subtitle = model.Feature1Subtitle;
+                    template.Feature1Title = model.Feature1Title ?? template.Feature1Title;
+                    template.Feature1Subtitle = model.Feature1Subtitle ?? template.Feature1Subtitle;
                     template.Feature1Description = model.Feature1Description ?? ""; // Optional
                     template.Feature1Icon = model.Feature1Icon ?? ""; // Optional
-                    template.Feature1Link = model.Feature1Link;
-                    template.Feature2Title = model.Feature2Title;
-                    template.Feature2Subtitle = model.Feature2Subtitle;
+                    template.Feature1Link = model.Feature1Link ?? template.Feature1Link;
+                    template.Feature2Title = model.Feature2Title ?? template.Feature2Title;
+                    template.Feature2Subtitle = model.Feature2Subtitle ?? template.Feature2Subtitle;
                     template.Feature2Description = model.Feature2Description ?? ""; // Optional
                     template.Feature2Icon = model.Feature2Icon ?? ""; // Optional
-                    template.Feature2Link = model.Feature2Link;
-                    template.Feature3Title = model.Feature3Title;
-                    template.Feature3Subtitle = model.Feature3Subtitle;
+                    template.Feature2Link = model.Feature2Link ?? template.Feature2Link;
+                    template.Feature3Title = model.Feature3Title ?? template.Feature3Title;
+                    template.Feature3Subtitle = model.Feature3Subtitle ?? template.Feature3Subtitle;
                     template.Feature3Description = model.Feature3Description ?? ""; // Optional
                     template.Feature3Icon = model.Feature3Icon ?? ""; // Optional
-                    template.Feature3Link = model.Feature3Link;
+                    template.Feature3Link = model.Feature3Link ?? template.Feature3Link;
                     template.UpdatedAt = DateTime.UtcNow;
                 }
 
