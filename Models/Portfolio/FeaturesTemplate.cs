@@ -75,7 +75,7 @@ namespace Portfolio.Models.Portfolio
 
         [Required]
         [StringLength(200)]
-        public string Feature3Link { get; set; } = string.Empty
+        public string Feature3Link { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
