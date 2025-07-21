@@ -1046,7 +1046,7 @@ namespace Portfolio.Controllers
 
                 if (tableExists == 0)
                 {
-                    return Json(new { success = true, data = new object[0] });
+                    return Json(new { success = true, data = new object?[0] });
                 }
 
                 var templates = await _context.CTATemplates

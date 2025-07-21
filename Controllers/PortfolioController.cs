@@ -339,7 +339,7 @@ namespace Portfolio.Controllers
                             link = features.Feature3Link ?? ""
                         }
                     },
-                    lastModified = features.UpdatedAt.GetValueOrDefault(DateTime.UtcNow)
+                    lastModified = features.UpdatedAt
                 };
 
                 return Json(new
