@@ -2433,7 +2433,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    ctaTemplates = result.templates || [];
+                    ctaTemplates = result.data || [];
                     console.log('Loaded CTA templates:', ctaTemplates);
                     updateCTATemplateDropdown();
                 } else {
@@ -2446,27 +2446,51 @@
 
         // Update CTA template dropdown
         function updateCTATemplateDropdown() {
+            console.log('Updating CTA template dropdown with templates:', ctaTemplates);
             const dropdown = document.getElementById('ctaTemplateOptions');
             if (!dropdown) return;
             
             dropdown.innerHTML = '';
             
-            ctaTemplates.forEach(template => {
+            ctaTemplates.forEach((template, idx) => {
+                console.log('Creating option for CTA template:', template);
                 const item = document.createElement('div');
                 item.className = 'dropdown-item';
-                item.style.cssText = 'color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease;';
-                item.onmouseenter = function() { this.style.background = 'rgba(129, 140, 248, 0.1)'; };
-                item.onmouseleave = function() { this.style.background = 'transparent'; };
-                item.onclick = () => selectCTATemplate(template.id);
+                item.style.cssText = 'color: #818cf8; background: transparent; padding: 0.5rem 1rem; cursor: pointer; transition: background 0.2s ease; border-top: 1px solid rgba(129, 140, 248, 0.2);';
                 item.textContent = template.nickname;
+                item.onclick = function(e) {
+                    e.preventDefault();
+                    selectCTATemplate(template.id, template.nickname);
+                    // Close dropdown after selection with smooth animation
+                    closeCTADropdown();
+                };
+                
+                // Add hover effect
+                item.onmouseenter = function() {
+                    this.style.background = 'rgba(129, 140, 248, 0.1)';
+                };
+                item.onmouseleave = function() {
+                    this.style.background = 'transparent';
+                };
+                
                 dropdown.appendChild(item);
             });
+            console.log('CTA template dropdown updated');
         }
 
-        // Select CTA template
-        async function selectCTATemplate(templateId) {
+        // Select CTA template from dropdown
+        async function selectCTATemplate(templateId, templateNickname) {
+            // Update the input field with the selected nickname
+            document.getElementById('ctaTemplateNickname').value = templateNickname;
+            
+            // Load the template data
+            await loadCTATemplateById(templateId);
+        }
+
+        // Load CTA template by ID
+        async function loadCTATemplateById(templateId) {
             try {
-                console.log('Selecting CTA template:', templateId);
+                console.log('Loading CTA template by ID:', templateId);
                 
                 const response = await fetch(`/Admin/GetCTATemplate?id=${templateId}`);
                 
@@ -2480,24 +2504,20 @@
                 
                 if (result.success) {
                     const template = result.data;
-                    console.log('Selected CTA template:', template);
+                    console.log('Loaded CTA template:', template);
                     
                     // Fill form fields
-                    document.getElementById('ctaTemplateNickname').value = template.nickname || '';
                     document.getElementById('ctaTitle').value = template.title || '';
                     document.getElementById('ctaSubtitle').value = template.subtitle || '';
                     document.getElementById('ctaButtonText').value = template.buttonText || '';
                     document.getElementById('ctaButtonLink').value = template.buttonLink || '';
                     
-                    // Close dropdown
-                    closeCTADropdown();
-                    
-                    console.log('CTA template selected successfully');
+                    console.log('CTA template loaded successfully');
                 } else {
                     console.error('Error loading CTA template:', result.message);
                 }
             } catch (error) {
-                console.error('Error selecting CTA template:', error);
+                console.error('Error loading CTA template:', error);
             }
         }
 

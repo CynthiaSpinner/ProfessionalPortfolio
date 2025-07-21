@@ -1046,7 +1046,7 @@ namespace Portfolio.Controllers
 
                 if (tableExists == 0)
                 {
-                    return Json(new { success = true, templates = new object[0] });
+                    return Json(new { success = true, data = new object[0] });
                 }
 
                 var templates = await _context.CTATemplates
@@ -1059,7 +1059,7 @@ namespace Portfolio.Controllers
                     .OrderByDescending(t => t.lastModified)
                     .ToListAsync();
 
-                return Json(new { success = true, templates });
+                return Json(new { success = true, data = templates });
             }
             catch (Exception ex)
             {
