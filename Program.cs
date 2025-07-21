@@ -199,13 +199,13 @@ if (!Directory.Exists(Path.Combine(app.Environment.ContentRootPath, "wwwroot")))
 
 // Graceful shutdown handling
 var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
-lifetime.ApplicationStopping.Register(() =>
+lifetime.ApplicationStopping.Register(async () =>
 {
     Console.WriteLine("Application is shutting down...");
     
     // Close all WebSocket connections
     var webSocketService = app.Services.GetRequiredService<WebSocketService>();
-    webSocketService.CloseAllConnections();
+    await webSocketService.CloseAllConnections();
     
     Console.WriteLine("All WebSocket connections closed.");
 });

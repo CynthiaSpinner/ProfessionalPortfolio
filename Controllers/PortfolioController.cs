@@ -339,7 +339,7 @@ namespace Portfolio.Controllers
                             link = features.Feature3Link ?? ""
                         }
                     },
-                    lastModified = features.UpdatedAt ?? DateTime.UtcNow
+                    lastModified = features.UpdatedAt.GetValueOrDefault(DateTime.UtcNow)
                 };
 
                 return Json(new
@@ -348,7 +348,7 @@ namespace Portfolio.Controllers
                     features = featuresData,
                     projects = new object[0], // Empty array instead of null
                     skills = new object[0],   // Empty array instead of null
-                    about = (object)null,     // Explicit null cast
+                    about = (object?)null,     // Explicit null cast
                     lastModified = DateTime.UtcNow
                 });
             }
