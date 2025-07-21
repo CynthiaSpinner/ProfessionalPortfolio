@@ -79,7 +79,7 @@ namespace Portfolio.Controllers
                     lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load hero section data" });
             }
@@ -140,7 +140,7 @@ namespace Portfolio.Controllers
                 var about = await _context.Abouts.FirstOrDefaultAsync();
                 return Json(about);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Return null instead of error for now
                 return Json(null);
@@ -227,7 +227,7 @@ namespace Portfolio.Controllers
                     lastModified = features.UpdatedAt
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load features data" });
             }

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Services;
 using Portfolio.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Caching.Memory;

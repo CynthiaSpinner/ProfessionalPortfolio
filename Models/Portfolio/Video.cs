@@ -9,19 +9,19 @@ namespace Portfolio.Models.Portfolio
 
         [Required]
         [StringLength(100)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [StringLength(500)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Required]
-        public string FilePath { get; set; }
+        public string FilePath { get; set; } = string.Empty;
 
         [Required]
-        public string ThumbnailPath { get; set; }
+        public string ThumbnailPath { get; set; } = string.Empty;
 
         [Required]
-        public string FileType { get; set; }
+        public string FileType { get; set; } = string.Empty;
 
         public long FileSize { get; set; }
 

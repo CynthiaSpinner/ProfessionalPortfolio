@@ -62,13 +62,13 @@ namespace Portfolio.Data.Repositories
             return await UpdateHomePageAsync(homePage);
         }
 
-        public async Task<string> UploadHeaderBackgroundImageAsync(IFormFile file)
+        public Task<string> UploadHeaderBackgroundImageAsync(IFormFile file)
         {
             // Implementation will be added later
             throw new NotImplementedException();
         }
 
-        public async Task<string> UploadHeaderBackgroundVideoAsync(IFormFile file)
+        public Task<string> UploadHeaderBackgroundVideoAsync(IFormFile file)
         {
             // Implementation will be added later
             throw new NotImplementedException();
@@ -125,7 +125,7 @@ namespace Portfolio.Data.Repositories
             return homePage;
         }
 
-        public async Task<string> UploadSkillCategoryImageAsync(IFormFile file)
+        public Task<string> UploadSkillCategoryImageAsync(IFormFile file)
         {
             // Implementation will be added later
             throw new NotImplementedException();
@@ -182,7 +182,7 @@ namespace Portfolio.Data.Repositories
             return await UpdateHomePageAsync(homePage);
         }
 
-        public async Task<string> UploadCTABackgroundImageAsync(IFormFile file)
+        public Task<string> UploadCTABackgroundImageAsync(IFormFile file)
         {
             // Implementation will be added later
             throw new NotImplementedException();

@@ -46,7 +46,7 @@ namespace Portfolio.Controllers
             {
                 _logger.LogInformation("Login page requested");
                 
-                if (User.Identity.IsAuthenticated)
+                if (User.Identity?.IsAuthenticated == true)
                 {
                     _logger.LogInformation("User already authenticated, redirecting to dashboard");
                     return RedirectToAction("Dashboard");
@@ -952,7 +952,7 @@ namespace Portfolio.Controllers
                 await _context.SaveChangesAsync();
 
                 // Notify WebSocket clients
-                await _webSocketService.NotifyClientsAsync("cta", "CTA section updated");
+                await _webSocketService.BroadcastMessageAsync("{\"type\":\"ctaDataUpdated\",\"timestamp\":\"" + DateTime.UtcNow.ToString("O") + "\"}");
 
                 return Json(new { success = true, message = "CTA section saved successfully!" });
             }

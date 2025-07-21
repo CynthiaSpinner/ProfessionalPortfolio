@@ -11,12 +11,12 @@ namespace Portfolio.Models.Portfolio
         [Required]
         [StringLength(100)]
         [Column("Name")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [StringLength(500)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
-        public string ImagePath { get; set; }
+        public string ImagePath { get; set; } = string.Empty;
 
         [Column(TypeName = "json")]
         public string SkillsJson { get; set; } = "[]";
