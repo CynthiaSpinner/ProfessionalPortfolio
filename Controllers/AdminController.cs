@@ -1054,7 +1054,7 @@ namespace Portfolio.Controllers
                     {
                         id = t.Id,
                         nickname = t.Nickname ?? "",
-                        lastModified = t.UpdatedAt.GetValueOrDefault(t.CreatedAt)
+                        lastModified = t.UpdatedAt ?? t.CreatedAt
                     })
                     .OrderByDescending(t => t.lastModified)
                     .ToListAsync();
