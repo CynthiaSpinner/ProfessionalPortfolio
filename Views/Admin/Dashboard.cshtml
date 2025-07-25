@@ -2332,6 +2332,34 @@
         // CTA Section Functions - Following same pattern as Hero and Features
         let ctaTemplates = [];
 
+        // Test function to check CTA templates API response
+        async function testCTATemplatesAPI() {
+            try {
+                console.log('🧪 Testing CTA Templates API...');
+                const response = await fetch('/Admin/GetCTATemplates');
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response headers:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('📄 Raw response text:', responseText);
+                
+                try {
+                    const result = JSON.parse(responseText);
+                    console.log('✅ Parsed JSON result:', result);
+                    console.log('📊 Success:', result.success);
+                    console.log('💬 Message:', result.message);
+                    console.log('📦 Data:', result.data);
+                    console.log('📦 Data type:', typeof result.data);
+                    console.log('📦 Data length:', result.data ? result.data.length : 'null');
+                } catch (jsonError) {
+                    console.error('❌ JSON parsing failed:', jsonError);
+                    console.error('❌ Raw text that failed to parse:', responseText);
+                }
+            } catch (error) {
+                console.error('❌ Fetch error:', error);
+            }
+        }
+
         // Toggle CTA edit form
         function toggleCTAEdit() {
             const form = document.getElementById('ctaEditForm');

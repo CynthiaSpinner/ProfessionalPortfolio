@@ -1039,32 +1039,52 @@ namespace Portfolio.Controllers
         {
             try
             {
-                // Check if table exists
-                var tableExists = await _context.Database
-                    .SqlQueryRaw<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'CTATemplates'")
-                    .FirstOrDefaultAsync();
-
-                if (tableExists == 0)
-                {
-                    return Json(new { success = true, data = new object?[0] });
-                }
-
+                Console.WriteLine("GetCTATemplates: Starting query...");
+                
+                // Count templates for logging/debugging
+                var templateCount = await _context.CTATemplates.CountAsync();
+                Console.WriteLine($"GetCTATemplates: Found {templateCount} templates in database");
+                
+                // Query and project templates
                 var templates = await _context.CTATemplates
+                    .OrderByDescending(t => t.CreatedAt)
                     .Select(t => new
                     {
                         id = t.Id,
                         nickname = t.Nickname ?? "",
                         lastModified = t.UpdatedAt ?? t.CreatedAt
                     })
-                    .OrderByDescending(t => t.lastModified)
                     .ToListAsync();
-
-                return Json(new { success = true, data = templates });
+                
+                Console.WriteLine($"GetCTATemplates: Processed {templates.Count} templates");
+                foreach (var template in templates)
+                {
+                    Console.WriteLine($"Template: Id={template.id}, Nickname={template.nickname}, LastModified={template.lastModified}");
+                }
+                
+                return Json(new { 
+                    success = true, 
+                    message = "CTA templates retrieved successfully.",
+                    data = templates 
+                });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting CTA templates: {Error}", ex.Message);
-                return Json(new { success = false, message = ex.Message });
+                Console.WriteLine($"GetCTATemplates: Error - {ex.Message}");
+                Console.WriteLine($"GetCTATemplates: Stack trace - {ex.StackTrace}");
+                _logger.LogError(ex, "Error retrieving CTA templates");
+                
+                // Return empty array instead of error if table doesn't exist
+                if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("doesn't exist") || ex.Message.Contains("Invalid column name"))
+                {
+                    return Json(new { success = true, data = new List<object>() });
+                }
+                
+                return Json(new { 
+                    success = false, 
+                    message = $"An error occurred while retrieving CTA templates: {ex.Message}",
+                    data = new object[] { } 
+                });
             }
         }
 
