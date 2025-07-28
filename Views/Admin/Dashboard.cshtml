@@ -3,6 +3,41 @@
     Layout = "_AdminLayout";
 }
 
+<style>
+    /* Glowing border and focus/active styles for ALL dropdown inputs and buttons in the backend */
+    input[type="text"]:focus,
+    button:focus,
+    input[type="text"]:active,
+    button:active {
+        border-color: #818cf8 !important;
+        box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.3) !important;
+        outline: none !important;
+        z-index: 100;
+        position: relative;
+    }
+    
+    /* Specific styles for dropdown buttons to keep them visually connected to inputs */
+    .input-group .btn {
+        border-left: none !important;
+    }
+    
+    /* Ensure dropdown menus appear above other content */
+    [id*="DropdownMenu"] {
+        z-index: 99999999 !important;
+    }
+    
+    /* Consistent dropdown item styling */
+    .dropdown-item {
+        color: #818cf8 !important;
+        background: transparent !important;
+        transition: background 0.2s ease !important;
+    }
+    
+    .dropdown-item:hover {
+        background: rgba(129, 140, 248, 0.1) !important;
+    }
+</style>
+
 <div class="admin-container">
     <div class="admin-sidebar">
         <div class="sidebar-header">
@@ -497,11 +532,12 @@
                                 <h5 class="mb-3" style="color: #818cf8 !important;">Template</h5>
                                 <div class="card" style="overflow: visible;">
                                     <div class="card-body" style="overflow: visible;">
+                                        <!-- CTA Nickname Dropdown (update parent and dropdown menu styles) -->
                                         <div class="mb-3" style="position: relative;">
                                             <label for="ctaTemplateNickname" class="form-label" style="color: #9ca3af !important;">Nickname</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" id="ctaTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; background-color: rgba(50, 45, 60, 0.25) !important;">
-                                                <button class="btn btn-outline-secondary" type="button" id="ctaTemplateDropdownBtn" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important; padding: 0.375rem 0.5rem !important; min-width: auto !important; display: flex !important; align-items: center !important; justify-content: center !important; background: transparent !important; width: 40px !important; height: 38px !important; line-height: 1 !important;">
+                                                <input type="text" class="form-control" id="ctaTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important; background-color: rgba(50, 45, 60, 0.25) !important; box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.15) !important; border-color: rgba(129, 140, 248, 0.3) !important;">
+                                                <button class="btn btn-outline-secondary" type="button" id="ctaTemplateDropdownBtn" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important; padding: 0.375rem 0.5rem !important; min-width: auto !important; display: flex !important; align-items: center !important; justify-content: center !important; background: transparent !important; width: 40px !important; height: 38px !important; line-height: 1 !important; box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.15) !important;">
                                                     <i class="fas fa-chevron-down" style="margin: 0 !important; padding: 0 !important; display: block !important;"></i>
                                                 </button>
                                             </div>
@@ -513,54 +549,54 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- CTA Content -->
-                            <div class="mb-4">
-                                <h5 class="mb-3" style="color: #818cf8 !important;">CTA Content</h5>
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="ctaTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
-                                                <input type="text" class="form-control" id="ctaTitle" name="Title" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="ctaSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
-                                                <input type="text" class="form-control" id="ctaSubtitle" name="Subtitle" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                        <!-- CTA Content -->
+                                        <div class="mb-4">
+                                            <h5 class="mb-3" style="color: #818cf8 !important;">CTA Content</h5>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="ctaTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                            <input type="text" class="form-control" id="ctaTitle" name="Title" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="ctaSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                            <input type="text" class="form-control" id="ctaSubtitle" name="Subtitle" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="ctaButtonText" class="form-label" style="color: #9ca3af !important;">Button Text</label>
+                                                            <input type="text" class="form-control" id="ctaButtonText" name="ButtonText" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="ctaButtonLink" class="form-label" style="color: #9ca3af !important;">Button Link</label>
+                                                            <input type="text" class="form-control" id="ctaButtonLink" name="ButtonLink" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="ctaButtonText" class="form-label" style="color: #9ca3af !important;">Button Text</label>
-                                                <input type="text" class="form-control" id="ctaButtonText" name="ButtonText" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="ctaButtonLink" class="form-label" style="color: #9ca3af !important;">Button Link</label>
-                                                <input type="text" class="form-control" id="ctaButtonLink" name="ButtonLink" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+
+                                        <!-- Action Buttons -->
+                                        <div class="d-flex gap-2 justify-content-between">
+                                            <button type="button" class="btn btn-danger btn-block" onclick="deleteCTATemplate()" id="deleteCTABtn">
+                                                <i class="fas fa-trash"></i>
+                                                Delete Template
+                                            </button>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-secondary" onclick="toggleCTAEdit()">
+                                                    <i class="fas fa-times"></i>
+                                                    Cancel
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-save"></i>
+                                                    Save Changes
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="d-flex gap-2 justify-content-between">
-                                <button type="button" class="btn btn-danger btn-block" onclick="deleteCTATemplate()" id="deleteCTABtn">
-                                    <i class="fas fa-trash"></i>
-                                    Delete Template
-                                </button>
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-secondary" onclick="toggleCTAEdit()">
-                                        <i class="fas fa-times"></i>
-                                        Cancel
-                                    </button>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i>
-                                        Save Changes
-                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -568,22 +604,7 @@
                 </div>
             </div>
 
-            <!-- Footer Section Card -->
-            <div class="card mb-4" style="margin-bottom: 1.5rem !important;">
-                <div class="card-header">
-                    <h5 class="mb-0" style="color: #818cf8 !important;">
-                        <i class="fas fa-shoe-prints"></i>
-                        Footer Section
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted" style="color: #9ca3af !important;">Manage the footer content and links.</p>
-                    <button class="btn btn-primary" onclick="editSection('footer')">
-                        <i class="fas fa-edit"></i>
-                        Edit Footer
-                    </button>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>
@@ -620,11 +641,7 @@
             const form = document.getElementById('heroEditForm');
             const editButton = document.querySelector('.btn-primary[onclick="toggleHeroEdit()"]');
             
-            console.log('toggleHeroEdit called');
-            console.log('Form display before:', form.style.display);
-            console.log('Form computed display:', window.getComputedStyle(form).display);
-            console.log('Form element:', form);
-            console.log('Edit button:', editButton);
+
             
             if (form.style.display === 'none' || form.style.display === '') {
                 // Show form, hide edit button
@@ -699,7 +716,7 @@
                     toggleHeroEdit();
                     
                     // The backend will automatically broadcast the WebSocket message
-                    console.log('Hero section saved successfully, WebSocket broadcast sent');
+    
                 } else {
                     console.error('Server error:', result);
                     alert(`Failed to update hero section: ${result.message}\n\nDetails: ${result.details || 'No additional details'}`);
@@ -1830,15 +1847,10 @@
         // Load all templates
         async function loadTemplates() {
             try {
-                console.log('Loading templates...');
-                
-                // Server handles authentication - no need to check cookies client-side
-                console.log('Loading templates - server will handle authentication...');
                 
                 const response = await fetch('/Admin/GetHeroTemplates');
                 
-                console.log('Template response status:', response.status);
-                console.log('Template response headers:', response.headers);
+
                 
                 // Check if response is OK before trying to parse JSON
                 if (!response.ok) {
@@ -1869,11 +1881,9 @@
                     throw new Error(`JSON parsing failed: ${jsonError.message}`);
                 }
                 
-                console.log('Templates response:', result);
                 
                 if (result.success) {
                     currentTemplates = result.data;
-                    console.log('Loaded templates:', currentTemplates);
                     updateTemplateDropdown();
                     setupCustomDropdown();
                 } else {
@@ -1919,9 +1929,7 @@
             const dropdownBtn = document.getElementById('templateDropdownBtn');
             const dropdownMenu = document.getElementById('customDropdownMenu');
             
-            console.log('Setting up custom dropdown');
-            console.log('Button:', dropdownBtn);
-            console.log('Menu:', dropdownMenu);
+
             
             let isOpen = false;
             
@@ -2214,7 +2222,7 @@
                     try {
                         const data = JSON.parse(event.data);
                         if (data.type === 'heroDataUpdated') {
-                            console.log('Hero data updated via WebSocket');
+    
                             // Could show a notification or update UI
                         }
                     } catch (error) {
