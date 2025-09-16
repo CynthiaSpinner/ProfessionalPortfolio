@@ -25,9 +25,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowPortfolio", policy =>
     {
         policy.WithOrigins(
+                "https://localhost:3000", 
+                "http://localhost:3000",
                 "https://localhost:44406", 
                 "http://localhost:44406",
-                "https://portfolio-frontend-1776-chgwakejaue7dha5.centralus-01.azurewebsites.net"
+                "https://yourportfolio.netlify.app",
+                "https://yourportfolio.com"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
