@@ -63,13 +63,13 @@ if (string.IsNullOrEmpty(connectionString))
 
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
-    options.UseSqlServer(connectionString, sqlOptions =>
+    options.UseNpgsql(connectionString, npgsqlOptions =>
     {
-        sqlOptions.EnableRetryOnFailure(
+        npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
-        sqlOptions.CommandTimeout(60);
+            errorCodesToAdd: null);
+        npgsqlOptions.CommandTimeout(60);
     });
 });
 

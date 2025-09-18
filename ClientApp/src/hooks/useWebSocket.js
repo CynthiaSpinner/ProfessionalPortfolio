@@ -9,7 +9,7 @@ export const useWebSocket = (messageType, onMessage) => {
 
   const getWebSocketUrl = () => {
     if (process.env.NODE_ENV === 'production') {
-      return `wss://api.yourportfolio.com/client/hubs/portfolio`;
+      return `wss://${window.location.hostname}/client/hubs/portfolio`;
     } else {
       return `ws://localhost:7094/client/hubs/portfolio`;
     }
