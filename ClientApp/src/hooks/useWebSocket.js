@@ -9,7 +9,7 @@ export const useWebSocket = (messageType, onMessage) => {
 
   const getWebSocketUrl = () => {
     if (process.env.NODE_ENV === 'production') {
-      return `wss://${window.location.hostname}/client/hubs/portfolio`;
+      return `wss://professionalportfolio-9a6n.onrender.com/client/hubs/portfolio`;
     } else {
       return `ws://localhost:7094/client/hubs/portfolio`;
     }

@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:3000",
                 "https://localhost:44406", 
                 "http://localhost:44406",
-                "https://yourportfolio.netlify.app",
+                "https://codespinner.netlify.app",
                 "https://yourportfolio.com"
             )
             .AllowAnyHeader()
