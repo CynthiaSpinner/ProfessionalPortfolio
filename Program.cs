@@ -57,9 +57,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 // Configure PostgreSQL connection
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration");
+Console.WriteLine("=== DEBUG CONNECTION STRING ===");
+var configConnString = builder.Configuration.GetConnectionString("DefaultConnection");
+var envConnString = Environment.GetEnvironmentVariable("DATABASE_URL");
+var envConnString2 = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+
+Console.WriteLine($"Config connection string: '{configConnString}'");
+Console.WriteLine($"DATABASE_URL env var: '{envConnString}'");
+Console.WriteLine($"ConnectionStrings__DefaultConnection env var: '{envConnString2}'");
+
+var connectionString = configConnString ?? envConnString ?? envConnString2
+    ?? throw new InvalidOperationException("No connection string found in any source");
 
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
@@ -84,16 +92,32 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Testing database connection...");
         Console.WriteLine($"Connection string starts with: {connectionString?.Substring(0, Math.Min(30, connectionString?.Length ?? 0))}...");
         
-        // Test database connection first
-        if (await context.Database.CanConnectAsync())
+        // Test database connection with retries
+        bool connected = false;
+        for (int i = 0; i < 3; i++)
         {
-            Console.WriteLine("Database connection successful. Applying migrations...");
-            await context.Database.MigrateAsync();
-            Console.WriteLine("Database migrations applied successfully.");
+            try
+            {
+                Console.WriteLine($"Database connection attempt {i + 1}/3...");
+                if (await context.Database.CanConnectAsync())
+                {
+                    Console.WriteLine("Database connection successful. Applying migrations...");
+                    await context.Database.MigrateAsync();
+                    Console.WriteLine("Database migrations applied successfully.");
+                    connected = true;
+                    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Connection attempt {i + 1} failed: {ex.Message}");
+                if (i < 2) await Task.Delay(5000); // Wait 5 seconds before retry
+            }
         }
-        else
+        
+        if (!connected)
         {
-            Console.WriteLine("Database connection failed during startup, but app will continue.");
+            Console.WriteLine("All database connection attempts failed, but app will continue.");
         }
     }
     catch (Exception ex)
