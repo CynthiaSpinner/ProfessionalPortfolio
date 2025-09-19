@@ -30,6 +30,8 @@ builder.Services.AddCors(options =>
                 "https://localhost:44406", 
                 "http://localhost:44406",
                 "https://codespinner.netlify.app",
+                "https://professionalportfolio-9a6n.onrender.com",
+                "http://professionalportfolio-9a6n.onrender.com",
                 "https://yourportfolio.com"
             )
             .AllowAnyHeader()
