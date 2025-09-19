@@ -117,16 +117,24 @@ namespace Portfolio.Services
             // to extract a frame from the video and save it as a thumbnail
             var thumbnailPath = videoPath.Replace(Path.GetExtension(videoPath), "_thumb.jpg");
 
-            // Create a placeholder thumbnail
-            using (var image = new Bitmap(320, 180))
-            using (var graphics = Graphics.FromImage(image))
+            // Create a placeholder thumbnail (Windows only)
+            if (OperatingSystem.IsWindows())
             {
-                graphics.Clear(Color.Black);
-                using (var font = new Font("Arial", 20))
+                using (var image = new Bitmap(320, 180))
+                using (var graphics = Graphics.FromImage(image))
                 {
-                    graphics.DrawString("Video Thumbnail", font, Brushes.White, new PointF(10, 10));
+                    graphics.Clear(Color.Black);
+                    using (var font = new Font("Arial", 20))
+                    {
+                        graphics.DrawString("Video Thumbnail", font, Brushes.White, new PointF(10, 10));
+                    }
+                    image.Save(thumbnailPath, ImageFormat.Jpeg);
                 }
-                image.Save(thumbnailPath, ImageFormat.Jpeg);
+            }
+            else
+            {
+                // On Linux/cloud, just create an empty file or skip thumbnail generation
+                Console.WriteLine("Skipping thumbnail generation on non-Windows platform");
             }
             
             return Task.CompletedTask;

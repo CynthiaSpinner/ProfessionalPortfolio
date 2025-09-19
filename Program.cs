@@ -80,7 +80,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         Console.WriteLine("Testing database connection...");
-        Console.WriteLine($"Connection string starts with: {connectionString?.Substring(0, Math.Min(30, connectionString.Length ?? 0))}...");
+        Console.WriteLine($"Connection string starts with: {connectionString?.Substring(0, Math.Min(30, connectionString?.Length ?? 0))}...");
         
         // Test database connection first
         if (await context.Database.CanConnectAsync())
