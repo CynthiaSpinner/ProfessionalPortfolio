@@ -54,12 +54,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.MaxAge = null; // This makes it a session cookie
     });
 
-// Configure MySQL connection
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json");
-}
+// Configure PostgreSQL connection
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration");
 
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
