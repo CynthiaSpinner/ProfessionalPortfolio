@@ -124,7 +124,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Add WebSocket middleware with Azure-friendly configuration
+// Add WebSocket middleware
 app.UseWebSockets(new WebSocketOptions
 {
     KeepAliveInterval = TimeSpan.FromMinutes(2)
@@ -132,7 +132,7 @@ app.UseWebSockets(new WebSocketOptions
 
 app.UseEndpoints(endpoints =>
 {
-    // WebSocket endpoint for real-time updates (Azure standard format)
+    // WebSocket endpoint for real-time updates
     endpoints.Map("/client/hubs/portfolio", async context =>
     {
         if (context.WebSockets.IsWebSocketRequest)
