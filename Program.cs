@@ -66,8 +66,53 @@ Console.WriteLine($"Config connection string: '{configConnString}'");
 Console.WriteLine($"DATABASE_URL env var: '{envConnString}'");
 Console.WriteLine($"ConnectionStrings__DefaultConnection env var: '{envConnString2}'");
 
-var connectionString = configConnString ?? envConnString ?? envConnString2
+var rawConnectionString = configConnString ?? envConnString ?? envConnString2
     ?? throw new InvalidOperationException("No connection string found in any source");
+
+// Convert Render PostgreSQL URL to Npgsql format if needed
+string connectionString;
+Console.WriteLine("=== CONNECTION STRING PARSING ===");
+Console.WriteLine($"Raw connection string length: {rawConnectionString?.Length ?? 0}");
+Console.WriteLine($"Raw connection string starts with: {rawConnectionString?.Substring(0, Math.Min(20, rawConnectionString?.Length ?? 0))}...");
+
+if (rawConnectionString.StartsWith("postgresql://") || rawConnectionString.StartsWith("postgres://"))
+{
+    Console.WriteLine("🔄 Converting PostgreSQL URL format to Npgsql format...");
+    try
+    {
+        // Parse the PostgreSQL URL format: postgresql://user:password@host:port/database
+        var uri = new Uri(rawConnectionString);
+        var host = uri.Host;
+        var port = uri.Port > 0 ? uri.Port : 5432;
+        var database = uri.AbsolutePath.TrimStart('/');
+        var userInfo = uri.UserInfo.Split(':');
+        var username = userInfo[0];
+        var password = userInfo.Length > 1 ? userInfo[1] : "";
+        
+        Console.WriteLine($"Parsed components:");
+        Console.WriteLine($"  Host: {host}");
+        Console.WriteLine($"  Port: {port}");
+        Console.WriteLine($"  Database: {database}");
+        Console.WriteLine($"  Username: {username}");
+        Console.WriteLine($"  Password length: {password?.Length ?? 0} characters");
+        
+        // Build Npgsql connection string
+        connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
+        Console.WriteLine($"✅ Converted to Npgsql format successfully");
+        Console.WriteLine($"Final connection string: {connectionString.Replace(password, "***")}");
+    }
+    catch (Exception parseEx)
+    {
+        Console.WriteLine($"❌ Error parsing PostgreSQL URL: {parseEx.Message}");
+        Console.WriteLine("Falling back to raw connection string...");
+        connectionString = rawConnectionString;
+    }
+}
+else
+{
+    Console.WriteLine("ℹ️ Using raw connection string format (already in Npgsql format)");
+    connectionString = rawConnectionString;
+}
 
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
@@ -89,41 +134,135 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<PortfolioContext>();
     try
     {
-        Console.WriteLine("Testing database connection (clean environment)...");
-        Console.WriteLine($"Connection string starts with: {connectionString?.Substring(0, Math.Min(30, connectionString?.Length ?? 0))}...");
+        Console.WriteLine("=== STARTING DATABASE CONNECTION DIAGNOSTICS ===");
+        Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
+        Console.WriteLine($"Connection string format: {(rawConnectionString.StartsWith("postgresql://") ? "PostgreSQL URL" : "Npgsql format")}");
+        Console.WriteLine($"Final connection string: {connectionString}");
         
-        // Test database connection with retries
+        // Test database connection with detailed logging
         bool connected = false;
         for (int i = 0; i < 3; i++)
         {
             try
             {
-                Console.WriteLine($"Database connection attempt {i + 1}/3...");
-                if (await context.Database.CanConnectAsync())
+                Console.WriteLine($"=== DATABASE CONNECTION ATTEMPT {i + 1}/3 ===");
+                Console.WriteLine($"Attempting to connect to: {connectionString.Split(';')[0]}"); // Show only Host part
+                
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                bool canConnect = await context.Database.CanConnectAsync();
+                stopwatch.Stop();
+                
+                Console.WriteLine($"CanConnectAsync() returned: {canConnect} (took {stopwatch.ElapsedMilliseconds}ms)");
+                
+                if (canConnect)
                 {
-                    Console.WriteLine("Database connection successful. Applying migrations...");
-                    await context.Database.MigrateAsync();
-                    Console.WriteLine("Database migrations applied successfully.");
+                    Console.WriteLine("✅ Database connection successful!");
+                    
+                    // Check if database exists
+                    Console.WriteLine("Checking if database exists...");
+                    var dbExists = await context.Database.EnsureCreatedAsync();
+                    Console.WriteLine($"Database creation result: {(dbExists ? "Created new database" : "Database already exists")}");
+                    
+                    // Check pending migrations
+                    Console.WriteLine("Checking for pending migrations...");
+                    var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+                    Console.WriteLine($"Pending migrations count: {pendingMigrations.Count()}");
+                    
+                    if (pendingMigrations.Any())
+                    {
+                        Console.WriteLine("Pending migrations:");
+                        foreach (var migration in pendingMigrations)
+                        {
+                            Console.WriteLine($"  - {migration}");
+                        }
+                        
+                        Console.WriteLine("Applying migrations...");
+                        await context.Database.MigrateAsync();
+                        Console.WriteLine("✅ Database migrations applied successfully!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No pending migrations found.");
+                    }
+                    
+                    // Test basic query
+                    Console.WriteLine("Testing basic database query...");
+                    var adminCount = await context.Admins.CountAsync();
+                    Console.WriteLine($"Admin table query successful. Found {adminCount} admin records.");
+                    
                     connected = true;
                     break;
+                }
+                else
+                {
+                    Console.WriteLine("❌ CanConnectAsync() returned false");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Connection attempt {i + 1} failed: {ex.Message}");
-                if (i < 2) await Task.Delay(5000); // Wait 5 seconds before retry
+                Console.WriteLine($"❌ Connection attempt {i + 1} failed:");
+                Console.WriteLine($"Exception Type: {ex.GetType().Name}");
+                Console.WriteLine($"Exception Message: {ex.Message}");
+                
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception Type: {ex.InnerException.GetType().Name}");
+                    Console.WriteLine($"Inner Exception Message: {ex.InnerException.Message}");
+                }
+                
+                // Log specific Npgsql errors
+                if (ex.Message.Contains("Format of the initialization string"))
+                {
+                    Console.WriteLine("🔍 CONNECTION STRING FORMAT ERROR DETECTED");
+                    Console.WriteLine($"Raw connection string: {rawConnectionString}");
+                    Console.WriteLine($"Parsed connection string: {connectionString}");
+                }
+                
+                if (ex.Message.Contains("timeout"))
+                {
+                    Console.WriteLine("🔍 TIMEOUT ERROR DETECTED - Network or firewall issue");
+                }
+                
+                if (ex.Message.Contains("authentication") || ex.Message.Contains("password"))
+                {
+                    Console.WriteLine("🔍 AUTHENTICATION ERROR DETECTED - Check credentials");
+                }
+                
+                if (ex.Message.Contains("does not exist"))
+                {
+                    Console.WriteLine("🔍 DATABASE/HOST NOT FOUND ERROR DETECTED");
+                }
+                
+                if (i < 2) 
+                {
+                    Console.WriteLine($"Waiting 5 seconds before retry {i + 2}/3...");
+                    await Task.Delay(5000);
+                }
             }
         }
         
         if (!connected)
         {
-            Console.WriteLine("All database connection attempts failed, but app will continue.");
+            Console.WriteLine("=== DATABASE CONNECTION FAILED ===");
+            Console.WriteLine("❌ All database connection attempts failed, but app will continue.");
+            Console.WriteLine("The application will run without database functionality.");
+        }
+        else
+        {
+            Console.WriteLine("=== DATABASE CONNECTION SUCCESSFUL ===");
+            Console.WriteLine("✅ Database is ready and migrations are applied.");
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error applying database migrations: {ex.Message}");
-        Console.WriteLine($"Full exception: {ex}");
+        Console.WriteLine("=== CRITICAL DATABASE ERROR ===");
+        Console.WriteLine($"❌ Critical error in database initialization: {ex.Message}");
+        Console.WriteLine($"Exception Type: {ex.GetType().Name}");
+        Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+        if (ex.InnerException != null)
+        {
+            Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+        }
         Console.WriteLine("App will continue without database migrations.");
     }
 }

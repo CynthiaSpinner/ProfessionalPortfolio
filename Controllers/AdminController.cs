@@ -8,8 +8,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Cryptography;
-using System.Text;
+using BCrypt.Net;
 
 namespace Portfolio.Controllers
 {
@@ -32,11 +31,12 @@ namespace Portfolio.Controllers
 
         private string HashPassword(string password)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
+            return BCrypt.Net.BCrypt.HashPassword(password, 12); // Use work factor of 12 for security
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
 
         [AllowAnonymous]
@@ -84,15 +84,13 @@ namespace Portfolio.Controllers
                     return View(model);
                 }
 
-                var hashedPassword = HashPassword(model.Password);
-
                 // Optimized query - only select the fields we need
                 var admin = await _context.Admins
                     .Where(a => a.Username == model.Username)
                     .Select(a => new { a.Username, a.PasswordHash })
                     .FirstOrDefaultAsync();
 
-                if (admin == null || admin.PasswordHash != hashedPassword)
+                if (admin == null || !VerifyPassword(model.Password, admin.PasswordHash))
                 {
                     ViewBag.ErrorMessage = "Invalid username or password.";
                     return View(model);
