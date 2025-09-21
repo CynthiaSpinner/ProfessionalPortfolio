@@ -89,7 +89,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<PortfolioContext>();
     try
     {
-        Console.WriteLine("Testing database connection...");
+        Console.WriteLine("Testing database connection (clean environment)...");
         Console.WriteLine($"Connection string starts with: {connectionString?.Substring(0, Math.Min(30, connectionString?.Length ?? 0))}...");
         
         // Test database connection with retries
