@@ -39,6 +39,27 @@ namespace Portfolio.Controllers
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
 
+        private bool IsReadOnlyUser()
+        {
+            return User.IsInRole("ReadOnly");
+        }
+
+        private IActionResult ReadOnlyError()
+        {
+            ViewBag.ErrorMessage = "This guest user account is read only";
+            return View("Dashboard"); // Return to dashboard with error message
+        }
+
+        // Custom authorization check for POST actions
+        private bool CheckWritePermission()
+        {
+            if (User.IsInRole("ReadOnly"))
+            {
+                return false;
+            }
+            return true;
+        }
+
         [AllowAnonymous]
         public IActionResult Login()
         {
@@ -87,7 +108,7 @@ namespace Portfolio.Controllers
                 // Optimized query - only select the fields we need
                 var admin = await _context.Admins
                     .Where(a => a.Username == model.Username)
-                    .Select(a => new { a.Username, a.PasswordHash })
+                    .Select(a => new { a.Username, a.PasswordHash, a.Role })
                     .FirstOrDefaultAsync();
 
                 if (admin == null || !VerifyPassword(model.Password, admin.PasswordHash))
@@ -99,7 +120,8 @@ namespace Portfolio.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, admin.Username),
-                    new Claim(ClaimTypes.Role, "Admin")
+                    new Claim(ClaimTypes.NameIdentifier, admin.Username),
+                    new Claim(ClaimTypes.Role, admin.Role)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -124,13 +146,18 @@ namespace Portfolio.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,ReadOnly")]
         public async Task<IActionResult> Dashboard()
         {
             try
             {
                 var homePage = await _homePageService.GetHomePageAsync();
                 ViewBag.HomePage = homePage;
+                
+                // Pass user role to view
+                ViewBag.UserRole = User.IsInRole("ReadOnly") ? "ReadOnly" : "Admin";
+                ViewBag.IsReadOnly = User.IsInRole("ReadOnly");
+                
                 return View();
             }
             catch (Exception ex)

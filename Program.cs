@@ -190,6 +190,12 @@ using (var scope = app.Services.CreateScope())
                     var adminCount = await context.Admins.CountAsync();
                     Console.WriteLine($"Admin table query successful. Found {adminCount} admin records.");
                     
+                    // Auto-create admin user from environment variables if none exist
+                    if (adminCount == 0)
+                    {
+                        await CreateInitialAdminUser(context);
+                    }
+                    
                     connected = true;
                     break;
                 }
@@ -382,6 +388,102 @@ lifetime.ApplicationStopping.Register(async () =>
 });
 
 app.Run();
+
+// Function to create initial admin users from environment variables
+static async Task CreateInitialAdminUser(PortfolioContext context)
+{
+    try
+    {
+        Console.WriteLine("=== CREATING INITIAL ADMIN USERS ===");
+        
+        // Check for primary admin
+        var adminUsername = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
+        var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+        
+        // Check for second admin
+        var admin2Username = Environment.GetEnvironmentVariable("ADMIN2_USERNAME");
+        var admin2Password = Environment.GetEnvironmentVariable("ADMIN2_PASSWORD");
+        
+        var adminsToCreate = new List<(string username, string password)>();
+        
+        if (!string.IsNullOrEmpty(adminUsername) && !string.IsNullOrEmpty(adminPassword))
+        {
+            adminsToCreate.Add((adminUsername, adminPassword));
+        }
+        
+        if (!string.IsNullOrEmpty(admin2Username) && !string.IsNullOrEmpty(admin2Password))
+        {
+            adminsToCreate.Add((admin2Username, admin2Password));
+        }
+        
+        if (adminsToCreate.Count == 0)
+        {
+            Console.WriteLine("⚠️ No admin environment variables set.");
+            Console.WriteLine("Set these environment variables to auto-create admin users:");
+            Console.WriteLine("  - ADMIN_USERNAME=your_email@domain.com");
+            Console.WriteLine("  - ADMIN_PASSWORD=your_secure_password");
+            Console.WriteLine("  - ADMIN2_USERNAME=second_email@domain.com (optional)");
+            Console.WriteLine("  - ADMIN2_PASSWORD=second_secure_password (optional)");
+            return;
+        }
+        
+        Console.WriteLine($"Found {adminsToCreate.Count} admin user(s) to create");
+        
+        foreach (var (username, password) in adminsToCreate)
+        {
+            // Check if admin already exists
+            var existingAdmin = await context.Admins
+                .Where(a => a.Username == username || a.Email == username)
+                .FirstOrDefaultAsync();
+                
+            if (existingAdmin != null)
+            {
+                Console.WriteLine($"ℹ️ Admin user {username} already exists, skipping...");
+                continue;
+            }
+            
+            Console.WriteLine($"Creating admin user: {username}");
+            
+            // Generate secure BCrypt hash
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(password, 12);
+            
+            // Determine role based on which admin this is
+            var role = username == adminUsername ? "Admin" : "ReadOnly";
+            
+            var admin = new Portfolio.Models.Portfolio.Admin
+            {
+                Username = username,
+                Email = username, // Using email as username
+                PasswordHash = passwordHash,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true,
+                Role = role
+            };
+            
+            Console.WriteLine($"   Role: {role}");
+            
+            context.Admins.Add(admin);
+            Console.WriteLine($"✅ Admin user {username} prepared for creation");
+        }
+        
+        // Save all new admin users
+        var changesSaved = await context.SaveChangesAsync();
+        Console.WriteLine($"✅ {changesSaved} admin user(s) created successfully!");
+        
+        // Log final admin count
+        var totalAdmins = await context.Admins.CountAsync();
+        Console.WriteLine($"Total admin users in database: {totalAdmins}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error creating initial admin users: {ex.Message}");
+        Console.WriteLine($"Exception Type: {ex.GetType().Name}");
+        if (ex.InnerException != null)
+        {
+            Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+        }
+    }
+}
 
 // WebSocket connection handler
 async Task HandleWebSocketConnection(WebSocket webSocket, WebSocketService webSocketService, string connectionId)
