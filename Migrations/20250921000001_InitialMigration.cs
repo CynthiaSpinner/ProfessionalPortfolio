@@ -12,24 +12,14 @@ namespace Portfolio.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Admins",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastLoginAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    Role = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "Admin")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Admins", x => x.Id);
-                });
+            // Add Role column to existing Admins table
+            migrationBuilder.AddColumn<string>(
+                name: "Role",
+                table: "Admins",
+                type: "character varying(20)",
+                maxLength: 20,
+                nullable: false,
+                defaultValue: "Admin");
 
             migrationBuilder.CreateTable(
                 name: "Abouts",
@@ -399,7 +389,11 @@ namespace Portfolio.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "Admins");
+            // Remove Role column from Admins table
+            migrationBuilder.DropColumn(
+                name: "Role",
+                table: "Admins");
+                
             migrationBuilder.DropTable(name: "Abouts");
             migrationBuilder.DropTable(name: "WorkExperiences");
             migrationBuilder.DropTable(name: "Educations");
