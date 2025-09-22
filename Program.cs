@@ -124,6 +124,10 @@ builder.Services.AddDbContext<PortfolioContext>(options =>
             errorCodesToAdd: null);
         npgsqlOptions.CommandTimeout(60);
     });
+    
+    // Suppress pending model changes warning to allow migration
+    options.ConfigureWarnings(warnings => 
+        warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
 });
 
 var app = builder.Build();
