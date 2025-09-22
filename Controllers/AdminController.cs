@@ -105,10 +105,10 @@ namespace Portfolio.Controllers
                     return View(model);
                 }
 
-                // Optimized query - only select the fields we need (Role column doesn't exist yet)
+                // Optimized query - only select the fields we need
                 var admin = await _context.Admins
                     .Where(a => a.Username == model.Username)
-                    .Select(a => new { a.Username, a.PasswordHash })
+                    .Select(a => new { a.Username, a.PasswordHash, a.Role })
                     .FirstOrDefaultAsync();
 
                 if (admin == null || !VerifyPassword(model.Password, admin.PasswordHash))
@@ -121,7 +121,7 @@ namespace Portfolio.Controllers
                 {
                     new Claim(ClaimTypes.Name, admin.Username),
                     new Claim(ClaimTypes.NameIdentifier, admin.Username),
-                    new Claim(ClaimTypes.Role, "Admin") // Default to Admin until Role column is added
+                    new Claim(ClaimTypes.Role, admin.Role)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
