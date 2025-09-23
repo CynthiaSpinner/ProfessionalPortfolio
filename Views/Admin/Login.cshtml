@@ -420,6 +420,19 @@
             </h1>
         </div>
         
+        @if (ViewBag.ShowSwitchMessage == true)
+        {
+            <div class="info-message" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 1px solid rgba(59, 130, 246, 0.2); color: #3b82f6; width: 100%; max-width: 300px; padding: 1rem; border-radius: 0.25rem; margin: 0 auto 1.5rem auto; text-align: center; font-size: 0.9rem;">
+                You're already logged in as <strong>@ViewBag.CurrentUser</strong>
+                <br><br>
+                <a href="/Admin/Dashboard" style="color: #3b82f6; text-decoration: underline;">Go to Dashboard</a>
+                <span style="color: #6b7280;"> or </span>
+                <form asp-action="Logout" method="post" style="display: inline;">
+                    <button type="submit" style="background: none; border: none; color: #3b82f6; text-decoration: underline; cursor: pointer; font-size: 0.9rem;">Logout & Login as Different User</button>
+                </form>
+            </div>
+        }
+        
         @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
         {
             <div class="error-message">
@@ -427,7 +440,9 @@
             </div>
         }
         
-        <form asp-action="Login" method="post" id="loginForm">
+        @if (ViewBag.ShowSwitchMessage != true)
+        {
+            <form asp-action="Login" method="post" id="loginForm">
             @Html.AntiForgeryToken()
             <div class="form-group">
                 <label for="username">Username</label>
@@ -447,6 +462,7 @@
             </div>
             <div class="validation-message" id="validationMessage"></div>
         </form>
+        }
     </div>
 
     <script>

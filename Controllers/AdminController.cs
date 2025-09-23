@@ -61,7 +61,7 @@ namespace Portfolio.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string action = null)
         {
             try
             {
@@ -69,7 +69,18 @@ namespace Portfolio.Controllers
                 
                 if (User.Identity?.IsAuthenticated == true)
                 {
-                    _logger.LogInformation("User already authenticated, redirecting to dashboard");
+                    _logger.LogInformation($"User already authenticated as: {User.Identity.Name}");
+                    
+                    // If they explicitly want to logout and login as someone else
+                    if (action == "switch")
+                    {
+                        ViewBag.ShowSwitchMessage = true;
+                        ViewBag.CurrentUser = User.Identity.Name;
+                        ViewBag.ErrorMessage = null;
+                        return View();
+                    }
+                    
+                    // Otherwise redirect to dashboard
                     return RedirectToAction("Dashboard");
                 }
                 
@@ -87,6 +98,24 @@ namespace Portfolio.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                Console.WriteLine($"🔓 User {User.Identity?.Name} logging out");
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                Console.WriteLine("✅ Logout successful");
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Logout error: {ex.Message}");
+                return RedirectToAction("Login");
+            }
+        }
+
+        [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
@@ -98,6 +127,10 @@ namespace Portfolio.Controllers
                 Console.WriteLine($"Username: '{model?.Username}'");
                 Console.WriteLine($"Password length: {model?.Password?.Length ?? 0}");
                 Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+                Console.WriteLine($"Current user authenticated: {User.Identity?.IsAuthenticated}");
+                Console.WriteLine($"Current user name: '{User.Identity?.Name}'");
+                
+                // Allow concurrent sessions - don't force logout
                 
                 if (!ModelState.IsValid)
                 {
