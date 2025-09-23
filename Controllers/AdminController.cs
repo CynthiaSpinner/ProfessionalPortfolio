@@ -88,7 +88,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        // [ValidateAntiForgeryToken] // Temporarily disabled to debug 400 error
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             try
