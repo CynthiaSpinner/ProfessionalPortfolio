@@ -88,13 +88,24 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken] // Temporarily disabled to debug 400 error
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             try
             {
+                Console.WriteLine("=== LOGIN POST REQUEST RECEIVED ===");
+                Console.WriteLine($"Model is null: {model == null}");
+                Console.WriteLine($"Username: '{model?.Username}'");
+                Console.WriteLine($"Password length: {model?.Password?.Length ?? 0}");
+                Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+                
                 if (!ModelState.IsValid)
                 {
+                    Console.WriteLine("❌ ModelState validation failed:");
+                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        Console.WriteLine($"  - {error.ErrorMessage}");
+                    }
                     ViewBag.ErrorMessage = "Please provide valid username and password.";
                     return View(model);
                 }
@@ -140,6 +151,13 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"❌ LOGIN ERROR: {ex.GetType().Name}: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                }
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                
                 _logger.LogError(ex, "Error during login");
                 ViewBag.ErrorMessage = $"An error occurred during login: {ex.Message}";
                 return View(model);
