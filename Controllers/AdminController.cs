@@ -65,7 +65,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                _logger.LogInformation("Login page requested");
+                _logger.LogInformation($"Login page requested with action: {action}");
                 
                 if (User.Identity?.IsAuthenticated == true)
                 {
@@ -74,6 +74,7 @@ namespace Portfolio.Controllers
                     // If they explicitly want to logout and login as someone else
                     if (action == "switch")
                     {
+                        _logger.LogInformation("Switch action requested - showing switch message");
                         ViewBag.ShowSwitchMessage = true;
                         ViewBag.CurrentUser = User.Identity.Name;
                         ViewBag.ErrorMessage = null;
@@ -81,6 +82,7 @@ namespace Portfolio.Controllers
                     }
                     
                     // Otherwise redirect to dashboard
+                    _logger.LogInformation("Redirecting authenticated user to dashboard");
                     return RedirectToAction("Dashboard");
                 }
                 
@@ -91,9 +93,12 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading login page");
-                ViewBag.ErrorMessage = $"Error loading login page: {ex.Message}";
-                return View();
+                _logger.LogError(ex, $"Error loading login page with action: {action}");
+                _logger.LogError(ex, $"Exception details: {ex.Message}");
+                _logger.LogError(ex, $"Stack trace: {ex.StackTrace}");
+                
+                // Return a simple error response instead of the view to avoid further errors
+                return StatusCode(500, new { error = "Internal server error", message = ex.Message });
             }
         }
 

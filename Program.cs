@@ -348,6 +348,13 @@ app.UseEndpoints(endpoints =>
         }
     });
 
+    // Health check endpoint
+    endpoints.MapGet("/health", context =>
+    {
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsync("{\"status\": \"healthy\", \"timestamp\": \"" + DateTime.UtcNow.ToString("o") + "\"}");
+    });
+
     // Redirect root to admin login
     endpoints.MapGet("/", context =>
     {
