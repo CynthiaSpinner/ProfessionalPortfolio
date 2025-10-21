@@ -1,8 +1,9 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 // Frontend deployment test - remove startup command
-import { PortfolioProvider } from "./context/PortfolioContext";
+import { PortfolioProvider, usePortfolio } from "./context/PortfolioContext";
 import Navbar from "./components/Navbar";
+import LoadingSpinner from "./components/LoadingSpinner";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
@@ -13,22 +14,34 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import "./styles/App.css";
 
+function AppContent() {
+  const { loading } = usePortfolio();
+
+  if (loading) {
+    return <LoadingSpinner message="Loading portfolio..." />;
+  }
+
+  return (
+    <div className="App">
+      <Navbar />
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/graphic-design" element={<GraphicDesign />} />
+          <Route path="/design" element={<Design />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
+
 function App() {
   return (
     <PortfolioProvider>
-      <div className="App">
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/graphic-design" element={<GraphicDesign />} />
-            <Route path="/design" element={<Design />} />
-          </Routes>
-        </main>
-      </div>
+      <AppContent />
     </PortfolioProvider>
   );
 }
