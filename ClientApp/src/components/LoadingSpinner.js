@@ -9,7 +9,7 @@ const LoadingSpinner = ({
   return (
     <div className="loading-container">
       <div className="loading-content">
-        <Spinner animation="border" variant="primary" />
+        <div className="loading-spinner"></div>
         <p className="loading-message">{message}</p>
         <p className="loading-subtitle">{subtitle}</p>
       </div>
