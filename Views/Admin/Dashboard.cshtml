@@ -3240,19 +3240,76 @@
             }, 100);
         });
 
-        // Simple image file handler
+        // Image file handler with upload functionality
+        let imageFile;
         document.addEventListener('DOMContentLoaded', function() {
-            const imageFile = document.getElementById('imageFile');
+            imageFile = document.getElementById('imageFile');
             if (imageFile) {
                 imageFile.addEventListener('change', function(e) {
                     const file = e.target.files[0];
                     if (file) {
                         console.log('Image file selected:', file.name);
-                        // For now, just log the file - we'll add upload logic later
+                        
+                        // Validate file type
+                        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                        if (!allowedTypes.includes(file.type)) {
+                            alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)');
+                            e.target.value = '';
+                            return;
+                        }
+                        
+                        // Validate file size (10MB max)
+                        const maxSize = 10 * 1024 * 1024; // 10MB
+                        if (file.size > maxSize) {
+                            alert('File size must be less than 10MB');
+                            e.target.value = '';
+                            return;
+                        }
+                        
+                        // Upload the file
+                        uploadImageFile(file);
                     }
                 });
             }
         });
+
+        // Upload image function
+        async function uploadImageFile(file) {
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // Show loading state
+                const originalValue = imageFile.value;
+                imageFile.disabled = true;
+                imageFile.value = 'Uploading...';
+
+                const response = await fetch('/api/portfolio/upload-hero-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        // Update the background image URL field
+                        document.getElementById('heroBackgroundImage').value = result.imageUrl;
+                        alert('Image uploaded successfully! The URL has been filled in automatically.');
+                    } else {
+                        throw new Error(result.error || 'Upload failed');
+                    }
+                } else {
+                    throw new Error('Upload failed with status: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Failed to upload image: ' + error.message);
+            } finally {
+                // Reset file input
+                imageFile.disabled = false;
+                imageFile.value = '';
+            }
+        }
 
     </script>
 }
