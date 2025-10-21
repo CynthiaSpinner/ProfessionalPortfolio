@@ -221,7 +221,7 @@ namespace Portfolio.Services
             if (string.IsNullOrEmpty(filePath))
                 return Task.FromResult(string.Empty);
 
-            var baseUrl = _configuration["BaseUrl"] ?? "https://localhost:5001";
+            var baseUrl = _configuration["BaseUrl"] ?? "https://professionalportfolio-9a6n.onrender.com";
             return Task.FromResult($"{baseUrl}/{filePath}");
         }
 
