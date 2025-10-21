@@ -13,7 +13,9 @@ namespace Portfolio.Services
         private readonly IConfiguration _configuration;
         private readonly string _uploadPath;
         private readonly string[] _allowedVideoTypes = { ".mp4", ".webm", ".ogg" };
+        private readonly string[] _allowedImageTypes = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
         private readonly long _maxVideoSize = 500 * 1024 * 1024; // 500MB
+        private readonly long _maxImageSize = 10 * 1024 * 1024; // 10MB
 
         public FileService(IConfiguration configuration)
         {
@@ -30,6 +32,12 @@ namespace Portfolio.Services
             if (!Directory.Exists(videoPath))
             {
                 Directory.CreateDirectory(videoPath);
+            }
+
+            var imagePath = Path.Combine(_uploadPath, "images");
+            if (!Directory.Exists(imagePath))
+            {
+                Directory.CreateDirectory(imagePath);
             }
         }
 
@@ -53,6 +61,35 @@ namespace Portfolio.Services
             }
 
             return Path.Combine("uploads", subdirectory, fileName).Replace("\\", "/");
+        }
+
+        public async Task<string> UploadImageAsync(IFormFile imageFile, string subdirectory)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+                throw new ArgumentException("Image file is empty");
+
+            // Validate image file
+            if (!await ValidateFileTypeAsync(imageFile, _allowedImageTypes))
+                throw new ArgumentException("Invalid image file type");
+
+            if (!await ValidateFileSizeAsync(imageFile, _maxImageSize))
+                throw new ArgumentException("Image file too large");
+
+            var directoryPath = Path.Combine(_uploadPath, "images", subdirectory);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+            var filePath = Path.Combine(directoryPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+
+            return Path.Combine("uploads", "images", subdirectory, fileName).Replace("\\", "/");
         }
 
         public async Task<string> UploadVideoAsync(IFormFile videoFile, string subdirectory)

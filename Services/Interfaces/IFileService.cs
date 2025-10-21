@@ -9,6 +9,9 @@ namespace Portfolio.Services.Interfaces
         Task<bool> DeleteFileAsync(string filePath);
         Task<string> GetFileUrlAsync(string filePath);
 
+        // Image-specific operations
+        Task<string> UploadImageAsync(IFormFile imageFile, string subdirectory);
+        
         // Video-specific operations
         Task<string> UploadVideoAsync(IFormFile videoFile, string subdirectory);
         Task<Stream> GetVideoStreamAsync(string filePath);

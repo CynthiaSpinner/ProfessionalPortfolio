@@ -12,11 +12,13 @@ namespace Portfolio.Controllers
     {
         private readonly PortfolioContext _context;
         private readonly IHomePageService _homePageService;
+        private readonly IFileService _fileService;
 
-        public PortfolioController(PortfolioContext context, IHomePageService homePageService)
+        public PortfolioController(PortfolioContext context, IHomePageService homePageService, IFileService fileService)
         {
             _context = context;
             _homePageService = homePageService;
+            _fileService = fileService;
         }
 
         // GET: Portfolio/Projects
@@ -358,6 +360,46 @@ namespace Portfolio.Controllers
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
                 return StatusCode(500, new { error = "Failed to load homepage data", details = ex.Message });
+            }
+        }
+
+        // POST: api/portfolio/upload-hero-image
+        [HttpPost("api/portfolio/upload-hero-image")]
+        public async Task<IActionResult> UploadHeroImage(IFormFile image)
+        {
+            try
+            {
+                if (image == null || image.Length == 0)
+                {
+                    return BadRequest(new { error = "No image file provided" });
+                }
+
+                // Upload the image
+                var imagePath = await _fileService.UploadImageAsync(image, "hero");
+                var imageUrl = await _fileService.GetFileUrlAsync(imagePath);
+
+                // Update the hero section with the new image
+                var homePage = await _homePageService.GetHomePageAsync();
+                if (homePage != null)
+                {
+                    homePage.HeaderBackgroundImageUrl = imageUrl;
+                    homePage.UpdatedAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+                }
+
+                return Json(new { 
+                    success = true, 
+                    imageUrl = imageUrl,
+                    message = "Hero background image uploaded successfully" 
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to upload image", details = ex.Message });
             }
         }
     }
