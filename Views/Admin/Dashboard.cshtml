@@ -186,6 +186,12 @@
                                             <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Background Image URL</label>
                                             <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             
+                                            <!-- Simple File Upload -->
+                                            <div class="mt-3">
+                                                <label class="form-label" style="color: #9ca3af !important;">Or Upload Image File</label>
+                                                <input type="file" id="imageFile" accept="image/*" class="form-control" style="color: #818cf8 !important;">
+                                            </div>
+                                            
                                             <!-- Image Overlay Settings -->
                                             <div class="mt-4 overlay-controls" id="imageOverlayControls">
                                                 <div class="overlay-header">
@@ -3232,6 +3238,20 @@
                 setupFeaturesDropdown();
                 setupCTADropdown();
             }, 100);
+        });
+
+        // Simple image file handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageFile = document.getElementById('imageFile');
+            if (imageFile) {
+                imageFile.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        console.log('Image file selected:', file.name);
+                        // For now, just log the file - we'll add upload logic later
+                    }
+                });
+            }
         });
 
     </script>
