@@ -61,7 +61,7 @@ namespace Portfolio.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Login(string action = null)
+        public IActionResult Login(string? action = null)
         {
             try
             {
@@ -219,12 +219,6 @@ namespace Portfolio.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
-        }
 
         public IActionResult AccessDenied()
         {
