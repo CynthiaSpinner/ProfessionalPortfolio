@@ -22,15 +22,7 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      <HeroSection 
-        heroData={homepageData?.hero} 
-        showImageUpload={true}
-        onImageUpload={(imageUrl) => {
-          console.log('New background image uploaded:', imageUrl);
-          // Optionally refresh the page or update state
-          window.location.reload();
-        }}
-      />
+      <HeroSection heroData={homepageData?.hero} />
       <FeaturesSection featuresData={homepageData?.features} />
       <CTASection />
       <Footer />

@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../Header";
 
-const HeroSection = ({ heroData, showImageUpload = false, onImageUpload = null }) => {
+const HeroSection = ({ heroData }) => {
   // Use provided data - handle undefined gracefully
   const data = heroData || {};
 
@@ -17,8 +17,6 @@ const HeroSection = ({ heroData, showImageUpload = false, onImageUpload = null }
       primaryButtonText={data.primaryButtonText}
       primaryButtonUrl={data.primaryButtonUrl}
       showButtons={true}
-      showImageUpload={showImageUpload}
-      onImageUpload={onImageUpload}
     />
   );
 };

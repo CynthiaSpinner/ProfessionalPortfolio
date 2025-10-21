@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "./HeadingGroup";
 import Button from "./Button";
-import ImageUpload from "./ImageUpload";
 import "../styles/Header.css";
 
 const Header = ({
@@ -17,27 +16,8 @@ const Header = ({
   primaryButtonUrl = "/projects",
   children,
   showButtons = false,
-  refreshing = false,
-  showImageUpload = false,
-  onImageUpload = null
+  refreshing = false
 }) => {
-  const [currentBackgroundImage, setCurrentBackgroundImage] = useState(backgroundImageUrl);
-  const [showUpload, setShowUpload] = useState(false);
-
-  // Handle successful image upload
-  const handleUploadSuccess = (imageUrl) => {
-    setCurrentBackgroundImage(imageUrl);
-    setShowUpload(false);
-    if (onImageUpload) {
-      onImageUpload(imageUrl);
-    }
-  };
-
-  // Handle upload error
-  const handleUploadError = (error) => {
-    console.error('Image upload failed:', error);
-    alert('Failed to upload image. Please try again.');
-  };
 
   // Build background style
   let backgroundStyle = {};
@@ -47,9 +27,9 @@ const Header = ({
       position: 'relative',
       overflow: 'hidden'
     };
-  } else if (currentBackgroundImage) {
+  } else if (backgroundImageUrl) {
     backgroundStyle = {
-      backgroundImage: `url(${currentBackgroundImage})`,
+      backgroundImage: `url(${backgroundImageUrl})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -85,7 +65,7 @@ const Header = ({
       )}
 
       {/* Overlay */}
-      {(currentBackgroundImage || backgroundVideoUrl) && (
+      {(backgroundImageUrl || backgroundVideoUrl) && (
         <div
           style={{
             position: 'absolute',
@@ -119,30 +99,6 @@ const Header = ({
           </Col>
         </Row>
 
-        {/* Image Upload Section */}
-        {showImageUpload && (
-          <Row className="justify-content-center mt-4">
-            <Col lg={6}>
-              <div className="text-center">
-                <button 
-                  className="btn btn-outline-light btn-sm mb-3"
-                  onClick={() => setShowUpload(!showUpload)}
-                >
-                  {showUpload ? 'Hide Upload' : 'Change Background Image'}
-                </button>
-                
-                {showUpload && (
-                  <div className="bg-dark bg-opacity-75 p-3 rounded">
-                    <ImageUpload 
-                      onUploadSuccess={handleUploadSuccess}
-                      onUploadError={handleUploadError}
-                    />
-                  </div>
-                )}
-              </div>
-            </Col>
-          </Row>
-        )}
         
         {/* Refresh Indicator */}
         {refreshing && (
