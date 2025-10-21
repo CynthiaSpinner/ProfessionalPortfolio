@@ -3279,10 +3279,11 @@
                 const formData = new FormData();
                 formData.append('image', file);
 
-                // Show loading state
-                const originalValue = imageFile.value;
+                // Show loading state by disabling the input
                 imageFile.disabled = true;
-                imageFile.value = 'Uploading...';
+                
+                // Show loading message in console
+                console.log('Uploading image...');
 
                 const response = await fetch('/api/portfolio/upload-hero-image', {
                     method: 'POST',
