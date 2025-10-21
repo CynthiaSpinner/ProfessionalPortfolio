@@ -11,14 +11,10 @@ const Home = () => {
     return data;
   }, []);
 
-  const { data: homepageData, loading, refetch } = usePortfolioData(fetchHomepageData, []);
+  const { data: homepageData, refetch } = usePortfolioData(fetchHomepageData, []);
 
   // Set up WebSocket for real-time updates
   useWebSocket('homepage', refetch);
-
-  if (loading) {
-    return null; // Let the main app loading spinner handle this
-  }
 
   return (
     <div className="home-page">
