@@ -17,9 +17,6 @@ export const PortfolioProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // Temporary delay to test loading spinner
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
       // Add timeout to prevent infinite loading
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Request timeout')), 10000); // 10 second timeout

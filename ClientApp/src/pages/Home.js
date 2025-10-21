@@ -17,15 +17,7 @@ const Home = () => {
   useWebSocket('homepage', refetch);
 
   if (loading) {
-    return (
-      <div className="home-page">
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading homepage...</span>
-          </div>
-        </div>
-      </div>
-    );
+    return null; // Let the main app loading spinner handle this
   }
 
   return (
