@@ -12,8 +12,6 @@ const HeroSection = ({ heroData }) => {
       description={data.description}
       backgroundImageUrl={data.backgroundImageUrl}
       backgroundVideoUrl={data.backgroundVideoUrl}
-      overlayColor={data.overlayColor}
-      overlayOpacity={data.overlayOpacity}
       primaryButtonText={data.primaryButtonText}
       primaryButtonUrl={data.primaryButtonUrl}
       showButtons={true}
