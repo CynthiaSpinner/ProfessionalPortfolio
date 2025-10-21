@@ -18,7 +18,12 @@ function AppContent() {
   const { loading } = usePortfolio();
 
   if (loading) {
-    return <LoadingSpinner message="Loading portfolio..." />;
+    return (
+      <LoadingSpinner 
+        message="Loading Portfolio" 
+        subtitle="Preparing your experience..." 
+      />
+    );
   }
 
   return (
