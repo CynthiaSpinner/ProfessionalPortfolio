@@ -1,0 +1,15 @@
+# Backend files - don't trigger frontend builds
+Controllers/
+Models/
+Services/
+Migrations/
+Views/
+wwwroot/
+*.cs
+*.csproj
+*.sln
+Program.cs
+appsettings*.json
+database-seed.sql
+Dockerfile
+libman.json
