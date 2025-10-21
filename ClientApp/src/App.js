@@ -11,8 +11,8 @@ import Contact from "./pages/Contact";
 import GraphicDesign from "./pages/GraphicDesign";
 import Design from "./pages/Design";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 import "./styles/App.css";
+import "./styles/LoadingSpinner.css";
 
 function AppContent() {
   const { loading } = usePortfolio();
