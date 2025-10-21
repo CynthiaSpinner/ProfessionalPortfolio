@@ -28,7 +28,7 @@ const Header = ({
   } else if (backgroundImageUrl) {
     backgroundStyle = {
       backgroundImage: `url(${backgroundImageUrl})`,
-      backgroundSize: 'cover',
+      backgroundSize: 'contain',
       backgroundPosition: 'center center',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'scroll', // Better performance on mobile
