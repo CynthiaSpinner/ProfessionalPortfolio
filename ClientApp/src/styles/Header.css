@@ -2,6 +2,9 @@
   padding: 6rem 0;
   position: relative;
   overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .page-header::before {
@@ -41,13 +44,81 @@
   z-index: 2;
 }
 
+/* Background image responsive styles */
+.page-header[style*="background-image"] {
+  background-attachment: scroll; /* Better performance on mobile */
+}
+
+/* Ensure background images are properly sized */
+.page-header[style*="background-image"] {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Fallback for when background image fails to load */
+.page-header[style*="background-image"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 10, 0.7),
+    rgba(5, 5, 25, 0.5)
+  );
+  z-index: 1;
+  opacity: 0.8;
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
   .page-header {
-    padding: 4rem 0;
+    padding: 3rem 0;
+    min-height: 80vh;
   }
 
   .page-header h1 {
     font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .page-header {
+    padding: 2rem 0;
+    min-height: 70vh;
+  }
+
+  .page-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .page-header p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Large desktop styles */
+@media (min-width: 1200px) {
+  .page-header {
+    min-height: 100vh;
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+  }
+
+  .page-header p {
+    font-size: 1.25rem;
   }
 }
 

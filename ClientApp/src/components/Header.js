@@ -31,8 +31,9 @@ const Header = ({
     backgroundStyle = {
       backgroundImage: `url(${backgroundImageUrl})`,
       backgroundSize: 'cover',
-      backgroundPosition: 'center',
+      backgroundPosition: 'center center',
       backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'scroll', // Better performance on mobile
       position: 'relative'
     };
   } else {
