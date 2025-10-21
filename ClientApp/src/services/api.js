@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // For development, use mock data (clean deployment)
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 const API_URL = process.env.REACT_APP_API_URL || "https://professionalportfolio-9a6n.onrender.com/api";
 
