@@ -49,8 +49,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromHours(1);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.IsEssential = true;
         options.Cookie.Name = "Portfolio.Admin.Auth";
         options.Cookie.MaxAge = null; // This makes it a session cookie
@@ -348,11 +348,11 @@ app.UseEndpoints(endpoints =>
         }
     });
 
-    // Redirect root to admin login
+    // Serve API info at root
     endpoints.MapGet("/", context =>
     {
-        context.Response.Redirect("/Admin/Login");
-        return Task.CompletedTask;
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsync("{\"message\": \"Portfolio API is running\", \"version\": \"1.0.0\"}");
     });
 
     // Map admin routes first with higher priority
