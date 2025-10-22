@@ -1,10 +1,12 @@
 import React from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import HeadingGroup from "../HeadingGroup";
 
 const FeaturesSection = ({ featuresData }) => {
   // Use provided data - handle undefined gracefully
   const data = featuresData || {};
+  const navigate = useNavigate();
 
   return (
     <section className="features-section py-5">
@@ -24,7 +26,7 @@ const FeaturesSection = ({ featuresData }) => {
                 className={`feature-card ${feature.link ? "clickable-card" : ""}`}
                 onClick={() => {
                   if (feature.link) {
-                    window.location.href = feature.link;
+                    navigate(feature.link);
                   }
                 }}
                 style={{ 
