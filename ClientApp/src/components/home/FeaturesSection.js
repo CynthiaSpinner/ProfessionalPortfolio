@@ -37,12 +37,24 @@ const FeaturesSection = ({ featuresData }) => {
                   if (feature.link) {
                     e.currentTarget.style.transform = 'translateY(-5px)';
                     e.currentTarget.style.boxShadow = '0 10px 25px rgba(129, 140, 248, 0.2)';
+                    // Make the click indicator more prominent on hover
+                    const clickIndicator = e.currentTarget.querySelector('small');
+                    if (clickIndicator) {
+                      clickIndicator.style.opacity = '1';
+                      clickIndicator.style.color = '#c7d2fe';
+                    }
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (feature.link) {
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = '';
+                    // Reset the click indicator
+                    const clickIndicator = e.currentTarget.querySelector('small');
+                    if (clickIndicator) {
+                      clickIndicator.style.opacity = '0.8';
+                      clickIndicator.style.color = '#818cf8';
+                    }
                   }
                 }}
               >
@@ -65,9 +77,15 @@ const FeaturesSection = ({ featuresData }) => {
                 )}
                 {feature.link && (
                   <div className="text-center mt-3">
-                    <Button href={feature.link} className="btn-sm">
-                      Explore
-                    </Button>
+                    <small style={{ 
+                      color: '#818cf8', 
+                      fontWeight: '500',
+                      fontStyle: 'italic',
+                      opacity: '0.8',
+                      transition: 'opacity 0.3s ease'
+                    }}>
+                      Click to explore →
+                    </small>
                   </div>
                 )}
               </Card>
