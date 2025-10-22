@@ -102,7 +102,7 @@ namespace Portfolio.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> Logout()
         {
