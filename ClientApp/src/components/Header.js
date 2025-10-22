@@ -18,9 +18,6 @@ const Header = ({
 }) => {
   const [imageError, setImageError] = useState(false);
 
-  // Fallback image URL
-  const fallbackImageUrl = "https://via.placeholder.com/1920x1080/1a1a2e/ffffff?text=Digital+Experiences";
-
   // Handle image loading error
   const handleImageError = () => {
     console.warn("Background image failed to load:", backgroundImageUrl);
@@ -42,15 +39,6 @@ const Header = ({
       backgroundPosition: 'center center',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'scroll', // Better performance on mobile
-      position: 'relative'
-    };
-  } else if (imageError && fallbackImageUrl) {
-    backgroundStyle = {
-      backgroundImage: `url(${fallbackImageUrl})`,
-      backgroundSize: 'contain',
-      backgroundPosition: 'center center',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'scroll',
       position: 'relative'
     };
   } else {

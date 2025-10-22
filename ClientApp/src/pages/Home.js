@@ -18,7 +18,7 @@ const Home = () => {
           title: "Crafting Digital Experiences That Work",
           subtitle: "Creating elegant applications with precision and patience",
           description: "Beautiful user interfaces and resilient backend systems with meticulous attention to detail - where beauty and strength intertwine, delivering seamless user experiences and scalable business solutions.",
-          backgroundImageUrl: "https://via.placeholder.com/1920x1080/1a1a2e/ffffff?text=Digital+Experiences",
+          backgroundImageUrl: "",
           backgroundVideoUrl: "",
           primaryButtonText: "Explore My Creations",
           primaryButtonUrl: "/projects",
