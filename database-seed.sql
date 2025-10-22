@@ -259,5 +259,54 @@ VALUES (
 )
 ON CONFLICT ("Id") DO NOTHING;
 
+-- Insert Features Templates (matching actual model schema)
+INSERT INTO "FeaturesTemplates" (
+    "Nickname",
+    "SectionTitle",
+    "SectionSubtitle",
+    "SectionDescription",
+    "Feature1Title",
+    "Feature1Subtitle",
+    "Feature1Description",
+    "Feature1Icon",
+    "Feature1Link",
+    "Feature2Title",
+    "Feature2Subtitle",
+    "Feature2Description",
+    "Feature2Icon",
+    "Feature2Link",
+    "Feature3Title",
+    "Feature3Subtitle",
+    "Feature3Description",
+    "Feature3Icon",
+    "Feature3Link",
+    "CreatedAt",
+    "UpdatedAt"
+)
+VALUES (
+    'Default Features Template',
+    'Key Skills & Technologies',
+    'Explore my expertise across different domains',
+    'Comprehensive overview of my technical skills and capabilities',
+    'Frontend Development',
+    'React, JavaScript, HTML5, CSS3, Bootstrap',
+    'Building responsive and interactive user interfaces with modern frameworks and best practices.',
+    'fas fa-code',
+    '/projects?category=frontend',
+    'Backend Development',
+    '.NET Core, C#, RESTful APIs, MySQL',
+    'Creating robust server-side applications and APIs with enterprise-grade technologies.',
+    'fas fa-server',
+    '/projects?category=backend',
+    'Design & Tools',
+    'Adobe Creative Suite, UI/UX Design, Git, Docker',
+    'Crafting beautiful designs and managing development workflows with professional tools.',
+    'fas fa-palette',
+    '/projects?category=design',
+    NOW(),
+    NOW()
+)
+ON CONFLICT ("Id") DO NOTHING;
+
 -- Verify data insertion
 SELECT 'Data insertion completed successfully' as status;
