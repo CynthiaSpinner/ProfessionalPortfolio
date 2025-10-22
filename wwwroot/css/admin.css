@@ -494,19 +494,43 @@ body {
     -webkit-text-fill-color: #818cf8;
 }
 
+/* File input styling */
+.admin-container input[type="file"] {
+    background-color: rgba(50, 45, 60, 0.25) !important;
+    border: 1px solid rgba(187, 195, 255, 0.5) !important;
+    color: #818cf8 !important;
+    padding: 0.5rem !important;
+    border-radius: 0.25rem !important;
+}
+
+.admin-container input[type="file"]:focus {
+    background-color: rgba(50, 45, 60, 0.35) !important;
+    border-color: rgba(129, 140, 248, 0.7) !important;
+    box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.3) !important;
+    outline: none !important;
+}
+
 /* Ultra-specific selectors to override Bootstrap */
 .admin-container .form-control,
 .admin-container input[type="text"],
+.admin-container input[type="email"],
+.admin-container input[type="url"],
 .admin-container input[type="password"],
-.admin-container textarea {
+.admin-container input[type="number"],
+.admin-container textarea,
+.admin-container select {
     color: #818cf8 !important;
     -webkit-text-fill-color: #818cf8 !important;
 }
 
 .admin-container .form-control:focus,
 .admin-container input[type="text"]:focus,
+.admin-container input[type="email"]:focus,
+.admin-container input[type="url"]:focus,
 .admin-container input[type="password"]:focus,
-.admin-container textarea:focus {
+.admin-container input[type="number"]:focus,
+.admin-container textarea:focus,
+.admin-container select:focus {
     color: #818cf8 !important;
     -webkit-text-fill-color: #818cf8 !important;
 }
@@ -514,8 +538,12 @@ body {
 /* Override autofill styles like in login */
 .admin-container .form-control:-webkit-autofill,
 .admin-container input[type="text"]:-webkit-autofill,
+.admin-container input[type="email"]:-webkit-autofill,
+.admin-container input[type="url"]:-webkit-autofill,
 .admin-container input[type="password"]:-webkit-autofill,
-.admin-container textarea:-webkit-autofill {
+.admin-container input[type="number"]:-webkit-autofill,
+.admin-container textarea:-webkit-autofill,
+.admin-container select:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 30px rgba(50, 45, 60, 0.25) inset !important;
     -webkit-text-fill-color: #818cf8 !important;
     background-color: rgba(50, 45, 60, 0.25) !important;
@@ -524,8 +552,12 @@ body {
 
 .admin-container .form-control:-webkit-autofill:focus,
 .admin-container input[type="text"]:-webkit-autofill:focus,
+.admin-container input[type="email"]:-webkit-autofill:focus,
+.admin-container input[type="url"]:-webkit-autofill:focus,
 .admin-container input[type="password"]:-webkit-autofill:focus,
-.admin-container textarea:-webkit-autofill:focus {
+.admin-container input[type="number"]:-webkit-autofill:focus,
+.admin-container textarea:-webkit-autofill:focus,
+.admin-container select:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 30px rgba(50, 45, 60, 0.35) inset !important;
     -webkit-text-fill-color: #818cf8 !important;
     background-color: rgba(50, 45, 60, 0.35) !important;
