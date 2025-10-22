@@ -67,6 +67,7 @@ const Home = () => {
   // Set up WebSocket for real-time updates
   useWebSocket('heroDataUpdated', refetch);
   useWebSocket('featuresDataUpdated', refetch);
+  useWebSocket('ctaDataUpdated', refetch);
 
   return (
     <div className="home-page">
