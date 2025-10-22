@@ -1303,6 +1303,17 @@
                     // Step 2: Save to frontend
                     const formData = new FormData(heroForm);
                     
+                    // Preserve existing image URL if no new image is provided
+                    const currentImageUrl = document.getElementById('heroBackgroundImage').value;
+                    if (!currentImageUrl || currentImageUrl.trim() === '') {
+                        // If image URL is empty, try to get the current value from the database
+                        // This prevents clearing the existing image when updating other fields
+                        const currentHeroData = await fetch('/api/portfolio/hero').then(r => r.json()).catch(() => null);
+                        if (currentHeroData && currentHeroData.backgroundImageUrl) {
+                            formData.set('HeaderBackgroundImageUrl', currentHeroData.backgroundImageUrl);
+                        }
+                    }
+                    
                     const response = await fetch('/Admin/SaveHeroSection', {
                         method: 'POST',
                         body: formData,
