@@ -1,9 +1,9 @@
 import React from 'react';
 import '../styles/LoadingSpinner.css';
 
-const LoadingSpinner = ({ 
-  message = "Weaving Digital Experiences", 
-  subtitle = "Spinning up your web..." 
+const LoadingSpinner = ({
+  message = "Crafting Digital Experiences",
+  subtitle = "Spinning up your web..."
 }) => {
   return (
     <div className="loading-container">

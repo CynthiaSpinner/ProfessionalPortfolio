@@ -76,20 +76,40 @@ namespace Portfolio.Services
                 throw new ArgumentException("Image file too large");
 
             var directoryPath = Path.Combine(_uploadPath, "images", subdirectory);
+            Console.WriteLine($"Creating directory: {directoryPath}");
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
+                Console.WriteLine($"Directory created: {directoryPath}");
+            }
+            else
+            {
+                Console.WriteLine($"Directory already exists: {directoryPath}");
             }
 
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
             var filePath = Path.Combine(directoryPath, fileName);
+            Console.WriteLine($"Saving file to: {filePath}");
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await imageFile.CopyToAsync(stream);
             }
 
-            return Path.Combine("uploads", "images", subdirectory, fileName).Replace("\\", "/");
+            // Verify file was created
+            if (File.Exists(filePath))
+            {
+                var fileInfo = new FileInfo(filePath);
+                Console.WriteLine($"File saved successfully. Size: {fileInfo.Length} bytes");
+            }
+            else
+            {
+                Console.WriteLine($"ERROR: File was not created at {filePath}");
+            }
+
+            var relativePath = Path.Combine("uploads", "images", subdirectory, fileName).Replace("\\", "/");
+            Console.WriteLine($"Returning relative path: {relativePath}");
+            return relativePath;
         }
 
         public async Task<string> UploadVideoAsync(IFormFile videoFile, string subdirectory)
@@ -219,10 +239,17 @@ namespace Portfolio.Services
         public Task<string> GetFileUrlAsync(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
+            {
+                Console.WriteLine("GetFileUrlAsync: filePath is null or empty");
                 return Task.FromResult(string.Empty);
+            }
 
             var baseUrl = _configuration["BaseUrl"] ?? "https://professionalportfolio-9a6n.onrender.com";
-            return Task.FromResult($"{baseUrl}/{filePath}");
+            var fullUrl = $"{baseUrl}/{filePath}";
+            Console.WriteLine($"GetFileUrlAsync: Generated URL: {fullUrl}");
+            Console.WriteLine($"GetFileUrlAsync: Base URL: {baseUrl}");
+            Console.WriteLine($"GetFileUrlAsync: File path: {filePath}");
+            return Task.FromResult(fullUrl);
         }
 
         public Task<bool> ValidateFileSizeAsync(IFormFile file, long maxSize)
