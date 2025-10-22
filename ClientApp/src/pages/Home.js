@@ -9,6 +9,8 @@ const Home = () => {
   const fetchHomepageData = useCallback(async () => {
     try {
       const data = await PortfolioService.getHomepageData();
+      console.log("Homepage data from API:", data);
+      console.log("CTA data:", data?.cta);
       return data;
     } catch (error) {
       console.warn("Failed to load homepage data, using fallback:", error);
