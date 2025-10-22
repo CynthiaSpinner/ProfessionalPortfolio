@@ -55,7 +55,11 @@ const FeaturesSection = ({ featuresData }) => {
                   headingLevel="h4"
                 />
                 {feature.description && (
-                  <p className="text-muted text-center mt-3" style={{ fontSize: '0.9rem' }}>
+                  <p className="text-center mt-3" style={{ 
+                    fontSize: '0.9rem', 
+                    color: '#d1d5db',
+                    lineHeight: '1.5'
+                  }}>
                     {feature.description}
                   </p>
                 )}
