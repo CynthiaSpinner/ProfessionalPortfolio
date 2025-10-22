@@ -83,7 +83,7 @@ const FeaturesSection = ({ featuresData }) => {
                       opacity: '0.8',
                       transition: 'opacity 0.3s ease'
                     }}>
-                      Click to explore →
+                      Step inside
                     </small>
                   </div>
                 )}
