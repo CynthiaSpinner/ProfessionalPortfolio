@@ -59,7 +59,8 @@ const Home = () => {
   const { data: homepageData, refetch } = usePortfolioData(fetchHomepageData, []);
 
   // Set up WebSocket for real-time updates
-  useWebSocket('homepage', refetch);
+  useWebSocket('heroDataUpdated', refetch);
+  useWebSocket('featuresDataUpdated', refetch);
 
   return (
     <div className="home-page">
