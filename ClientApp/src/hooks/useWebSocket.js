@@ -21,6 +21,7 @@ export const useWebSocket = (messageType, onMessage) => {
       
       wsRef.current.onopen = () => {
         console.log(`WebSocket connected for ${messageType} updates`);
+        console.log(`WebSocket URL: ${getWebSocketUrl()}`);
         reconnectAttemptsRef.current = 0;
         
         if (fallbackPollingIntervalRef.current) {
@@ -31,9 +32,12 @@ export const useWebSocket = (messageType, onMessage) => {
       
       wsRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log(`WebSocket message received:`, data);
         if (data.type === messageType) {
           console.log(`Real-time update received for ${messageType}, refreshing data...`);
           onMessage();
+        } else {
+          console.log(`Message type ${data.type} does not match expected ${messageType}`);
         }
       };
       

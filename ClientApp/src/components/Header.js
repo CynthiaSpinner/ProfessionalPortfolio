@@ -12,6 +12,8 @@ const Header = ({
   backgroundVideoUrl,
   primaryButtonText = "View Projects",
   primaryButtonUrl = "/projects",
+  overlayColor = "#000000",
+  overlayOpacity = 0.5,
   children,
   showButtons = false,
   refreshing = false
@@ -80,6 +82,21 @@ const Header = ({
         </video>
       )}
 
+      {/* Overlay */}
+      {(backgroundImageUrl || backgroundVideoUrl) && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: overlayColor,
+            opacity: overlayOpacity,
+            zIndex: 2
+          }}
+        />
+      )}
 
       {/* Content */}
       <Container style={{ position: 'relative', zIndex: 3 }}>
