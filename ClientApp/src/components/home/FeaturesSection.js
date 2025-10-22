@@ -68,7 +68,7 @@ const FeaturesSection = ({ featuresData }) => {
                 {feature.description && (
                   <p className="text-center mt-3" style={{ 
                     fontSize: '0.9rem', 
-                    color: '#d1d5db',
+                    color: '#6b7280',
                     lineHeight: '1.5'
                   }}>
                     {feature.description}
