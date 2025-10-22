@@ -1,11 +1,9 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Container } from "react-bootstrap";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProjectCard from "../components/ProjectCard";
 import Button from "../components/Button";
-import { PortfolioService } from "../services/PortfolioService";
-import { usePortfolioData } from "../hooks";
 import "../styles/Projects.css";
 
 // Sample database content - replace with your actual data source
@@ -94,44 +92,6 @@ const projects = [
 ];
 
 const Projects = () => {
-  const fetchProjectsData = useCallback(async () => {
-    try {
-      const data = await PortfolioService.getProjects();
-      console.log("Projects data from API:", data);
-      return data;
-    } catch (error) {
-      console.warn("Failed to load projects data, using fallback:", error);
-      // Return fallback data if API fails
-      return projects;
-    }
-  }, []);
-
-  const { data: projectsData, loading, error } = usePortfolioData(fetchProjectsData, []);
-
-  console.log("Projects page - loading:", loading, "error:", error, "projectsData:", projectsData);
-
-  if (loading) {
-    return (
-      <div className="projects-page">
-        <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="projects-page">
-        <div className="text-center py-5">
-          <p className="text-danger">Error loading projects. Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="projects-page">
       <Header
@@ -143,7 +103,7 @@ const Projects = () => {
         </Button>
       </Header>
 
-      {(projectsData || projects).map((project) => (
+      {projects.map((project) => (
         <section key={project.id} className="project-item py-5">
           <Container>
             <ProjectCard project={project} />
