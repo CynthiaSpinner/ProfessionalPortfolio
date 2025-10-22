@@ -344,8 +344,9 @@ namespace Portfolio.Controllers
                     lastModified = features.UpdatedAt
                 };
 
-                // Build CTA data - with fallback
-                var ctaData = homePage == null ? new
+                // Build CTA data - read from CTASections table
+                var ctaSection = await _context.CTASections.FirstOrDefaultAsync();
+                var ctaData = ctaSection == null ? new
                 {
                     title = "Ready to Start a Project?",
                     subtitle = "Let's work together to bring your ideas to life.",
@@ -355,12 +356,12 @@ namespace Portfolio.Controllers
                     textColor = "#ffffff"
                 } : new
                 {
-                    title = homePage.CTATitle ?? "Ready to Start a Project?",
-                    subtitle = homePage.CTASubtitle ?? "Let's work together to bring your ideas to life.",
-                    buttonText = homePage.CTAButtonText ?? "Get in Touch",
-                    buttonUrl = homePage.CTAButtonUrl ?? "/contact",
-                    backgroundImageUrl = homePage.CTABackgroundImageUrl ?? "",
-                    textColor = homePage.CTATextColor ?? "#ffffff"
+                    title = ctaSection.Title ?? "Ready to Start a Project?",
+                    subtitle = ctaSection.Subtitle ?? "Let's work together to bring your ideas to life.",
+                    buttonText = ctaSection.ButtonText ?? "Get in Touch",
+                    buttonUrl = ctaSection.ButtonLink ?? "/contact",
+                    backgroundImageUrl = "", // CTASection doesn't have background image
+                    textColor = "#ffffff"   // CTASection doesn't have text color
                 };
 
                 return Json(new
