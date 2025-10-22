@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "./HeadingGroup";
 import Button from "./Button";
@@ -16,6 +16,16 @@ const Header = ({
   showButtons = false,
   refreshing = false
 }) => {
+  const [imageError, setImageError] = useState(false);
+
+  // Fallback image URL
+  const fallbackImageUrl = "https://via.placeholder.com/1920x1080/1a1a2e/ffffff?text=Digital+Experiences";
+
+  // Handle image loading error
+  const handleImageError = () => {
+    console.warn("Background image failed to load:", backgroundImageUrl);
+    setImageError(true);
+  };
 
   // Build background style
   let backgroundStyle = {};
@@ -25,13 +35,22 @@ const Header = ({
       position: 'relative',
       overflow: 'hidden'
     };
-  } else if (backgroundImageUrl) {
+  } else if (backgroundImageUrl && !imageError) {
     backgroundStyle = {
       backgroundImage: `url(${backgroundImageUrl})`,
       backgroundSize: 'contain',
       backgroundPosition: 'center center',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'scroll', // Better performance on mobile
+      position: 'relative'
+    };
+  } else if (imageError && fallbackImageUrl) {
+    backgroundStyle = {
+      backgroundImage: `url(${fallbackImageUrl})`,
+      backgroundSize: 'contain',
+      backgroundPosition: 'center center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'scroll',
       position: 'relative'
     };
   } else {
@@ -42,6 +61,16 @@ const Header = ({
 
   return (
     <header className="page-header" style={backgroundStyle}>
+      {/* Hidden image for error detection */}
+      {backgroundImageUrl && !imageError && (
+        <img
+          src={backgroundImageUrl}
+          alt=""
+          style={{ display: 'none' }}
+          onError={handleImageError}
+        />
+      )}
+
       {/* Video Background */}
       {backgroundVideoUrl && (
         <video

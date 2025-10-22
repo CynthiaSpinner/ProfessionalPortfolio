@@ -15,12 +15,12 @@ const Home = () => {
       // Return fallback data structure if API fails
       return {
         hero: {
-          title: "Weaving Digital Experiences That Work",
+          title: "Crafting Digital Experiences That Work",
           subtitle: "Creating elegant applications with precision and patience",
           description: "Beautiful user interfaces and resilient backend systems with meticulous attention to detail - where beauty and strength intertwine, delivering seamless user experiences and scalable business solutions.",
-          backgroundImageUrl: "",
+          backgroundImageUrl: "https://via.placeholder.com/1920x1080/1a1a2e/ffffff?text=Digital+Experiences",
           backgroundVideoUrl: "",
-          primaryButtonText: "Explore My Web",
+          primaryButtonText: "Explore My Creations",
           primaryButtonUrl: "/projects",
           overlayColor: "#000000",
           overlayOpacity: 0.5

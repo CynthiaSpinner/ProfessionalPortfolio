@@ -3,7 +3,7 @@ import '../styles/LoadingSpinner.css';
 
 const LoadingSpinner = ({
   message = "Crafting Digital Experiences",
-  subtitle = "Spinning up your web..."
+  subtitle = "Building your digital world..."
 }) => {
   return (
     <div className="loading-container">
