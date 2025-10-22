@@ -1,7 +1,6 @@
 import React from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import HeadingGroup from "../HeadingGroup";
-import Button from "../Button";
 
 const FeaturesSection = ({ featuresData }) => {
   // Use provided data - handle undefined gracefully
