@@ -22,7 +22,7 @@ const projects = [
       "Admin dashboard",
     ],
     technologies: ["React", ".NET Core", "SQL Server", "Stripe"],
-    videoUrl: "https://sora.chatgpt.com/g/gen_01jn1tws19fp28j0ardpd8cxn5",
+    videoUrl: "", // Video URL removed due to CSP restrictions
     projectUrl: "#",
   },
   {
@@ -38,7 +38,7 @@ const projects = [
       "Performance monitoring",
     ],
     technologies: [".NET Core", "Entity Framework", "JWT", "Redis"],
-    videoUrl: "https://sora.chatgpt.com/g/gen_01jn1tws19fp28j0ardpd8cxn5",
+    videoUrl: "", // Video URL removed due to CSP restrictions
     projectUrl: "#",
   },
   {
@@ -54,7 +54,7 @@ const projects = [
       "Performance monitoring",
     ],
     technologies: ["SQL Server", "SSIS", "Power BI", "Azure"],
-    videoUrl: "https://sora.chatgpt.com/g/gen_01jn1tws19fp28j0ardpd8cxn5",
+    videoUrl: "", // Video URL removed due to CSP restrictions
     projectUrl: "#",
   },
   {
@@ -70,7 +70,7 @@ const projects = [
       "Cross-platform support",
     ],
     technologies: ["Unity", "C#", "WebGL", "Photon"],
-    videoUrl: "https://sora.chatgpt.com/g/gen_01jn1tws19fp28j0ardpd8cxn5",
+    videoUrl: "", // Video URL removed due to CSP restrictions
     projectUrl: "#",
   },
   {
@@ -86,7 +86,7 @@ const projects = [
       "Multi-site support",
     ],
     technologies: ["React", "Node.js", "MongoDB", "GraphQL"],
-    videoUrl: "https://sora.chatgpt.com/g/gen_01jn1tws19fp28j0ardpd8cxn5",
+    videoUrl: "", // Video URL removed due to CSP restrictions
     projectUrl: "#",
   },
 ];
