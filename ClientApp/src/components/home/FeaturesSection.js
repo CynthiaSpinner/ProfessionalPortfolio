@@ -1,7 +1,7 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import HeadingGroup from "../HeadingGroup";
-import Card from "../Card";
+import Button from "../Button";
 
 const FeaturesSection = ({ featuresData }) => {
   // Use provided data - handle undefined gracefully
@@ -22,7 +22,7 @@ const FeaturesSection = ({ featuresData }) => {
           {data?.features?.map((feature, idx) => (
             <Col md={4} key={idx}>
               <Card 
-                className={feature.link ? "clickable-card" : ""}
+                className={`feature-card ${feature.link ? "clickable-card" : ""}`}
                 onClick={() => {
                   if (feature.link) {
                     window.location.href = feature.link;
@@ -61,9 +61,9 @@ const FeaturesSection = ({ featuresData }) => {
                 )}
                 {feature.link && (
                   <div className="text-center mt-3">
-                    <small className="text-primary" style={{ fontWeight: '500' }}>
-                      Click to explore →
-                    </small>
+                    <Button href={feature.link} className="btn-sm">
+                      Explore
+                    </Button>
                   </div>
                 )}
               </Card>
