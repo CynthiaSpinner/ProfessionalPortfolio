@@ -97,6 +97,7 @@ const Projects = () => {
   const fetchProjectsData = useCallback(async () => {
     try {
       const data = await PortfolioService.getProjects();
+      console.log("Projects data from API:", data);
       return data;
     } catch (error) {
       console.warn("Failed to load projects data, using fallback:", error);
@@ -106,6 +107,8 @@ const Projects = () => {
   }, []);
 
   const { data: projectsData, loading, error } = usePortfolioData(fetchProjectsData, []);
+
+  console.log("Projects page - loading:", loading, "error:", error, "projectsData:", projectsData);
 
   if (loading) {
     return (
