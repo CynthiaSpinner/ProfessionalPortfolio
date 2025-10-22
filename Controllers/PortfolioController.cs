@@ -344,10 +344,30 @@ namespace Portfolio.Controllers
                     lastModified = features.UpdatedAt
                 };
 
+                // Build CTA data - with fallback
+                var ctaData = homePage == null ? new
+                {
+                    title = "Ready to Start a Project?",
+                    subtitle = "Let's work together to bring your ideas to life.",
+                    buttonText = "Get in Touch",
+                    buttonUrl = "/contact",
+                    backgroundImageUrl = "",
+                    textColor = "#ffffff"
+                } : new
+                {
+                    title = homePage.CTATitle ?? "Ready to Start a Project?",
+                    subtitle = homePage.CTASubtitle ?? "Let's work together to bring your ideas to life.",
+                    buttonText = homePage.CTAButtonText ?? "Get in Touch",
+                    buttonUrl = homePage.CTAButtonUrl ?? "/contact",
+                    backgroundImageUrl = homePage.CTABackgroundImageUrl ?? "",
+                    textColor = homePage.CTATextColor ?? "#ffffff"
+                };
+
                 return Json(new
                 {
                     hero = heroData,
                     features = featuresData,
+                    cta = ctaData,
                     projects = new object[0], // Empty array instead of null
                     skills = new object[0],   // Empty array instead of null
                     about = (object?)null,     // Explicit null cast

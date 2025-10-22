@@ -51,6 +51,12 @@ const Home = () => {
               link: "/projects?category=design"
             }
           ]
+        },
+        cta: {
+          title: "Ready to Start a Project?",
+          subtitle: "Let's work together to bring your ideas to life.",
+          buttonText: "Get in Touch",
+          buttonUrl: "/contact"
         }
       };
     }
@@ -66,7 +72,7 @@ const Home = () => {
     <div className="home-page">
       <HeroSection heroData={homepageData?.hero} />
       <FeaturesSection featuresData={homepageData?.features} />
-      <CTASection />
+      <CTASection ctaData={homepageData?.cta} />
       <Footer />
     </div>
   );
