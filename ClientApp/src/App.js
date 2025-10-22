@@ -19,10 +19,7 @@ function AppContent() {
 
   if (loading) {
     return (
-      <LoadingSpinner 
-        message="Loading Portfolio" 
-        subtitle="Preparing your experience..." 
-      />
+      <LoadingSpinner />
     );
   }
 
