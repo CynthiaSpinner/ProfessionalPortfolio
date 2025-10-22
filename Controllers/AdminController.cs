@@ -927,6 +927,9 @@ namespace Portfolio.Controllers
 
                 await _context.SaveChangesAsync();
                 
+                // Broadcast WebSocket message for real-time updates
+                await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "featuresDataUpdated" }));
+                
                 // Return properly formatted data like GetFeaturesTemplate
                 var templateData = new
                 {
