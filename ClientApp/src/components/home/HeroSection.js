@@ -14,6 +14,8 @@ const HeroSection = ({ heroData }) => {
       backgroundVideoUrl={data.backgroundVideoUrl}
       primaryButtonText={data.primaryButtonText}
       primaryButtonUrl={data.primaryButtonUrl}
+      overlayColor={data.overlayColor}
+      overlayOpacity={data.overlayOpacity}
       showButtons={true}
     />
   );
