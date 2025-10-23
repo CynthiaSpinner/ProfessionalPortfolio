@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Models.Portfolio;
+using Portfolio.Services;
 using Portfolio.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,9 +14,9 @@ namespace Portfolio.Controllers
         private readonly PortfolioContext _context;
         private readonly IHomePageService _homePageService;
         private readonly IFileService _fileService;
-        private readonly IWebSocketService _webSocketService;
+        private readonly WebSocketService _webSocketService;
 
-        public PortfolioController(PortfolioContext context, IHomePageService homePageService, IFileService fileService, IWebSocketService webSocketService)
+        public PortfolioController(PortfolioContext context, IHomePageService homePageService, IFileService fileService, WebSocketService webSocketService)
         {
             _context = context;
             _homePageService = homePageService;
