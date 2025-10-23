@@ -13,12 +13,14 @@ namespace Portfolio.Controllers
         private readonly PortfolioContext _context;
         private readonly IHomePageService _homePageService;
         private readonly IFileService _fileService;
+        private readonly IWebSocketService _webSocketService;
 
-        public PortfolioController(PortfolioContext context, IHomePageService homePageService, IFileService fileService)
+        public PortfolioController(PortfolioContext context, IHomePageService homePageService, IFileService fileService, IWebSocketService webSocketService)
         {
             _context = context;
             _homePageService = homePageService;
             _fileService = fileService;
+            _webSocketService = webSocketService;
         }
 
         // GET: Portfolio/Projects
@@ -407,6 +409,9 @@ namespace Portfolio.Controllers
                     homePage.UpdatedAt = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
                 }
+
+                // Notify WebSocket clients that hero data has been updated
+                await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "heroDataUpdated" }));
 
                 return Json(new { 
                     success = true, 
