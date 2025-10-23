@@ -161,6 +161,63 @@
     .dropdown-item:hover {
         background: rgba(129, 140, 248, 0.1) !important;
     }
+
+    /* Custom File Upload Styling */
+    .custom-file-upload {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .custom-file-upload #fileUploadBtn {
+        background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+        border: 1px solid rgba(129, 140, 248, 0.3);
+        color: #9ca3af;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 2.5rem;
+    }
+
+    .custom-file-upload #fileUploadBtn:hover {
+        background: linear-gradient(135deg, rgba(0, 0, 10, 0.8), rgba(5, 5, 25, 0.6));
+        border-color: rgba(129, 140, 248, 0.5);
+        color: #c7d2fe;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(129, 140, 248, 0.2);
+    }
+
+    .custom-file-upload #fileUploadBtn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(129, 140, 248, 0.3);
+    }
+
+    .custom-file-upload #fileUploadBtn i {
+        font-size: 1rem;
+    }
+
+    .file-name-display {
+        color: #818cf8;
+        font-size: 0.875rem;
+        font-style: italic;
+        opacity: 0.8;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .file-name-display.has-file {
+        opacity: 1;
+        color: #c7d2fe;
+    }
 </style>
 
 <div class="admin-container">
@@ -311,11 +368,18 @@
                                             <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Background Image URL</label>
                                             <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             
-                                            <!-- Simple File Upload -->
-                                            <div class="mt-3">
-                                                <label class="form-label" style="color: #9ca3af !important;">Or Upload Image File</label>
-                                                <input type="file" id="imageFile" accept="image/*" class="form-control" style="color: #818cf8 !important;">
-                                            </div>
+                        <!-- Custom File Upload -->
+                        <div class="mt-3">
+                            <label class="form-label" style="color: #9ca3af !important;">Or Upload Image File</label>
+                            <div class="custom-file-upload">
+                                <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                                <button type="button" id="fileUploadBtn" class="btn btn-outline-primary">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Choose Image File</span>
+                                </button>
+                                <span id="fileName" class="file-name-display"></span>
+                            </div>
+                        </div>
                                             
                                             <!-- Image Overlay Settings -->
                                             <div class="mt-4 overlay-controls" id="imageOverlayControls">
@@ -3380,17 +3444,32 @@
         let imageFile;
         document.addEventListener('DOMContentLoaded', function() {
             imageFile = document.getElementById('imageFile');
-            if (imageFile) {
+            const fileUploadBtn = document.getElementById('fileUploadBtn');
+            const fileNameDisplay = document.getElementById('fileName');
+            
+            if (imageFile && fileUploadBtn) {
+                // Custom button click handler
+                fileUploadBtn.addEventListener('click', function() {
+                    imageFile.click();
+                });
+                
+                // File input change handler
                 imageFile.addEventListener('change', function(e) {
                     const file = e.target.files[0];
                     if (file) {
                         console.log('Image file selected:', file.name);
                         
+                        // Update button text and file name display
+                        fileUploadBtn.innerHTML = '<i class="fas fa-upload"></i><span>Uploading...</span>';
+                        fileUploadBtn.disabled = true;
+                        fileNameDisplay.textContent = file.name;
+                        fileNameDisplay.classList.add('has-file');
+                        
                         // Validate file type
                         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
                         if (!allowedTypes.includes(file.type)) {
                             alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)');
-                            e.target.value = '';
+                            resetFileUpload();
                             return;
                         }
                         
@@ -3398,7 +3477,7 @@
                         const maxSize = 10 * 1024 * 1024; // 10MB
                         if (file.size > maxSize) {
                             alert('File size must be less than 10MB');
-                            e.target.value = '';
+                            resetFileUpload();
                             return;
                         }
                         
@@ -3408,6 +3487,26 @@
                 });
             }
         });
+        
+        // Reset file upload button
+        function resetFileUpload() {
+            const fileUploadBtn = document.getElementById('fileUploadBtn');
+            const fileNameDisplay = document.getElementById('fileName');
+            
+            if (fileUploadBtn) {
+                fileUploadBtn.innerHTML = '<i class="fas fa-upload"></i><span>Choose Image File</span>';
+                fileUploadBtn.disabled = false;
+            }
+            
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = '';
+                fileNameDisplay.classList.remove('has-file');
+            }
+            
+            if (imageFile) {
+                imageFile.value = '';
+            }
+        }
 
         // Upload image function
         async function uploadImageFile(file) {
@@ -3442,9 +3541,8 @@
                 console.error('Upload error:', error);
                 alert('Failed to upload image: ' + error.message);
             } finally {
-                // Reset file input
-                imageFile.disabled = false;
-                imageFile.value = '';
+                // Reset file upload button and input
+                resetFileUpload();
             }
         }
 
