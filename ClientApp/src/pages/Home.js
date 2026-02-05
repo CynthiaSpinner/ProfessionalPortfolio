@@ -2,7 +2,6 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "../components/HeadingGroup";
 import Footer from "../components/Footer";
-import Button from "../components/Button";
 import Card from "../components/Card";
 import Header from "../components/Header";
 import "../styles/Home.css";
