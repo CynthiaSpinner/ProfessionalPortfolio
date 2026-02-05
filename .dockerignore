@@ -1,0 +1,16 @@
+.git
+.gitignore
+**/.dockerignore
+**/node_modules
+**/npm-debug.log
+**/ClientApp/build
+**/bin
+**/obj
+**/.vs
+**/*.user
+.env
+.env.*
+!.env.example
+**/appsettings.Development.json
+**/Dockerfile*
+**/README.md
