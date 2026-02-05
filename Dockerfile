@@ -9,7 +9,7 @@ RUN dotnet restore
 
 #copy everything and publish (this runs npm install + npm run build in ClientApp via your csproj)
 COPY . .
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish Portfolio.csproj -c Release -o /app/publish
 
 #runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
