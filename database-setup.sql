@@ -1,5 +1,5 @@
 -- Create the database if it doesn't exist
--- (This is usually already done when you created the Azure SQL Database)
+-- (Create the database on your SQL Server or host first if needed)
 
 -- Create tables based on your Entity Framework models
 CREATE TABLE [dbo].[Admins] (

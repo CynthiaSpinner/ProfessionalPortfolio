@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "https://localhost:44406", 
                 "http://localhost:44406",
-                "https://wonderful-smoke-060b14a10.1.azurestaticapps.net"
+                "http://localhost:3000"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()

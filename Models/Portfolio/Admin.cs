@@ -21,5 +21,9 @@ namespace Portfolio.Models.Portfolio
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
         public bool IsActive { get; set; } = true;
+
+        [Required]
+        [StringLength(20)]
+        public string Role { get; set; } = "Admin"; // "Admin" or "ReadOnly"
     }
 }

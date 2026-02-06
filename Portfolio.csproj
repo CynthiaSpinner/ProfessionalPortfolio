@@ -11,8 +11,6 @@
     <SpaProxyServerUrl>https://localhost:44406</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <ImplicitUsings>enable</ImplicitUsings>
-    <WebPublishMethod>MSDeploy</WebPublishMethod>
-    <PublishProvider>AzureWebSite</PublishProvider>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,7 +41,6 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
-  <!-- ALL NPM TARGETS REMOVED - Handled by GitHub Actions deployment pipeline -->
-  <!-- This prevents npm install errors with old npm 1.4.28 on Azure -->
+  <!-- NPM build handled by deployment pipeline or local npm run build -->
 
 </Project>

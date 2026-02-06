@@ -1,4 +1,6 @@
-// Mock data for development
+import api from "./api";
+
+// Mock data for development (used only when API not available or for projects/skills/about if not yet wired)
 const mockData = {
   hero: {
     title: "Welcome to My Portfolio",
@@ -46,6 +48,47 @@ export const PortfolioService = {
   },
 
   async getHeroSection() {
-    return mockData.hero;
+    try {
+      const { data } = await api.get("/portfolio/hero");
+      return data;
+    } catch (err) {
+      console.error("Error fetching hero:", err);
+      return mockData.hero;
+    }
+  },
+
+  async getFeatures() {
+    try {
+      const { data } = await api.get("/portfolio/features");
+      return data;
+    } catch (err) {
+      console.error("Error fetching features:", err);
+      return {
+        sectionTitle: "Key Skills & Technologies",
+        sectionSubtitle: "Explore my expertise across different domains",
+        features: [
+          { title: "Frontend Development", subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap", description: "", icon: "fas fa-code", link: "/projects?category=frontend" },
+          { title: "Backend Development", subtitle: ".NET Core, C#, RESTful APIs, MySQL", description: "", icon: "fas fa-server", link: "/projects?category=backend" },
+          { title: "Design & Tools", subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker", description: "", icon: "fas fa-palette", link: "/projects?category=design" }
+        ],
+        lastModified: new Date().toISOString()
+      };
+    }
+  },
+
+  async getCTA() {
+    try {
+      const { data } = await api.get("/portfolio/cta");
+      return data;
+    } catch (err) {
+      console.error("Error fetching CTA:", err);
+      return {
+        title: "Ready to Start a Project?",
+        subtitle: "Let's work together to bring your ideas to life.",
+        buttonText: "Get in Touch",
+        buttonLink: "/contact",
+        lastModified: new Date().toISOString()
+      };
+    }
   },
 };

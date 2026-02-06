@@ -104,7 +104,7 @@ namespace Portfolio.Controllers
 
                 var admin = await _context.Admins
                     .Where(a => a.Username == model.Username)
-                    .Select(a => new { a.Username, a.PasswordHash })
+                    .Select(a => new { a.Username, a.PasswordHash, a.Role })
                     .FirstOrDefaultAsync();
 
                 if (admin == null || !VerifyPassword(model.Password, admin.PasswordHash))
@@ -113,10 +113,11 @@ namespace Portfolio.Controllers
                     return View(model);
                 }
 
+                var role = admin.Role ?? "Admin";
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, admin.Username),
-                    new Claim(ClaimTypes.Role, "Admin")
+                    new Claim(ClaimTypes.Role, role)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -214,13 +215,15 @@ namespace Portfolio.Controllers
             return Ok("Password updated. Remove ADMIN_RESET_SECRET from env.");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,ReadOnly")]
         public async Task<IActionResult> Dashboard()
         {
             try
             {
                 var homePage = await _homePageService.GetHomePageAsync();
                 ViewBag.HomePage = homePage;
+                ViewBag.UserRole = User.IsInRole("ReadOnly") ? "ReadOnly" : "Admin";
+                ViewBag.IsReadOnly = User.IsInRole("ReadOnly");
                 return View();
             }
             catch (Exception ex)
@@ -231,7 +234,7 @@ namespace Portfolio.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,ReadOnly")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -522,6 +525,482 @@ namespace Portfolio.Controllers
             }
         }
 
+        // ----- Features Section -----
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveFeaturesSection([FromForm] FeaturesSectionModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+
+                var featuresSection = await _context.FeaturesSections.FirstOrDefaultAsync();
+                if (featuresSection == null)
+                {
+                    featuresSection = new FeaturesSection();
+                    _context.FeaturesSections.Add(featuresSection);
+                }
+
+                featuresSection.SectionTitle = model.SectionTitle ?? "Key Skills & Technologies";
+                featuresSection.SectionSubtitle = model.SectionSubtitle ?? "Explore my expertise across different domains";
+                featuresSection.Feature1Title = model.Feature1Title ?? "Frontend Development";
+                featuresSection.Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap";
+                featuresSection.Feature1Description = model.Feature1Description ?? "";
+                featuresSection.Feature1Icon = model.Feature1Icon ?? "fas fa-code";
+                featuresSection.Feature1Link = model.Feature1Link ?? "/projects?category=frontend";
+                featuresSection.Feature2Title = model.Feature2Title ?? "Backend Development";
+                featuresSection.Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, SQL Server";
+                featuresSection.Feature2Description = model.Feature2Description ?? "";
+                featuresSection.Feature2Icon = model.Feature2Icon ?? "fas fa-server";
+                featuresSection.Feature2Link = model.Feature2Link ?? "/projects?category=backend";
+                featuresSection.Feature3Title = model.Feature3Title ?? "Design & Tools";
+                featuresSection.Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker";
+                featuresSection.Feature3Description = model.Feature3Description ?? "";
+                featuresSection.Feature3Icon = model.Feature3Icon ?? "fas fa-palette";
+                featuresSection.Feature3Link = model.Feature3Link ?? "/projects?category=design";
+                featuresSection.IsActive = model.IsActive;
+                featuresSection.DisplayOrder = model.DisplayOrder;
+                featuresSection.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+                await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "featuresDataUpdated" }));
+
+                return Json(new { success = true, message = "Features section saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving features section");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetFeaturesSection()
+        {
+            try
+            {
+                var featuresSection = await _context.FeaturesSections.FirstOrDefaultAsync();
+                if (featuresSection == null)
+                {
+                    return Json(new { success = false, message = "Features section not found.", data = (object?)null });
+                }
+                var data = new
+                {
+                    sectionTitle = featuresSection.SectionTitle,
+                    sectionSubtitle = featuresSection.SectionSubtitle,
+                    feature1Title = featuresSection.Feature1Title,
+                    feature1Subtitle = featuresSection.Feature1Subtitle,
+                    feature1Description = featuresSection.Feature1Description,
+                    feature1Icon = featuresSection.Feature1Icon,
+                    feature1Link = featuresSection.Feature1Link,
+                    feature2Title = featuresSection.Feature2Title,
+                    feature2Subtitle = featuresSection.Feature2Subtitle,
+                    feature2Description = featuresSection.Feature2Description,
+                    feature2Icon = featuresSection.Feature2Icon,
+                    feature2Link = featuresSection.Feature2Link,
+                    feature3Title = featuresSection.Feature3Title,
+                    feature3Subtitle = featuresSection.Feature3Subtitle,
+                    feature3Description = featuresSection.Feature3Description,
+                    feature3Icon = featuresSection.Feature3Icon,
+                    feature3Link = featuresSection.Feature3Link,
+                    isActive = featuresSection.IsActive,
+                    displayOrder = featuresSection.DisplayOrder,
+                    updatedAt = featuresSection.UpdatedAt
+                };
+                return Json(new { success = true, message = "Features section retrieved successfully.", data });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving features section");
+                return Json(new { success = false, message = ex.Message, data = (object?)null });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("Admin/GetFeaturesTemplate")]
+        public async Task<IActionResult> GetFeaturesTemplate(int id)
+        {
+            try
+            {
+                var template = await _context.FeaturesTemplates.FindAsync(id);
+                if (template == null)
+                    return Json(new { success = false, message = "Template not found.", data = (object?)null });
+                var data = new
+                {
+                    id = template.Id,
+                    nickname = template.Nickname ?? "",
+                    sectionTitle = template.SectionTitle ?? "",
+                    sectionSubtitle = template.SectionSubtitle ?? "",
+                    sectionDescription = template.SectionDescription ?? "",
+                    feature1Title = template.Feature1Title ?? "",
+                    feature1Subtitle = template.Feature1Subtitle ?? "",
+                    feature1Description = template.Feature1Description ?? "",
+                    feature1Icon = template.Feature1Icon ?? "",
+                    feature1Link = template.Feature1Link ?? "",
+                    feature2Title = template.Feature2Title ?? "",
+                    feature2Subtitle = template.Feature2Subtitle ?? "",
+                    feature2Description = template.Feature2Description ?? "",
+                    feature2Icon = template.Feature2Icon ?? "",
+                    feature2Link = template.Feature2Link ?? "",
+                    feature3Title = template.Feature3Title ?? "",
+                    feature3Subtitle = template.Feature3Subtitle ?? "",
+                    feature3Description = template.Feature3Description ?? "",
+                    feature3Icon = template.Feature3Icon ?? "",
+                    feature3Link = template.Feature3Link ?? "",
+                    createdAt = template.CreatedAt,
+                    updatedAt = template.UpdatedAt
+                };
+                return Json(new { success = true, message = "Features template retrieved successfully.", data });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving features template");
+                return Json(new { success = false, message = ex.Message, data = (object?)null });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("Admin/GetFeaturesTemplates")]
+        public async Task<IActionResult> GetFeaturesTemplates()
+        {
+            try
+            {
+                var templates = await _context.FeaturesTemplates
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Select(t => new { id = t.Id, nickname = t.Nickname, sectionTitle = t.SectionTitle, sectionSubtitle = t.SectionSubtitle, createdAt = t.CreatedAt, updatedAt = t.UpdatedAt })
+                    .ToListAsync();
+                return Json(new { success = true, message = "Features templates retrieved successfully.", data = templates });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving features templates");
+                return Json(new { success = true, data = new List<object>() });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveFeaturesTemplate([FromForm] FeaturesTemplateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+                if (string.IsNullOrWhiteSpace(model.SectionTitle)) return Json(new { success = false, message = "Section Title is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature1Title)) return Json(new { success = false, message = "Feature 1 Title is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature1Subtitle)) return Json(new { success = false, message = "Feature 1 Subtitle is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature1Link)) return Json(new { success = false, message = "Feature 1 Link is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature2Title)) return Json(new { success = false, message = "Feature 2 Title is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature2Subtitle)) return Json(new { success = false, message = "Feature 2 Subtitle is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature2Link)) return Json(new { success = false, message = "Feature 2 Link is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature3Title)) return Json(new { success = false, message = "Feature 3 Title is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature3Subtitle)) return Json(new { success = false, message = "Feature 3 Subtitle is required." });
+                if (string.IsNullOrWhiteSpace(model.Feature3Link)) return Json(new { success = false, message = "Feature 3 Link is required." });
+
+                FeaturesTemplate template;
+                if (model.Id == null || model.Id == 0)
+                {
+                    template = new FeaturesTemplate
+                    {
+                        Nickname = model.Nickname ?? "New Template",
+                        SectionTitle = model.SectionTitle ?? "",
+                        SectionSubtitle = model.SectionSubtitle ?? "",
+                        Feature1Title = model.Feature1Title ?? "",
+                        Feature1Subtitle = model.Feature1Subtitle ?? "",
+                        Feature1Description = model.Feature1Description ?? "",
+                        Feature1Icon = model.Feature1Icon ?? "",
+                        Feature1Link = model.Feature1Link ?? "",
+                        Feature2Title = model.Feature2Title ?? "",
+                        Feature2Subtitle = model.Feature2Subtitle ?? "",
+                        Feature2Description = model.Feature2Description ?? "",
+                        Feature2Icon = model.Feature2Icon ?? "",
+                        Feature2Link = model.Feature2Link ?? "",
+                        Feature3Title = model.Feature3Title ?? "",
+                        Feature3Subtitle = model.Feature3Subtitle ?? "",
+                        Feature3Description = model.Feature3Description ?? "",
+                        Feature3Icon = model.Feature3Icon ?? "",
+                        Feature3Link = model.Feature3Link ?? "",
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.FeaturesTemplates.Add(template);
+                }
+                else
+                {
+                    template = await _context.FeaturesTemplates.FindAsync(model.Id);
+                    if (template == null) return Json(new { success = false, message = "Template not found" });
+                    template.Nickname = model.Nickname ?? template.Nickname;
+                    template.SectionTitle = model.SectionTitle ?? template.SectionTitle;
+                    template.SectionSubtitle = model.SectionSubtitle ?? "";
+                    template.Feature1Title = model.Feature1Title ?? template.Feature1Title;
+                    template.Feature1Subtitle = model.Feature1Subtitle ?? template.Feature1Subtitle;
+                    template.Feature1Description = model.Feature1Description ?? "";
+                    template.Feature1Icon = model.Feature1Icon ?? "";
+                    template.Feature1Link = model.Feature1Link ?? template.Feature1Link;
+                    template.Feature2Title = model.Feature2Title ?? template.Feature2Title;
+                    template.Feature2Subtitle = model.Feature2Subtitle ?? template.Feature2Subtitle;
+                    template.Feature2Description = model.Feature2Description ?? "";
+                    template.Feature2Icon = model.Feature2Icon ?? "";
+                    template.Feature2Link = model.Feature2Link ?? template.Feature2Link;
+                    template.Feature3Title = model.Feature3Title ?? template.Feature3Title;
+                    template.Feature3Subtitle = model.Feature3Subtitle ?? template.Feature3Subtitle;
+                    template.Feature3Description = model.Feature3Description ?? "";
+                    template.Feature3Icon = model.Feature3Icon ?? "";
+                    template.Feature3Link = model.Feature3Link ?? template.Feature3Link;
+                    template.UpdatedAt = DateTime.UtcNow;
+                }
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = $"Features template '{template.Nickname}' saved successfully!", data = new { id = template.Id, nickname = template.Nickname } });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving features template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteFeaturesTemplate(int id)
+        {
+            try
+            {
+                var template = await _context.FeaturesTemplates.FindAsync(id);
+                if (template == null) return Json(new { success = false, message = "Template not found" });
+                _context.FeaturesTemplates.Remove(template);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Features template deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting features template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // ----- CTA Section -----
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveCTASection([FromForm] CTASectionModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+                var ctaSection = await _context.CTASections.FirstOrDefaultAsync();
+                if (ctaSection == null)
+                {
+                    ctaSection = new CTASection { CreatedAt = DateTime.UtcNow };
+                    _context.CTASections.Add(ctaSection);
+                }
+                ctaSection.Title = model.Title ?? "";
+                ctaSection.Subtitle = model.Subtitle ?? "";
+                ctaSection.ButtonText = model.ButtonText ?? "";
+                ctaSection.ButtonLink = model.ButtonLink ?? "";
+                ctaSection.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                await _webSocketService.BroadcastMessageAsync("{\"type\":\"ctaDataUpdated\",\"timestamp\":\"" + DateTime.UtcNow.ToString("O") + "\"}");
+                return Json(new { success = true, message = "CTA section saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving CTA section");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetCTASection()
+        {
+            try
+            {
+                var ctaSection = await _context.CTASections.FirstOrDefaultAsync();
+                if (ctaSection == null)
+                    return Json(new { success = false, message = "No CTA section found." });
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        title = ctaSection.Title ?? "",
+                        subtitle = ctaSection.Subtitle ?? "",
+                        buttonText = ctaSection.ButtonText ?? "",
+                        buttonLink = ctaSection.ButtonLink ?? "",
+                        lastModified = ctaSection.UpdatedAt ?? ctaSection.CreatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CTA section");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("Admin/GetCTATemplate")]
+        public async Task<IActionResult> GetCTATemplate(int id)
+        {
+            try
+            {
+                var template = await _context.CTATemplates.FindAsync(id);
+                if (template == null)
+                    return Json(new { success = false, message = "CTA template not found." });
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        id = template.Id,
+                        nickname = template.Nickname ?? "",
+                        title = template.Title ?? "",
+                        subtitle = template.Subtitle ?? "",
+                        buttonText = template.ButtonText ?? "",
+                        buttonLink = template.ButtonLink ?? "",
+                        lastModified = template.UpdatedAt ?? template.CreatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("Admin/GetCTATemplates")]
+        public async Task<IActionResult> GetCTATemplates()
+        {
+            try
+            {
+                var templates = await _context.CTATemplates
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Select(t => new { id = t.Id, nickname = t.Nickname ?? "", lastModified = t.UpdatedAt ?? t.CreatedAt })
+                    .ToListAsync();
+                return Json(new { success = true, message = "CTA templates retrieved successfully.", data = templates });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving CTA templates");
+                return Json(new { success = true, data = new List<object>() });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveCTATemplate([FromForm] CTATemplateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+                if (string.IsNullOrWhiteSpace(model.Title)) return Json(new { success = false, message = "Title is required." });
+                if (string.IsNullOrWhiteSpace(model.Subtitle)) return Json(new { success = false, message = "Subtitle is required." });
+                if (string.IsNullOrWhiteSpace(model.ButtonText)) return Json(new { success = false, message = "Button text is required." });
+                if (string.IsNullOrWhiteSpace(model.ButtonLink)) return Json(new { success = false, message = "Button link is required." });
+                var existing = await _context.CTATemplates.FirstOrDefaultAsync(t => t.Nickname == model.Nickname);
+                if (existing != null)
+                    return Json(new { success = false, message = "A template with this nickname already exists. Please choose a different name." });
+
+                var template = new CTATemplate
+                {
+                    Nickname = model.Nickname ?? "",
+                    Title = model.Title ?? "",
+                    Subtitle = model.Subtitle ?? "",
+                    ButtonText = model.ButtonText ?? "",
+                    ButtonLink = model.ButtonLink ?? "",
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.CTATemplates.Add(template);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "CTA template saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateCTATemplate([FromForm] CTATemplateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = string.Join(", ", errors) });
+                }
+                if (string.IsNullOrWhiteSpace(model.Title)) return Json(new { success = false, message = "Title is required." });
+                if (string.IsNullOrWhiteSpace(model.Subtitle)) return Json(new { success = false, message = "Subtitle is required." });
+                if (string.IsNullOrWhiteSpace(model.ButtonText)) return Json(new { success = false, message = "Button text is required." });
+                if (string.IsNullOrWhiteSpace(model.ButtonLink)) return Json(new { success = false, message = "Button link is required." });
+                var existingTemplate = await _context.CTATemplates.FindAsync(model.Id);
+                if (existingTemplate == null)
+                    return Json(new { success = false, message = "Template not found." });
+                existingTemplate.Nickname = model.Nickname ?? "";
+                existingTemplate.Title = model.Title ?? "";
+                existingTemplate.Subtitle = model.Subtitle ?? "";
+                existingTemplate.ButtonText = model.ButtonText ?? "";
+                existingTemplate.ButtonLink = model.ButtonLink ?? "";
+                existingTemplate.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "CTA template updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCTATemplate(int id)
+        {
+            try
+            {
+                var template = await _context.CTATemplates.FindAsync(id);
+                if (template == null) return Json(new { success = false, message = "Template not found" });
+                _context.CTATemplates.Remove(template);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "CTA template deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         public class LoginModel
         {
             public string? Username { get; set; }
@@ -558,6 +1037,70 @@ namespace Portfolio.Controllers
             public int ImageOverlayOpacity { get; set; } = 50;
             public string? VideoOverlayColor { get; set; }
             public int VideoOverlayOpacity { get; set; } = 50;
+        }
+
+        public class FeaturesSectionModel
+        {
+            public string? SectionTitle { get; set; }
+            public string? SectionSubtitle { get; set; }
+            public string? Feature1Title { get; set; }
+            public string? Feature1Subtitle { get; set; }
+            public string? Feature1Description { get; set; }
+            public string? Feature1Icon { get; set; }
+            public string? Feature1Link { get; set; }
+            public string? Feature2Title { get; set; }
+            public string? Feature2Subtitle { get; set; }
+            public string? Feature2Description { get; set; }
+            public string? Feature2Icon { get; set; }
+            public string? Feature2Link { get; set; }
+            public string? Feature3Title { get; set; }
+            public string? Feature3Subtitle { get; set; }
+            public string? Feature3Description { get; set; }
+            public string? Feature3Icon { get; set; }
+            public string? Feature3Link { get; set; }
+            public bool IsActive { get; set; } = true;
+            public int DisplayOrder { get; set; } = 1;
+        }
+
+        public class FeaturesTemplateModel
+        {
+            public int? Id { get; set; }
+            public string? Nickname { get; set; }
+            public string? SectionTitle { get; set; }
+            public string? SectionSubtitle { get; set; }
+            public string? Feature1Title { get; set; }
+            public string? Feature1Subtitle { get; set; }
+            public string? Feature1Description { get; set; }
+            public string? Feature1Icon { get; set; }
+            public string? Feature1Link { get; set; }
+            public string? Feature2Title { get; set; }
+            public string? Feature2Subtitle { get; set; }
+            public string? Feature2Description { get; set; }
+            public string? Feature2Icon { get; set; }
+            public string? Feature2Link { get; set; }
+            public string? Feature3Title { get; set; }
+            public string? Feature3Subtitle { get; set; }
+            public string? Feature3Description { get; set; }
+            public string? Feature3Icon { get; set; }
+            public string? Feature3Link { get; set; }
+        }
+
+        public class CTASectionModel
+        {
+            public string? Title { get; set; }
+            public string? Subtitle { get; set; }
+            public string? ButtonText { get; set; }
+            public string? ButtonLink { get; set; }
+        }
+
+        public class CTATemplateModel
+        {
+            public int Id { get; set; }
+            public string? Nickname { get; set; }
+            public string? Title { get; set; }
+            public string? Subtitle { get; set; }
+            public string? ButtonText { get; set; }
+            public string? ButtonLink { get; set; }
         }
     }
 }

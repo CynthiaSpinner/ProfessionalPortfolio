@@ -3,6 +3,34 @@
     Layout = "_AdminLayout";
 }
 
+<style>
+    /* Glowing border and focus/active styles for ALL dropdown inputs and buttons in the backend */
+    input[type="text"]:focus,
+    button:focus,
+    input[type="text"]:active,
+    button:active {
+        border-color: #818cf8 !important;
+        box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.3) !important;
+        outline: none !important;
+        z-index: 100;
+        position: relative;
+    }
+    .input-group .btn {
+        border-left: none !important;
+    }
+    [id*="DropdownMenu"] {
+        z-index: 99999999 !important;
+    }
+    .dropdown-item {
+        color: #818cf8 !important;
+        background: transparent !important;
+        transition: background 0.2s ease !important;
+    }
+    .dropdown-item:hover {
+        background: rgba(129, 140, 248, 0.1) !important;
+    }
+</style>
+
 <div class="admin-container">
     <div class="admin-sidebar">
         <div class="sidebar-header">
@@ -54,6 +82,10 @@
         <div class="content-header">
             <h1>Welcome to Admin Dashboard</h1>
             <p class="text-muted" style="color: #9ca3af !important;">Manage your portfolio content and settings</p>
+            @if (ViewBag.IsReadOnly == true)
+            {
+                <p class="text-muted small mb-0"><span class="badge bg-secondary">Read only</span> You can view but not edit.</p>
+            }
         </div>
 
         <div id="home" class="content-section active">
@@ -67,12 +99,15 @@
                 </div>
                 <div class="card-body">
                     <p class="text-muted" style="color: #9ca3af !important;">Manage the hero content including title, subtitle, and action buttons.</p>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
                     <div class="btn-group" role="group">
                         <button class="btn btn-primary" onclick="toggleHeroEdit()" id="editHeroBtn">
                             <i class="fas fa-edit"></i>
                             Edit Hero
                         </button>
                     </div>
+                    }
                     
                     <!-- Hero Edit Form (Hidden by default) -->
                     <div id="heroEditForm" style="display: none !important; margin-top: 2rem;">
@@ -270,40 +305,152 @@
                 </div>
                 <div class="card-body">
                     <p class="text-muted" style="color: #9ca3af !important;">Manage the Key Skills & Technologies section with its three feature cards.</p>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title" style="color: #818cf8 !important;">Frontend Development</h6>
-                                    <button class="btn btn-primary btn-sm" onclick="editFeature('frontend')">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-primary" onclick="toggleFeaturesEdit()" id="editFeaturesBtn">
+                            <i class="fas fa-edit"></i>
+                            Edit Features
+                        </button>
+                    </div>
+                    }
+                    <div id="featuresEditForm" style="display: none !important; margin-top: 2rem;">
+                        <form id="featuresForm" asp-action="SaveFeaturesSection" asp-controller="Admin" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Template</h5>
+                                <div class="card" style="overflow: visible;">
+                                    <div class="card-body" style="overflow: visible;">
+                                        <div class="mb-3" style="position: relative;">
+                                            <label for="featuresTemplateNickname" class="form-label" style="color: #9ca3af !important;">Nickname</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="featuresTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <button class="btn btn-outline-secondary" type="button" id="featuresTemplateDropdownBtn" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important; padding: 0.375rem 0.5rem !important; min-width: auto !important; width: 40px !important; height: 38px !important;">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </button>
+                                            </div>
+                                            <div id="featuresCustomDropdownMenu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0, 0, 10, 0.95); border: 1px solid rgba(129, 140, 248, 0.3); border-top: none; z-index: 99999999 !important; border-radius: 0 0 4px 4px; margin-top: -1px;">
+                                                <div class="dropdown-item" onclick="clearFeaturesTemplateSelection()" style="color: #818cf8; padding: 0.5rem 1rem; cursor: pointer;">Clear Selection</div>
+                                                <div id="featuresTemplateOptions"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title" style="color: #818cf8 !important;">Backend Development</h6>
-                                    <button class="btn btn-primary btn-sm" onclick="editFeature('backend')">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Section Header</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="featuresTitle" class="form-label" style="color: #9ca3af !important;">Section Title</label>
+                                                <input type="text" class="form-control" id="featuresTitle" name="SectionTitle" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="featuresSubtitle" class="form-label" style="color: #9ca3af !important;">Section Subtitle</label>
+                                                <input type="text" class="form-control" id="featuresSubtitle" name="SectionSubtitle" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title" style="color: #818cf8 !important;">Design & Tools</h6>
-                                    <button class="btn btn-primary btn-sm" onclick="editFeature('design')">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Feature 1</h5>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature1Title" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="feature1Title" name="Feature1Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature1Subtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="feature1Subtitle" name="Feature1Subtitle" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature1Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
+                                                <input type="text" class="form-control" id="feature1Icon" name="Feature1Icon" maxlength="50" placeholder="fas fa-code" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature1Link" class="form-label" style="color: #9ca3af !important;">Link</label>
+                                                <input type="text" class="form-control" id="feature1Link" name="Feature1Link" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="feature1Description" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                            <textarea class="form-control" id="feature1Description" name="Feature1Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Feature 2</h5>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature2Title" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="feature2Title" name="Feature2Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature2Subtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="feature2Subtitle" name="Feature2Subtitle" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature2Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
+                                                <input type="text" class="form-control" id="feature2Icon" name="Feature2Icon" maxlength="50" placeholder="fas fa-server" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature2Link" class="form-label" style="color: #9ca3af !important;">Link</label>
+                                                <input type="text" class="form-control" id="feature2Link" name="Feature2Link" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="feature2Description" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                            <textarea class="form-control" id="feature2Description" name="Feature2Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Feature 3</h5>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature3Title" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="feature3Title" name="Feature3Title" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature3Subtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="feature3Subtitle" name="Feature3Subtitle" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature3Icon" class="form-label" style="color: #9ca3af !important;">Icon</label>
+                                                <input type="text" class="form-control" id="feature3Icon" name="Feature3Icon" maxlength="50" placeholder="fas fa-palette" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="feature3Link" class="form-label" style="color: #9ca3af !important;">Link</label>
+                                                <input type="text" class="form-control" id="feature3Link" name="Feature3Link" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="feature3Description" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                            <textarea class="form-control" id="feature3Description" name="Feature3Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="d-flex gap-2 justify-content-between">
+                                <button type="button" class="btn btn-danger" onclick="deleteFeaturesTemplate()" id="deleteFeaturesBtn"><i class="fas fa-trash"></i> Delete Template</button>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-secondary" onclick="toggleFeaturesEdit()"><i class="fas fa-times"></i> Cancel</button>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -317,11 +464,69 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted" style="color: #9ca3af !important;">Manage the CTA section content including title and subtitle.</p>
-                    <button class="btn btn-primary" onclick="editSection('cta')">
-                        <i class="fas fa-edit"></i>
-                        Edit CTA Section
-                    </button>
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage the CTA section content including title, subtitle, and action button.</p>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-primary" onclick="toggleCTAEdit()" id="editCTABtn">
+                            <i class="fas fa-edit"></i>
+                            Edit CTA
+                        </button>
+                    </div>
+                    }
+                    <div id="ctaEditForm" style="display: none !important; margin-top: 2rem;">
+                        <form id="ctaForm" asp-action="SaveCTASection" asp-controller="Admin" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-4">
+                                <h5 class="mb-3" style="color: #818cf8 !important;">Template</h5>
+                                <div class="card" style="overflow: visible;">
+                                    <div class="card-body" style="overflow: visible;">
+                                        <div class="mb-3" style="position: relative;">
+                                            <label for="ctaTemplateNickname" class="form-label" style="color: #9ca3af !important;">Nickname</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="ctaTemplateNickname" placeholder="Enter new nickname or select existing..." style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                                <button class="btn btn-outline-secondary" type="button" id="ctaTemplateDropdownBtn" style="border-color: rgba(129, 140, 248, 0.3) !important; color: #818cf8 !important; padding: 0.375rem 0.5rem !important; min-width: auto !important; width: 40px !important; height: 38px !important;">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </button>
+                                            </div>
+                                            <div id="ctaCustomDropdownMenu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0, 0, 10, 0.95); border: 1px solid rgba(129, 140, 248, 0.3); border-top: none; z-index: 99999999 !important; border-radius: 0 0 4px 4px; margin-top: -1px;">
+                                                <div class="dropdown-item" onclick="clearCTATemplateSelection()" style="color: #818cf8; padding: 0.5rem 1rem; cursor: pointer;">Clear Selection</div>
+                                                <div id="ctaTemplateOptions"></div>
+                                            </div>
+                                        </div>
+                                        <h5 class="mb-3" style="color: #818cf8 !important;">CTA Content</h5>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                                <input type="text" class="form-control" id="ctaTitle" name="Title" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                                <input type="text" class="form-control" id="ctaSubtitle" name="Subtitle" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaButtonText" class="form-label" style="color: #9ca3af !important;">Button Text</label>
+                                                <input type="text" class="form-control" id="ctaButtonText" name="ButtonText" maxlength="100" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="ctaButtonLink" class="form-label" style="color: #9ca3af !important;">Button Link</label>
+                                                <input type="text" class="form-control" id="ctaButtonLink" name="ButtonLink" maxlength="500" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2 justify-content-between mt-3">
+                                            <button type="button" class="btn btn-danger" onclick="deleteCTATemplate()" id="deleteCTABtn"><i class="fas fa-trash"></i> Delete Template</button>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-secondary" onclick="toggleCTAEdit()"><i class="fas fa-times"></i> Cancel</button>
+                                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -467,14 +672,233 @@
         }
 
         function editSection(sectionId) {
-            // TODO: Implement section editing functionality
+            if (sectionId === 'footer') {
+                console.log('Footer editing not implemented yet');
+                return;
+            }
             console.log(`Editing section: ${sectionId}`);
         }
 
         function editFeature(featureId) {
-            // TODO: Implement feature editing functionality
             console.log(`Editing feature: ${featureId}`);
         }
+
+        // ----- Features Section -----
+        function toggleFeaturesEdit() {
+            const form = document.getElementById('featuresEditForm');
+            const btn = document.getElementById('editFeaturesBtn');
+            if (!form || !btn) return;
+            const show = form.style.display === 'none' || !form.style.display;
+            form.style.display = show ? 'block' : 'none';
+            btn.style.display = show ? 'none' : 'inline-block';
+            if (show) {
+                loadFeaturesData();
+                loadFeaturesTemplates();
+                setupFeaturesDropdown();
+            }
+        }
+        async function loadFeaturesData() {
+            try {
+                const response = await fetch('/Admin/GetFeaturesSection');
+                const result = await response.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+                    set('featuresTitle', d.sectionTitle); set('featuresSubtitle', d.sectionSubtitle);
+                    set('feature1Title', d.feature1Title); set('feature1Subtitle', d.feature1Subtitle); set('feature1Icon', d.feature1Icon); set('feature1Link', d.feature1Link); set('feature1Description', d.feature1Description);
+                    set('feature2Title', d.feature2Title); set('feature2Subtitle', d.feature2Subtitle); set('feature2Icon', d.feature2Icon); set('feature2Link', d.feature2Link); set('feature2Description', d.feature2Description);
+                    set('feature3Title', d.feature3Title); set('feature3Subtitle', d.feature3Subtitle); set('feature3Icon', d.feature3Icon); set('feature3Link', d.feature3Link); set('feature3Description', d.feature3Description);
+                }
+            } catch (e) { console.error('Load features error', e); }
+        }
+        let featuresTemplatesList = [];
+        async function loadFeaturesTemplates() {
+            try {
+                const response = await fetch('/Admin/GetFeaturesTemplates');
+                const result = await response.json();
+                featuresTemplatesList = result.data || [];
+                const container = document.getElementById('featuresTemplateOptions');
+                if (!container) return;
+                container.innerHTML = '';
+                featuresTemplatesList.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'dropdown-item';
+                    div.style.cssText = 'color: #818cf8; padding: 0.5rem 1rem; cursor: pointer;';
+                    div.textContent = t.nickname || ('Template ' + t.id);
+                    div.onclick = () => { selectFeaturesTemplate(t.id, t.nickname); document.getElementById('featuresCustomDropdownMenu').style.display = 'none'; };
+                    container.appendChild(div);
+                });
+            } catch (e) { console.error('Load features templates error', e); }
+        }
+        function setupFeaturesDropdown() {
+            const btn = document.getElementById('featuresTemplateDropdownBtn');
+            const menu = document.getElementById('featuresCustomDropdownMenu');
+            if (!btn || !menu) return;
+            btn.onclick = () => { menu.style.display = menu.style.display === 'none' ? 'block' : 'none'; };
+            document.addEventListener('click', function closeFeatures(e) {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) { menu.style.display = 'none'; document.removeEventListener('click', closeFeatures); }
+            });
+        }
+        function clearFeaturesTemplateSelection() {
+            document.getElementById('featuresTemplateNickname').value = '';
+            document.getElementById('featuresCustomDropdownMenu').style.display = 'none';
+        }
+        async function selectFeaturesTemplate(id, nickname) {
+            document.getElementById('featuresTemplateNickname').value = nickname || '';
+            try {
+                const response = await fetch('/Admin/GetFeaturesTemplate?id=' + id);
+                const result = await response.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+                    set('featuresTitle', d.sectionTitle); set('featuresSubtitle', d.sectionSubtitle);
+                    set('feature1Title', d.feature1Title); set('feature1Subtitle', d.feature1Subtitle); set('feature1Icon', d.feature1Icon); set('feature1Link', d.feature1Link); set('feature1Description', d.feature1Description);
+                    set('feature2Title', d.feature2Title); set('feature2Subtitle', d.feature2Subtitle); set('feature2Icon', d.feature2Icon); set('feature2Link', d.feature2Link); set('feature2Description', d.feature2Description);
+                    set('feature3Title', d.feature3Title); set('feature3Subtitle', d.feature3Subtitle); set('feature3Icon', d.feature3Icon); set('feature3Link', d.feature3Link); set('feature3Description', d.feature3Description);
+                }
+            } catch (e) { console.error('Load features template error', e); }
+        }
+        async function deleteFeaturesTemplate() {
+            const nickname = document.getElementById('featuresTemplateNickname').value.trim();
+            if (!nickname) { alert('Select or enter a template nickname to delete.'); return; }
+            const t = featuresTemplatesList.find(x => (x.nickname || '').toLowerCase() === nickname.toLowerCase());
+            if (!t) { alert('Template not found.'); return; }
+            if (!confirm('Delete template "' + nickname + '"?')) return;
+            const token = document.querySelector('#featuresForm input[name="__RequestVerificationToken"]').value;
+            const fd = new FormData(); fd.append('__RequestVerificationToken', token); fd.append('id', t.id);
+            const response = await fetch('/Admin/DeleteFeaturesTemplate', { method: 'POST', body: fd });
+            const result = await response.json();
+            alert(result.message || (result.success ? 'Deleted.' : 'Error'));
+            if (result.success) { clearFeaturesTemplateSelection(); loadFeaturesTemplates(); }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const featuresForm = document.getElementById('featuresForm');
+            if (featuresForm) featuresForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const nickname = document.getElementById('featuresTemplateNickname').value.trim();
+                if (nickname) {
+                    const t = featuresTemplatesList.find(x => (x.nickname || '').toLowerCase() === nickname.toLowerCase());
+                    if (t) formData.append('Id', t.id);
+                    formData.append('Nickname', nickname);
+                    formData.append('SectionTitle', formData.get('SectionTitle'));
+                    formData.append('Feature1Title', formData.get('Feature1Title')); formData.append('Feature1Subtitle', formData.get('Feature1Subtitle')); formData.append('Feature1Description', formData.get('Feature1Description')); formData.append('Feature1Icon', formData.get('Feature1Icon')); formData.append('Feature1Link', formData.get('Feature1Link'));
+                    formData.append('Feature2Title', formData.get('Feature2Title')); formData.append('Feature2Subtitle', formData.get('Feature2Subtitle')); formData.append('Feature2Description', formData.get('Feature2Description')); formData.append('Feature2Icon', formData.get('Feature2Icon')); formData.append('Feature2Link', formData.get('Feature2Link'));
+                    formData.append('Feature3Title', formData.get('Feature3Title')); formData.append('Feature3Subtitle', formData.get('Feature3Subtitle')); formData.append('Feature3Description', formData.get('Feature3Description')); formData.append('Feature3Icon', formData.get('Feature3Icon')); formData.append('Feature3Link', formData.get('Feature3Link'));
+                    const saveResp = await fetch(t ? '/Admin/SaveFeaturesTemplate' : '/Admin/SaveFeaturesTemplate', { method: 'POST', body: formData });
+                    const saveRes = await saveResp.json();
+                    if (!saveRes.success) { alert(saveRes.message); return; }
+                }
+                const sectionFormData = new FormData(this);
+                const sectionResp = await fetch('/Admin/SaveFeaturesSection', { method: 'POST', body: sectionFormData });
+                const sectionRes = await sectionResp.json();
+                alert(sectionRes.message || (sectionRes.success ? 'Saved.' : 'Error'));
+                if (sectionRes.success) toggleFeaturesEdit();
+            });
+        });
+
+        // ----- CTA Section -----
+        function toggleCTAEdit() {
+            const form = document.getElementById('ctaEditForm');
+            const btn = document.getElementById('editCTABtn');
+            if (!form || !btn) return;
+            const show = form.style.display === 'none' || !form.style.display;
+            form.style.display = show ? 'block' : 'none';
+            btn.style.display = show ? 'none' : 'inline-block';
+            if (show) {
+                loadCTAData();
+                loadCTATemplates();
+                setupCTADropdown();
+            }
+        }
+        async function loadCTAData() {
+            try {
+                const response = await fetch('/Admin/GetCTASection');
+                const result = await response.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+                    set('ctaTitle', d.title); set('ctaSubtitle', d.subtitle); set('ctaButtonText', d.buttonText); set('ctaButtonLink', d.buttonLink);
+                }
+            } catch (e) { console.error('Load CTA error', e); }
+        }
+        let ctaTemplatesList = [];
+        async function loadCTATemplates() {
+            try {
+                const response = await fetch('/Admin/GetCTATemplates');
+                const result = await response.json();
+                ctaTemplatesList = result.data || [];
+                const container = document.getElementById('ctaTemplateOptions');
+                if (!container) return;
+                container.innerHTML = '';
+                ctaTemplatesList.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'dropdown-item';
+                    div.style.cssText = 'color: #818cf8; padding: 0.5rem 1rem; cursor: pointer;';
+                    div.textContent = t.nickname || ('Template ' + t.id);
+                    div.onclick = () => { selectCTATemplate(t.id, t.nickname); document.getElementById('ctaCustomDropdownMenu').style.display = 'none'; };
+                    container.appendChild(div);
+                });
+            } catch (e) { console.error('Load CTA templates error', e); }
+        }
+        function setupCTADropdown() {
+            const btn = document.getElementById('ctaTemplateDropdownBtn');
+            const menu = document.getElementById('ctaCustomDropdownMenu');
+            if (!btn || !menu) return;
+            btn.onclick = () => { menu.style.display = menu.style.display === 'none' ? 'block' : 'none'; };
+            document.addEventListener('click', function closeCTA(e) {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) { menu.style.display = 'none'; document.removeEventListener('click', closeCTA); }
+            });
+        }
+        function clearCTATemplateSelection() {
+            document.getElementById('ctaTemplateNickname').value = '';
+            document.getElementById('ctaCustomDropdownMenu').style.display = 'none';
+        }
+        async function selectCTATemplate(id, nickname) {
+            document.getElementById('ctaTemplateNickname').value = nickname || '';
+            try {
+                const response = await fetch('/Admin/GetCTATemplate?id=' + id);
+                const result = await response.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+                    set('ctaTitle', d.title); set('ctaSubtitle', d.subtitle); set('ctaButtonText', d.buttonText); set('ctaButtonLink', d.buttonLink);
+                }
+            } catch (e) { console.error('Load CTA template error', e); }
+        }
+        async function deleteCTATemplate() {
+            const nickname = document.getElementById('ctaTemplateNickname').value.trim();
+            if (!nickname) { alert('Select or enter a template nickname to delete.'); return; }
+            const t = ctaTemplatesList.find(x => (x.nickname || '').toLowerCase() === nickname.toLowerCase());
+            if (!t) { alert('Template not found.'); return; }
+            if (!confirm('Delete template "' + nickname + '"?')) return;
+            const token = document.querySelector('#ctaForm input[name="__RequestVerificationToken"]').value;
+            const fd = new FormData(); fd.append('__RequestVerificationToken', token); fd.append('id', t.id);
+            const response = await fetch('/Admin/DeleteCTATemplate', { method: 'POST', body: fd });
+            const result = await response.json();
+            alert(result.message || (result.success ? 'Deleted.' : 'Error'));
+            if (result.success) { clearCTATemplateSelection(); loadCTATemplates(); }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctaForm = document.getElementById('ctaForm');
+            if (ctaForm) ctaForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const nickname = document.getElementById('ctaTemplateNickname').value.trim();
+                if (nickname) {
+                    const t = ctaTemplatesList.find(x => (x.nickname || '').toLowerCase() === nickname.toLowerCase());
+                    const saveFormData = new FormData();
+                    saveFormData.append('__RequestVerificationToken', formData.get('__RequestVerificationToken'));
+                    saveFormData.append('Nickname', nickname);
+                    saveFormData.append('Title', formData.get('Title')); saveFormData.append('Subtitle', formData.get('Subtitle')); saveFormData.append('ButtonText', formData.get('ButtonText')); saveFormData.append('ButtonLink', formData.get('ButtonLink'));
+                    if (t) { saveFormData.append('Id', t.id); await fetch('/Admin/UpdateCTATemplate', { method: 'POST', body: saveFormData }); } else { await fetch('/Admin/SaveCTATemplate', { method: 'POST', body: saveFormData }); }
+                }
+                const sectionResp = await fetch('/Admin/SaveCTASection', { method: 'POST', body: formData });
+                const sectionRes = await sectionResp.json();
+                alert(sectionRes.message || (sectionRes.success ? 'Saved.' : 'Error'));
+                if (sectionRes.success) toggleCTAEdit();
+            });
+        });
 
         // Toggle background type
         function toggleBackgroundType() {
