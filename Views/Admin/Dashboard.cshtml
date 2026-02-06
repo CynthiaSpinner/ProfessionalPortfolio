@@ -111,7 +111,7 @@
                     
                     <!-- Hero Edit Form (Hidden by default) -->
                     <div id="heroEditForm" style="display: none !important; margin-top: 2rem;">
-                        <form id="heroForm" asp-action="SaveHeroSection" asp-controller="Admin" method="post">
+                        <form id="heroForm" asp-action="SaveHeroSection" asp-controller="Admin" method="post" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
                             
                             <!-- Template Section -->
@@ -181,10 +181,15 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Image URL Field -->
+                                        <!-- Image: upload file or URL -->
                                         <div class="mb-3" id="imageUrlField">
-                                            <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Background Image URL</label>
-                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            <label for="heroBackgroundImageFile" class="form-label" style="color: #9ca3af !important;">Background Image (recommended: upload file)</label>
+                                            <input type="file" class="form-control" id="heroBackgroundImageFile" name="HeroBackgroundImage" accept="image/jpeg,image/png,image/gif,image/webp" style="color: #818cf8 !important;">
+                                            <small class="text-muted" style="color: #6b7280 !important;">Upload stores the image on this server—it will not expire or disappear. JPEG, PNG, GIF, or WebP.</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Or Background Image URL</label>
+                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" placeholder="Leave empty if you uploaded a file above" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             
                                             <!-- Image Overlay Settings -->
                                             <div class="mt-4 overlay-controls" id="imageOverlayControls">

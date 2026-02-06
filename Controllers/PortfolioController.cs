@@ -65,12 +65,18 @@ namespace Portfolio.Controllers
                     });
                 }
 
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                var version = (homePage.UpdatedAt ?? homePage.CreatedAt ?? DateTime.UtcNow).Ticks;
+                var backgroundImageUrl = homePage.HeaderBackgroundImageData != null
+                    ? $"{baseUrl}/api/portfolio/hero-image?v={version}"
+                    : (homePage.HeaderBackgroundImageUrl ?? "");
+
                 return Json(new
                 {
                     title = homePage.HeaderTitle,
                     subtitle = homePage.HeaderSubtitle,
                     description = homePage.HeaderDescription,
-                    backgroundImageUrl = homePage.HeaderBackgroundImageUrl,
+                    backgroundImageUrl,
                     backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
                     primaryButtonText = homePage.HeaderPrimaryButtonText,
                     primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
@@ -82,6 +88,25 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = "Failed to load hero section data" });
+            }
+        }
+
+        // GET: api/portfolio/hero-image (serves stored hero background image from DB)
+        [HttpGet("api/portfolio/hero-image")]
+        public async Task<IActionResult> GetHeroImage()
+        {
+            try
+            {
+                var homePage = await _homePageService.GetHomePageAsync();
+                if (homePage?.HeaderBackgroundImageData == null || homePage.HeaderBackgroundImageData.Length == 0)
+                    return NotFound();
+                var contentType = homePage.HeaderBackgroundImageContentType ?? "image/jpeg";
+                Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+                return File(homePage.HeaderBackgroundImageData, contentType);
+            }
+            catch
+            {
+                return NotFound();
             }
         }
 

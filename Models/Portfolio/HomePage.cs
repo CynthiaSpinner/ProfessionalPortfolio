@@ -26,6 +26,12 @@ namespace Portfolio.Models.Portfolio
         [StringLength(500)]
         public string? HeaderBackgroundImageUrl { get; set; }
 
+        /// <summary>When set, the actual image bytes are stored; frontend should use GET /api/portfolio/hero-image.</summary>
+        public byte[]? HeaderBackgroundImageData { get; set; }
+
+        [StringLength(100)]
+        public string? HeaderBackgroundImageContentType { get; set; }
+
         [StringLength(500)]
         public string? HeaderBackgroundVideoUrl { get; set; }
 
