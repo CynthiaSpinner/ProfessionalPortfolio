@@ -330,7 +330,7 @@ namespace Portfolio.Controllers
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
                 var hp = updatedHomePage ?? homePage;
                 var hasStoredImage = hp.HeaderBackgroundImageData != null;
-                var version = (hp.UpdatedAt ?? hp.CreatedAt ?? DateTime.UtcNow).Ticks;
+                var version = (hp.UpdatedAt ?? hp.CreatedAt).Ticks;
                 var backgroundImageUrl = hasStoredImage
                     ? $"{baseUrl}/api/portfolio/hero-image?v={version}"
                     : (updatedHomePage?.HeaderBackgroundImageUrl ?? homePage.HeaderBackgroundImageUrl ?? "");
