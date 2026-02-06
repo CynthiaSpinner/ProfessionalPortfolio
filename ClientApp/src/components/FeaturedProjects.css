@@ -1,0 +1,77 @@
+.featured-projects {
+  padding: 4rem 0;
+  background: linear-gradient(
+    135deg,
+    rgba(75, 75, 90, 0.2),
+    rgba(85, 85, 105, 0.15),
+    rgba(227, 235, 255, 0.05)
+  );
+}
+
+.featured-projects h2 {
+  color: #e5e7eb;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.featured-projects .card {
+  background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.featured-projects .card:hover {
+  border-color: rgba(129, 140, 248, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.featured-projects .card-img-top {
+  height: 180px;
+  object-fit: cover;
+  background: #111827;
+}
+
+.featured-projects .card-body {
+  background: transparent;
+  color: #e0e0e0;
+}
+
+.featured-projects .card-title {
+  color: #818cf8;
+  font-weight: 600;
+}
+
+.featured-projects .card-text {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.featured-projects .btn-primary {
+  background-color: #818cf8;
+  border-color: #818cf8;
+}
+
+.featured-projects .btn-primary:hover {
+  background-color: #6366f1;
+  border-color: #6366f1;
+}
+
+.featured-projects .btn-outline-secondary {
+  border-color: rgba(129, 140, 248, 0.4);
+  color: #c7d2fe;
+}
+
+.featured-projects .btn-outline-secondary:hover {
+  background-color: rgba(129, 140, 248, 0.2);
+  border-color: #818cf8;
+  color: #e5e7eb;
+}
+
+@media (max-width: 768px) {
+  .featured-projects {
+    padding: 2rem 0;
+  }
+}

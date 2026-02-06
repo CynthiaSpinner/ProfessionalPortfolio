@@ -1,0 +1,43 @@
+.skills-overview {
+  padding: 4rem 0;
+  background: linear-gradient(
+    135deg,
+    rgba(75, 75, 90, 0.3),
+    rgba(85, 85, 105, 0.2),
+    rgba(227, 235, 255, 0.1)
+  );
+}
+
+.skills-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.skills-card {
+  background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  padding: 2rem;
+}
+
+.skills-overview h3 {
+  color: #818cf8;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.skills-overview .progress {
+  height: 0.5rem;
+  background: rgba(30, 30, 45, 0.8);
+  border-radius: 0.25rem;
+}
+
+.skills-overview .d-flex span {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .skills-overview {
+    padding: 2rem 0;
+  }
+}
