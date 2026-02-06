@@ -628,32 +628,7 @@
             }
         }
 
-        // Handle hero form submission
-        document.getElementById('heroForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            
-            try {
-                const response = await fetch('/api/homepage/header', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (response.ok) {
-                    alert('Hero section updated successfully!');
-                    toggleHeroEdit();
-                } else {
-                    alert('Failed to update hero section. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while updating the hero section.');
-            }
-        });
+        // Hero form submission is handled in initializeFormSubmission() (FormData to /Admin/SaveHeroSection).
 
         // Content management functions
         function addHomeContent() {
