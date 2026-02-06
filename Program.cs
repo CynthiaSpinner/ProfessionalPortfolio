@@ -61,9 +61,30 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Set DATABASE_URL (Render) or ConnectionStrings:DefaultConnection (appsettings.json).");
 }
 
+// Convert postgres:// URL (e.g. Render) to Npgsql key=value format to avoid "format does not conform" errors
+if (connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+    connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+{
+    try
+    {
+        var uri = new Uri(connectionString);
+        var userInfo = uri.UserInfo?.Split(new[] { ':' }, 2, StringSplitOptions.None) ?? Array.Empty<string>();
+        var user = userInfo.Length > 0 ? Uri.UnescapeDataString(userInfo[0]) : "";
+        var pass = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+        var db = string.IsNullOrEmpty(uri.AbsolutePath) ? "" : uri.AbsolutePath.TrimStart('/');
+        var port = uri.Port > 0 ? uri.Port : 5432;
+        var sslMode = "Require"; // Render and most cloud Postgres expect SSL
+        connectionString = $"Host={uri.Host};Port={port};Database={db};Username={user};Password={pass};SslMode={sslMode};";
+    }
+    catch (Exception ex)
+    {
+        throw new InvalidOperationException("DATABASE_URL must be a valid postgres:// URL.", ex);
+    }
+}
+
 // When DATABASE_URL is set (e.g. Render), treat as Postgres so we never pass a Postgres URL to SQL Server
 var fromEnv = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE_URL"));
-var isPostgres = fromEnv || connectionString.StartsWith("postgres", StringComparison.OrdinalIgnoreCase);
+var isPostgres = fromEnv || connectionString.StartsWith("Host=", StringComparison.OrdinalIgnoreCase) || connectionString.Contains("Database=");
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
     if (isPostgres)
