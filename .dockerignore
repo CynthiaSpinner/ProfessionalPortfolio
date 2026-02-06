@@ -1,0 +1,12 @@
+**/.git
+**/.vs
+**/bin
+**/obj
+**/node_modules
+**/ClientApp/node_modules
+**/publish
+**/publish-test
+**/.env
+**/*.user
+**/README.md
+**/.dockerignore
