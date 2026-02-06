@@ -89,6 +89,8 @@ var fromEnv = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE
 var isPostgres = fromEnv || connectionString.StartsWith("Host=", StringComparison.OrdinalIgnoreCase) || connectionString.Contains("Database=");
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
+    // Allow Migrate() to run when snapshot was generated for a different provider (e.g. SQL Server) but we run on Postgres
+    options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
     if (isPostgres)
     {
         options.UseNpgsql(connectionString, npgsqlOptions =>
