@@ -52,14 +52,18 @@ const Home = () => {
 
     // Set up WebSocket connection for real-time updates (NO POLLING!)
     const getWebSocketUrl = () => {
-      if (process.env.NODE_ENV === 'production') {
-        // In production, connect to the Azure App Service backend
-        return `wss://portfolio-app-1776.azurewebsites.net/ws/portfolio`;
-      } else {
-        // In development, connect to the ASP.NET Core backend directly
-        // The React dev server runs on 44406, but the backend runs on 7094 (HTTPS)
-        return `wss://localhost:7094/ws/portfolio`;
+      if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_API_URL) {
+        // In production, use same host as API (e.g. Render backend)
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const origin = new URL(apiUrl).origin;
+        const wsOrigin = origin.replace(/^https/, 'wss');
+        return `${wsOrigin}/ws/portfolio`;
       }
+      if (process.env.NODE_ENV === 'production') {
+        return `wss://professionalportfolio-9a6n.onrender.com/ws/portfolio`;
+      }
+      // In development, connect to the ASP.NET Core backend directly
+      return `wss://localhost:7094/ws/portfolio`;
     };
     
     let ws = null;

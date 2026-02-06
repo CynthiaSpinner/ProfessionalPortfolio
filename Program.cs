@@ -52,23 +52,38 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.MaxAge = null; // This makes it a session cookie
     });
 
-// Configure MySQL connection
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Prefer Render Postgres DATABASE_URL when set; otherwise use DefaultConnection (e.g. local SQL Server)
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json");
+    throw new InvalidOperationException("Set DATABASE_URL (Render) or ConnectionStrings:DefaultConnection (appsettings.json).");
 }
 
+var isPostgres = connectionString.TrimStart().StartsWith("postgres", StringComparison.OrdinalIgnoreCase);
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
-    options.UseSqlServer(connectionString, sqlOptions =>
+    if (isPostgres)
     {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
-        sqlOptions.CommandTimeout(60);
-    });
+        options.UseNpgsql(connectionString, npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30));
+            npgsqlOptions.CommandTimeout(60);
+        });
+    }
+    else
+    {
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+            sqlOptions.CommandTimeout(60);
+        });
+    }
 });
 
 var app = builder.Build();
