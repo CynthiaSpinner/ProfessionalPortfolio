@@ -26,6 +26,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowPortfolio", policy =>
     {
         policy.WithOrigins(
+                "https://codespinner.net",
+                "http://codespinner.net",
                 "https://localhost:44406", 
                 "http://localhost:44406",
                 "http://localhost:3000"
