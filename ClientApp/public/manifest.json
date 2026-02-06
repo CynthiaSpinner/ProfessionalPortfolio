@@ -1,12 +1,12 @@
 {
-  "short_name": "Portfolio",
-  "name": "Portfolio",
+  "short_name": "CodeSpinner",
+  "name": "CodeSpinner & Design",
   "icons": [
     {"src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml"},
     {"src": "/favicon.ico", "sizes": "64x64 32x32 24x24 16x16", "type": "image/x-icon"}
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#818cf8",
+  "background_color": "#050510"
 }
