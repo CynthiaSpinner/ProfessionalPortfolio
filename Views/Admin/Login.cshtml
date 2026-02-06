@@ -9,7 +9,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Cynthia Spinner</title>
+    <title>Login | CodeSpinner &amp; Design</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon">
     <style>
         @@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 
@@ -368,10 +369,51 @@
                 transform: translateY(0);
             }
         }
+
+        /* Logging-in overlay */
+        .login-loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #050510;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            z-index: 9999;
+        }
+        .login-loading-overlay.is-active {
+            display: flex;
+        }
+        .login-loading-overlay .spinner {
+            width: 56px;
+            height: 56px;
+            border: 3px solid rgba(129, 140, 248, 0.2);
+            border-top-color: #818cf8;
+            border-radius: 50%;
+            animation: loginSpin 0.9s linear infinite;
+        }
+        .login-loading-overlay .message {
+            color: #818cf8;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+        }
+        .login-loading-overlay .brand {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        @@keyframes loginSpin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body class="login-page" style="scrollbar-width: none; -ms-overflow-style: none; overflow: hidden;">
+    <div class="login-loading-overlay" id="loginLoadingOverlay" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="Loading"></div>
+        <p class="message">Logging in…</p>
+        <p class="brand">CodeSpinner</p>
+    </div>
     <div class="login-container @(ViewBag.ErrorMessage != null ? "has-error" : "")">
         <div class="login-header">
             <h1>
@@ -424,23 +466,25 @@
                 loginContainer.classList.remove('has-error');
             }
             
-            // Form submission handler
+            var LOGIN_TITLE = 'Logging in… | CodeSpinner & Design';
+            var LOGIN_FAVICON_SVG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="#818cf8" stroke-width="3" stroke-linecap="round" stroke-dasharray="22 44"/></svg>');
+
             form.addEventListener('submit', function(e) {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value.trim();
                 
-                // Check if fields are empty
                 if (!username || !password) {
                     e.preventDefault();
                     showValidationMessage('Please fill out all fields');
                     return false;
                 }
                 
-                // If validation passes, hide any existing messages
                 hideValidationMessage();
-                
-                // Allow form to submit
-                console.log('Form submitting with valid data');
+                document.getElementById('loginLoadingOverlay').classList.add('is-active');
+                document.getElementById('loginLoadingOverlay').setAttribute('aria-hidden', 'false');
+                document.title = LOGIN_TITLE;
+                var fav = document.getElementById('favicon');
+                if (fav) fav.href = LOGIN_FAVICON_SVG;
             });
             
             // Clear validation message when user starts typing

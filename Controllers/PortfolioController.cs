@@ -66,7 +66,7 @@ namespace Portfolio.Controllers
                 }
 
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
-                var version = (homePage.UpdatedAt ?? homePage.CreatedAt ?? DateTime.UtcNow).Ticks;
+                var version = (homePage.UpdatedAt ?? homePage.CreatedAt).Ticks;
                 var backgroundImageUrl = homePage.HeaderBackgroundImageData != null
                     ? $"{baseUrl}/api/portfolio/hero-image?v={version}"
                     : (homePage.HeaderBackgroundImageUrl ?? "");

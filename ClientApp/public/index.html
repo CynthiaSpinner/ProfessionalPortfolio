@@ -10,10 +10,10 @@
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <!-- Favicon from backend (same file that works there) -->
-    <link rel="icon" type="image/svg+xml" href="https://professionalportfolio-9a6n.onrender.com/favicon.svg">
-    <link rel="shortcut icon" href="https://professionalportfolio-9a6n.onrender.com/favicon.svg">
-    <link rel="apple-touch-icon" href="https://professionalportfolio-9a6n.onrender.com/favicon.svg">
+    <!-- Loading: spinner favicon + title; App.js switches to main favicon & title when mounted -->
+    <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon-loading.svg" id="favicon">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon-loading.svg">
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon-loading.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <!-- Deployment test - forcing new build -->
     <!--
@@ -25,13 +25,22 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>CodeSpinner &amp; Design</title>
+    <title>Spinning code… | CodeSpinner &amp; Design</title>
   </head>
   <body>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div id="app-loading" style="position:fixed;inset:0;background:#050510;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;z-index:9999;">
+        <div class="spinner-web" style="width:56px;height:56px;border:3px solid rgba(129,140,248,0.2);border-top-color:#818cf8;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
+        <p style="color:#818cf8;font-family:system-ui,-apple-system,sans-serif;font-size:1.1rem;margin:0;">Spinning code…</p>
+        <p style="color:#6b7280;font-family:system-ui,-apple-system,sans-serif;font-size:0.9rem;margin:0;">CodeSpinner</p>
+      </div>
+    </div>
+    <style>
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
