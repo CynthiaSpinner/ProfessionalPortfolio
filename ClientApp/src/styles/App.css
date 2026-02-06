@@ -22,6 +22,8 @@
 
   /* Text Colors */
   --text-muted: #6b7280;
+  --text-light: #e5e7eb;
+  --text-primary: #e5e7eb;
   --bg-dark: #050510;
   --bg-light: #f3f4f6;
 }
@@ -31,6 +33,10 @@
   margin: 0;
   padding: 0;
   font-family: "Inter", "Arial", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html, body {
