@@ -30,13 +30,31 @@ namespace Portfolio.Controllers
             _webSocketService = webSocketService;
         }
 
-        private string HashPassword(string password)
+        private static bool IsBcryptHash(string hash)
+        {
+            return !string.IsNullOrEmpty(hash) && (hash.StartsWith("$2a$", StringComparison.Ordinal) || hash.StartsWith("$2b$", StringComparison.Ordinal) || hash.StartsWith("$2y$", StringComparison.Ordinal));
+        }
+
+        private bool VerifyPassword(string plainPassword, string storedHash)
+        {
+            if (IsBcryptHash(storedHash))
+                return BCrypt.Net.BCrypt.Verify(plainPassword, storedHash);
+            var sha256Hash = HashPasswordLegacy(plainPassword);
+            return sha256Hash == storedHash;
+        }
+
+        private static string HashPasswordLegacy(string password)
         {
             using (var sha256 = SHA256.Create())
             {
                 var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(hashedBytes);
             }
+        }
+
+        private static string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
         }
 
         [AllowAnonymous]
@@ -84,14 +102,12 @@ namespace Portfolio.Controllers
                     return View(model);
                 }
 
-                var hashedPassword = HashPassword(model.Password);
-
                 var admin = await _context.Admins
                     .Where(a => a.Username == model.Username)
                     .Select(a => new { a.Username, a.PasswordHash })
                     .FirstOrDefaultAsync();
 
-                if (admin == null || admin.PasswordHash != hashedPassword)
+                if (admin == null || !VerifyPassword(model.Password, admin.PasswordHash))
                 {
                     ViewBag.ErrorMessage = "Invalid username or password.";
                     return View(model);
