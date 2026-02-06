@@ -181,15 +181,12 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Image: upload file or URL -->
-                                        <div class="mb-3" id="imageUrlField">
-                                            <label for="heroBackgroundImageFile" class="form-label" style="color: #9ca3af !important;">Background Image (recommended: upload file)</label>
+                                        <!-- Image: upload only (stored on server); no URL field -->
+                                        <input type="hidden" name="HeaderBackgroundImageUrl" id="heroBackgroundImageUrlHidden" value="">
+                                        <div class="mb-3" id="heroImageUploadField">
+                                            <label for="heroBackgroundImageFile" class="form-label" style="color: #9ca3af !important;">Background Image</label>
                                             <input type="file" class="form-control" id="heroBackgroundImageFile" name="HeroBackgroundImage" accept="image/jpeg,image/png,image/gif,image/webp" style="color: #818cf8 !important;">
-                                            <small class="text-muted" style="color: #6b7280 !important;">Upload stores the image on this server—it will not expire or disappear. JPEG, PNG, GIF, or WebP.</small>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="heroBackgroundImage" class="form-label" style="color: #9ca3af !important;">Or Background Image URL</label>
-                                            <input type="text" class="form-control" id="heroBackgroundImage" name="HeaderBackgroundImageUrl" maxlength="500" placeholder="Leave empty if you uploaded a file above" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            <small id="heroImageUploadHint" class="text-muted" style="color: #6b7280 !important; display: block; margin-top: 0.35rem;">Upload stores the image on this server. Upload a new file to replace the current image.</small>
                                             
                                             <!-- Image Overlay Settings -->
                                             <div class="mt-4 overlay-controls" id="imageOverlayControls">
@@ -1230,7 +1227,7 @@
                     formData.append('HeaderTitle', document.getElementById('heroTitle').value || '');
                     formData.append('HeaderSubtitle', document.getElementById('heroSubtitle').value || '');
                     formData.append('HeaderDescription', document.getElementById('heroDescription').value || '');
-                    formData.append('HeaderBackgroundImageUrl', document.getElementById('heroBackgroundImage').value || '');
+                    formData.append('HeaderBackgroundImageUrl', document.getElementById('heroBackgroundImageUrlHidden').value || '');
                     formData.append('HeaderBackgroundVideoUrl', document.getElementById('heroBackgroundVideo').value || '');
                     formData.append('HeaderPrimaryButtonText', document.getElementById('heroPrimaryButtonText').value || '');
                     formData.append('HeaderPrimaryButtonUrl', document.getElementById('heroPrimaryButtonUrl').value || '');
@@ -1259,7 +1256,7 @@
                     formData.append('HeaderTitle', document.getElementById('heroTitle').value || '');
                     formData.append('HeaderSubtitle', document.getElementById('heroSubtitle').value || '');
                     formData.append('HeaderDescription', document.getElementById('heroDescription').value || '');
-                    formData.append('HeaderBackgroundImageUrl', document.getElementById('heroBackgroundImage').value || '');
+                    formData.append('HeaderBackgroundImageUrl', document.getElementById('heroBackgroundImageUrlHidden').value || '');
                     formData.append('HeaderBackgroundVideoUrl', document.getElementById('heroBackgroundVideo').value || '');
                     formData.append('HeaderPrimaryButtonText', document.getElementById('heroPrimaryButtonText').value || '');
                     formData.append('HeaderPrimaryButtonUrl', document.getElementById('heroPrimaryButtonUrl').value || '');
@@ -1651,7 +1648,9 @@
                     document.getElementById('heroTitle').value = template.title || '';
                     document.getElementById('heroSubtitle').value = template.subtitle || '';
                     document.getElementById('heroDescription').value = template.description || '';
-                    document.getElementById('heroBackgroundImage').value = template.backgroundImageUrl || '';
+                    document.getElementById('heroBackgroundImageUrlHidden').value = template.backgroundImageUrl || '';
+                    var hintEl = document.getElementById('heroImageUploadHint');
+                    if (hintEl) hintEl.textContent = (template.backgroundImageUrl ? 'Current image: set. Upload a new file to replace it.' : 'Upload stores the image on this server. Upload a new file to replace the current image.');
                     document.getElementById('heroBackgroundVideo').value = template.backgroundVideoUrl || '';
                     document.getElementById('heroPrimaryButtonText').value = template.primaryButtonText || '';
                     document.getElementById('heroPrimaryButtonUrl').value = template.primaryButtonUrl || '';

@@ -12,11 +12,13 @@ namespace Portfolio.Controllers
     {
         private readonly PortfolioContext _context;
         private readonly IHomePageService _homePageService;
+        private readonly ILogger<PortfolioController> _logger;
 
-        public PortfolioController(PortfolioContext context, IHomePageService homePageService)
+        public PortfolioController(PortfolioContext context, IHomePageService homePageService, ILogger<PortfolioController> logger)
         {
             _context = context;
             _homePageService = homePageService;
+            _logger = logger;
         }
 
         // GET: Portfolio/Projects
@@ -40,6 +42,23 @@ namespace Portfolio.Controllers
             return View(homePage);
         }
 
+        private static object GetDefaultHeroJson(DateTime lastModified)
+        {
+            return new
+            {
+                title = "Welcome to My Portfolio",
+                subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
+                description = "",
+                backgroundImageUrl = "",
+                backgroundVideoUrl = "",
+                primaryButtonText = "View Projects",
+                primaryButtonUrl = "/projects",
+                overlayColor = "#000000",
+                overlayOpacity = 0.5,
+                lastModified
+            };
+        }
+
         // GET: api/portfolio/hero
         [HttpGet("api/portfolio/hero")]
         public async Task<IActionResult> GetHeroSection()
@@ -49,21 +68,7 @@ namespace Portfolio.Controllers
                 var homePage = await _homePageService.GetHomePageAsync();
                 
                 if (homePage == null)
-                {
-                    return Json(new
-                    {
-                        title = "Welcome to My Portfolio",
-                        subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
-                        description = "",
-                        backgroundImageUrl = "",
-                        backgroundVideoUrl = "",
-                        primaryButtonText = "View Projects",
-                        primaryButtonUrl = "/projects",
-                        overlayColor = "#000000",
-                        overlayOpacity = 0.5,
-                        lastModified = DateTime.UtcNow
-                    });
-                }
+                    return Json(GetDefaultHeroJson(DateTime.UtcNow));
 
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
                 var version = (homePage.UpdatedAt ?? homePage.CreatedAt).Ticks;
@@ -87,7 +92,10 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to load hero section data" });
+                // Log so Render/server logs show the real cause (e.g. missing migration columns)
+                // Return 200 with default hero so the site still loads; run DB migration to fix.
+                _logger.LogError(ex, "GetHeroSection failed: {Message}", ex.Message);
+                return Json(GetDefaultHeroJson(DateTime.UtcNow));
             }
         }
 

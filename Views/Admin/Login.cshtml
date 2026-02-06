@@ -398,10 +398,6 @@
             font-family: 'Playfair Display', serif;
             font-size: 1.1rem;
         }
-        .login-loading-overlay .brand {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
         @@keyframes loginSpin {
             to { transform: rotate(360deg); }
         }
@@ -412,7 +408,6 @@
     <div class="login-loading-overlay" id="loginLoadingOverlay" aria-hidden="true">
         <div class="spinner" role="status" aria-label="Loading"></div>
         <p class="message">Logging in…</p>
-        <p class="brand">CodeSpinner</p>
     </div>
     <div class="login-container @(ViewBag.ErrorMessage != null ? "has-error" : "")">
         <div class="login-header">
@@ -466,7 +461,6 @@
                 loginContainer.classList.remove('has-error');
             }
             
-            var LOGIN_TITLE = 'Logging in… | CodeSpinner & Design';
             var LOGIN_FAVICON_SVG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="#818cf8" stroke-width="3" stroke-linecap="round" stroke-dasharray="22 44"/></svg>');
 
             form.addEventListener('submit', function(e) {
@@ -482,7 +476,6 @@
                 hideValidationMessage();
                 document.getElementById('loginLoadingOverlay').classList.add('is-active');
                 document.getElementById('loginLoadingOverlay').setAttribute('aria-hidden', 'false');
-                document.title = LOGIN_TITLE;
                 var fav = document.getElementById('favicon');
                 if (fav) fav.href = LOGIN_FAVICON_SVG;
             });
