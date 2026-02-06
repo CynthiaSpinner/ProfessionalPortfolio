@@ -52,14 +52,11 @@ const Home = () => {
 
     // Set up WebSocket connection for real-time updates (NO POLLING!)
     const getWebSocketUrl = () => {
-      if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_API_URL) {
-        // In production, use same host as API (e.g. Render backend)
-        const apiUrl = process.env.REACT_APP_API_URL;
-        const origin = new URL(apiUrl).origin;
-        const wsOrigin = origin.replace(/^https/, 'wss');
-        return `${wsOrigin}/ws/portfolio`;
-      }
       if (process.env.NODE_ENV === 'production') {
+        // Prefer explicit WS URL (e.g. Netlify env); otherwise use Render backend
+        if (process.env.REACT_APP_WS_URL) {
+          return process.env.REACT_APP_WS_URL;
+        }
         return `wss://professionalportfolio-9a6n.onrender.com/ws/portfolio`;
       }
       // In development, connect to the ASP.NET Core backend directly
