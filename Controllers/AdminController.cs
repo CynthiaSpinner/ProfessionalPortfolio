@@ -251,7 +251,7 @@ namespace Portfolio.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveHeroSection([FromForm] HeroSectionModel model)
+        public async Task<IActionResult> SaveHeroSection([FromForm] HeroSectionModel model, [FromForm] IFormFile? HeroBackgroundImage)
         {
             try
             {
@@ -274,13 +274,45 @@ namespace Portfolio.Controllers
                 homePage.HeaderTitle = model.HeaderTitle ?? "Welcome to My Portfolio";
                 homePage.HeaderSubtitle = model.HeaderSubtitle ?? "I am a passionate software engineer specializing in full-stack development.";
                 homePage.HeaderDescription = model.HeaderDescription ?? "";
-                homePage.HeaderBackgroundImageUrl = model.HeaderBackgroundImageUrl ?? "";
                 homePage.HeaderBackgroundVideoUrl = model.HeaderBackgroundVideoUrl ?? "";
                 homePage.HeaderPrimaryButtonText = model.HeaderPrimaryButtonText ?? "View Projects";
                 homePage.HeaderPrimaryButtonUrl = model.HeaderPrimaryButtonUrl ?? "/projects";
                 homePage.HeaderOverlayColor = model.ImageOverlayColor ?? "#000000";
                 homePage.HeaderOverlayOpacity = model.ImageOverlayOpacity / 100f;
                 homePage.UpdatedAt = DateTime.UtcNow;
+
+                // Hero background image: upload file (store in DB) or use URL
+                if (HeroBackgroundImage != null && HeroBackgroundImage.Length > 0)
+                {
+                    var allowed = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+                    var contentType = HeroBackgroundImage.ContentType?.ToLowerInvariant() ?? "";
+                    if (!allowed.Contains(contentType))
+                    {
+                        return Json(new { success = false, message = "Invalid image type. Use JPEG, PNG, GIF, or WebP." });
+                    }
+                    using (var ms = new MemoryStream())
+                    {
+                        await HeroBackgroundImage.CopyToAsync(ms);
+                        homePage.HeaderBackgroundImageData = ms.ToArray();
+                    }
+                    homePage.HeaderBackgroundImageContentType = contentType;
+                    homePage.HeaderBackgroundImageUrl = null; // frontend will use /api/portfolio/hero-image
+                }
+                else
+                {
+                    // No file uploaded: use URL if provided, or clear stored image
+                    homePage.HeaderBackgroundImageUrl = model.HeaderBackgroundImageUrl?.Trim() ?? "";
+                    if (string.IsNullOrEmpty(homePage.HeaderBackgroundImageUrl))
+                    {
+                        homePage.HeaderBackgroundImageData = null;
+                        homePage.HeaderBackgroundImageContentType = null;
+                    }
+                    else
+                    {
+                        homePage.HeaderBackgroundImageData = null;
+                        homePage.HeaderBackgroundImageContentType = null;
+                    }
+                }
 
                 // Single save operation
                 await _context.SaveChangesAsync();
@@ -295,7 +327,14 @@ namespace Portfolio.Controllers
                 // Broadcast WebSocket message to all connected clients
                 await _webSocketService.BroadcastHeroDataUpdatedAsync();
 
-                // Return updated data for immediate frontend refresh
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                var hp = updatedHomePage ?? homePage;
+                var hasStoredImage = hp.HeaderBackgroundImageData != null;
+                var version = (hp.UpdatedAt ?? hp.CreatedAt ?? DateTime.UtcNow).Ticks;
+                var backgroundImageUrl = hasStoredImage
+                    ? $"{baseUrl}/api/portfolio/hero-image?v={version}"
+                    : (updatedHomePage?.HeaderBackgroundImageUrl ?? homePage.HeaderBackgroundImageUrl ?? "");
+
                 return Json(new { 
                     success = true, 
                     message = "Hero section saved successfully!",
@@ -304,7 +343,7 @@ namespace Portfolio.Controllers
                         title = updatedHomePage?.HeaderTitle ?? homePage.HeaderTitle,
                         subtitle = updatedHomePage?.HeaderSubtitle ?? homePage.HeaderSubtitle,
                         description = updatedHomePage?.HeaderDescription ?? homePage.HeaderDescription,
-                        backgroundImageUrl = updatedHomePage?.HeaderBackgroundImageUrl ?? homePage.HeaderBackgroundImageUrl,
+                        backgroundImageUrl,
                         backgroundVideoUrl = updatedHomePage?.HeaderBackgroundVideoUrl ?? homePage.HeaderBackgroundVideoUrl,
                         primaryButtonText = updatedHomePage?.HeaderPrimaryButtonText ?? homePage.HeaderPrimaryButtonText,
                         primaryButtonUrl = updatedHomePage?.HeaderPrimaryButtonUrl ?? homePage.HeaderPrimaryButtonUrl,

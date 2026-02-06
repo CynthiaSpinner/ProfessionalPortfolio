@@ -135,6 +135,38 @@
         0 0 18px rgba(99, 102, 241, 0.2);
 }
 
+/* Form elements: simple scrollbars (no animation, slimmer) */
+.admin-container textarea::-webkit-scrollbar,
+.admin-container select::-webkit-scrollbar,
+.admin-container .form-control::-webkit-scrollbar,
+.admin-container .card-body::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.admin-container textarea::-webkit-scrollbar-track,
+.admin-container select::-webkit-scrollbar-track,
+.admin-container .form-control::-webkit-scrollbar-track,
+.admin-container .card-body::-webkit-scrollbar-track {
+    background: rgb(25, 28, 35);
+    border-radius: 4px;
+}
+.admin-container textarea::-webkit-scrollbar-thumb,
+.admin-container select::-webkit-scrollbar-thumb,
+.admin-container .form-control::-webkit-scrollbar-thumb,
+.admin-container .card-body::-webkit-scrollbar-thumb {
+    background: rgba(129, 140, 248, 0.4);
+    border-radius: 4px;
+    animation: none !important;
+    box-shadow: none !important;
+}
+.admin-container textarea::-webkit-scrollbar-thumb:hover,
+.admin-container select::-webkit-scrollbar-thumb:hover,
+.admin-container .form-control::-webkit-scrollbar-thumb:hover,
+.admin-container .card-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(129, 140, 248, 0.6);
+    animation: none !important;
+    box-shadow: none !important;
+}
 
 
 body {

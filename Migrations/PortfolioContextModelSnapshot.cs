@@ -271,6 +271,13 @@ namespace Portfolio.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<byte[]>("HeaderBackgroundImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("HeaderBackgroundImageContentType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("HeaderBackgroundStyle")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
