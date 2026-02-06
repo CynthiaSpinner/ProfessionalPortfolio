@@ -86,7 +86,6 @@ namespace Portfolio.Controllers
 
                 var hashedPassword = HashPassword(model.Password);
 
-                // Optimized query - only select the fields we need
                 var admin = await _context.Admins
                     .Where(a => a.Username == model.Username)
                     .Select(a => new { a.Username, a.PasswordHash })
@@ -124,6 +123,79 @@ namespace Portfolio.Controllers
                 ViewBag.ErrorMessage = $"An error occurred during login: {ex.Message}";
                 return View(model);
             }
+        }
+
+        /// <summary>
+        /// One-time diagnostic: check DB connection and list admin usernames + stored password hashes.
+        /// Only works when ADMIN_RESET_SECRET (or DEBUG_DB_SECRET) is set. GET /Admin/CheckDb?secret=your_secret
+        /// Remove the env var after use. Share the returned hash (not your password) to compare hashing.
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckDb([FromQuery] string? secret)
+        {
+            var expectedSecret = _configuration["ADMIN_RESET_SECRET"] ?? Environment.GetEnvironmentVariable("ADMIN_RESET_SECRET")
+                ?? _configuration["DEBUG_DB_SECRET"] ?? Environment.GetEnvironmentVariable("DEBUG_DB_SECRET");
+            if (string.IsNullOrEmpty(expectedSecret) || secret != expectedSecret)
+            {
+                return Unauthorized();
+            }
+
+            var connectionOk = false;
+            string? connectionError = null;
+            var admins = new List<object>();
+
+            try
+            {
+                await _context.Database.CanConnectAsync();
+                connectionOk = true;
+            }
+            catch (Exception ex)
+            {
+                connectionError = ex.Message;
+                return Ok(new { connectionOk = false, connectionError, admins });
+            }
+
+            try
+            {
+                var list = await _context.Admins
+                    .Select(a => new { a.Username, a.PasswordHash })
+                    .ToListAsync();
+                admins = list.Cast<object>().ToList();
+            }
+            catch (Exception ex)
+            {
+                connectionError = $"Query failed: {ex.Message}";
+            }
+
+            return Ok(new { connectionOk, connectionError, admins });
+        }
+
+        /// <summary>
+        /// One-time: sync an admin's password hash in the DB to match this app's hashing (SHA256+Base64).
+        /// Only works when ADMIN_RESET_SECRET env var is set. Call once then remove the env var.
+        /// POST body: secret=your_ADMIN_RESET_SECRET&amp;username=admin&amp;newPassword=yourpassword
+        /// </summary>
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> SyncAdminPassword([FromForm] string? secret, [FromForm] string? username, [FromForm] string? newPassword)
+        {
+            var expectedSecret = _configuration["ADMIN_RESET_SECRET"] ?? Environment.GetEnvironmentVariable("ADMIN_RESET_SECRET");
+            if (string.IsNullOrEmpty(expectedSecret) || secret != expectedSecret || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(newPassword))
+            {
+                return Unauthorized();
+            }
+
+            var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Username == username);
+            if (admin == null)
+            {
+                return NotFound("Admin user not found.");
+            }
+
+            admin.PasswordHash = HashPassword(newPassword);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Password hash updated for admin {Username}", username);
+            return Ok("Password updated. Remove ADMIN_RESET_SECRET from env.");
         }
 
         [Authorize(Roles = "Admin")]
