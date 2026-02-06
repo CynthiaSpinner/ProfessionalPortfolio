@@ -53,14 +53,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 // Prefer Render Postgres DATABASE_URL when set; otherwise use DefaultConnection (e.g. local SQL Server)
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+var rawConnectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = rawConnectionString?.Trim();
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Set DATABASE_URL (Render) or ConnectionStrings:DefaultConnection (appsettings.json).");
 }
 
-var isPostgres = connectionString.TrimStart().StartsWith("postgres", StringComparison.OrdinalIgnoreCase);
+// When DATABASE_URL is set (e.g. Render), treat as Postgres so we never pass a Postgres URL to SQL Server
+var fromEnv = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE_URL"));
+var isPostgres = fromEnv || connectionString.StartsWith("postgres", StringComparison.OrdinalIgnoreCase);
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
     if (isPostgres)
