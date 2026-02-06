@@ -1,0 +1,5 @@
+# Serve favicons as static files before SPA fallback
+/favicon.svg   /favicon.svg  200
+/favicon.ico   /favicon.ico  200
+# SPA: serve index.html for all other routes
+/*   /index.html  200
