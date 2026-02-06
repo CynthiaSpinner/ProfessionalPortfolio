@@ -25,17 +25,15 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Spinning code… | CodeSpinner &amp; Design</title>
+    <title>CodeSpinner &amp; Design</title>
   </head>
   <body>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root">
-      <div id="app-loading" style="position:fixed;inset:0;background:#050510;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;z-index:9999;">
-        <div class="spinner-web" style="width:56px;height:56px;border:3px solid rgba(129,140,248,0.2);border-top-color:#818cf8;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
-        <p style="color:#818cf8;font-family:system-ui,-apple-system,sans-serif;font-size:1.1rem;margin:0;">Spinning code…</p>
-        <p style="color:#6b7280;font-family:system-ui,-apple-system,sans-serif;font-size:0.9rem;margin:0;">CodeSpinner</p>
+      <div id="app-loading" style="position:fixed;inset:0;background:#050510;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;">
+        <div class="spinner-web" style="width:56px;height:56px;border:3px solid rgba(129,140,248,0.2);border-top-color:#818cf8;border-radius:50%;animation:spin 0.9s linear infinite;" role="status" aria-label="Loading"></div>
       </div>
     </div>
     <style>

@@ -274,6 +274,10 @@ main {
 
 
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Ensure the page container adapts to content */
 .home-page {
   min-height: 100vh;
