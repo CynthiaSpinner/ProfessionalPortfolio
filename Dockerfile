@@ -6,7 +6,7 @@ COPY Portfolio.csproj ./
 RUN dotnet restore
 
 COPY . ./
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet publish Portfolio.csproj -c Release -o /app/publish --no-restore
 
 # Run stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
