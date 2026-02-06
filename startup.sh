@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Set Node.js version for Azure App Service
+# Set Node.js version for the runtime
 export WEBSITE_NODE_DEFAULT_VERSION=18.19.0
 
 # Install Node.js dependencies if needed

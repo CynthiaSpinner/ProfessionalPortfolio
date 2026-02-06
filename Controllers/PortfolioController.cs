@@ -129,5 +129,79 @@ namespace Portfolio.Controllers
                 return StatusCode(500, new { error = "Failed to load about data" });
             }
         }
+
+        // GET: api/portfolio/features (public - for frontend home page)
+        [HttpGet("api/portfolio/features")]
+        public async Task<IActionResult> GetFeatures()
+        {
+            try
+            {
+                var section = await _context.FeaturesSections.FirstOrDefaultAsync();
+                if (section == null)
+                {
+                    return Json(new
+                    {
+                        sectionTitle = "Key Skills & Technologies",
+                        sectionSubtitle = "Explore my expertise across different domains",
+                        features = new[]
+                        {
+                            new { title = "Frontend Development", subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap", description = "", icon = "fas fa-code", link = "/projects?category=frontend" },
+                            new { title = "Backend Development", subtitle = ".NET Core, C#, RESTful APIs, SQL Server", description = "", icon = "fas fa-server", link = "/projects?category=backend" },
+                            new { title = "Design & Tools", subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker", description = "", icon = "fas fa-palette", link = "/projects?category=design" }
+                        },
+                        lastModified = DateTime.UtcNow
+                    });
+                }
+                return Json(new
+                {
+                    sectionTitle = section.SectionTitle,
+                    sectionSubtitle = section.SectionSubtitle,
+                    features = new[]
+                    {
+                        new { title = section.Feature1Title, subtitle = section.Feature1Subtitle, description = section.Feature1Description ?? "", icon = section.Feature1Icon ?? "", link = section.Feature1Link ?? "" },
+                        new { title = section.Feature2Title, subtitle = section.Feature2Subtitle, description = section.Feature2Description ?? "", icon = section.Feature2Icon ?? "", link = section.Feature2Link ?? "" },
+                        new { title = section.Feature3Title, subtitle = section.Feature3Subtitle, description = section.Feature3Description ?? "", icon = section.Feature3Icon ?? "", link = section.Feature3Link ?? "" }
+                    },
+                    lastModified = section.UpdatedAt
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to load features data" });
+            }
+        }
+
+        // GET: api/portfolio/cta (public - for frontend home page)
+        [HttpGet("api/portfolio/cta")]
+        public async Task<IActionResult> GetCTA()
+        {
+            try
+            {
+                var section = await _context.CTASections.FirstOrDefaultAsync();
+                if (section == null)
+                {
+                    return Json(new
+                    {
+                        title = "Ready to Start a Project?",
+                        subtitle = "Let's work together to bring your ideas to life.",
+                        buttonText = "Get in Touch",
+                        buttonLink = "/contact",
+                        lastModified = DateTime.UtcNow
+                    });
+                }
+                return Json(new
+                {
+                    title = section.Title,
+                    subtitle = section.Subtitle,
+                    buttonText = section.ButtonText,
+                    buttonLink = section.ButtonLink,
+                    lastModified = section.UpdatedAt ?? section.CreatedAt
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to load CTA data" });
+            }
+        }
     }
 }

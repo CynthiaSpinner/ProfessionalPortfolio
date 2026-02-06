@@ -394,6 +394,16 @@ body {
     display: block !important;
 }
 
+/* Features and CTA edit forms - same hide/show as hero */
+.content-section.active #featuresEditForm,
+.content-section.active #ctaEditForm {
+    display: none !important;
+}
+.content-section.active #featuresEditForm[style*="display: block"],
+.content-section.active #ctaEditForm[style*="display: block"] {
+    display: block !important;
+}
+
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -1543,4 +1553,68 @@ input[type="range"].elegant-slider::-moz-range-track {
         0 4px 12px rgba(0, 0, 0, 0.3),
         0 0 0 0.2rem rgba(129, 140, 248, 0.25);
     border-color: rgba(129, 140, 248, 0.5);
+}
+
+/* Features and CTA dropdown buttons - same as Hero template dropdown */
+#featuresTemplateDropdownBtn,
+#ctaTemplateDropdownBtn {
+    background: transparent !important;
+    border-color: rgba(129, 140, 248, 0.3) !important;
+    color: #818cf8 !important;
+}
+#featuresTemplateDropdownBtn:hover,
+#featuresTemplateDropdownBtn:focus,
+#featuresTemplateDropdownBtn:active,
+#ctaTemplateDropdownBtn:hover,
+#ctaTemplateDropdownBtn:focus,
+#ctaTemplateDropdownBtn:active {
+    background: rgba(129, 140, 248, 0.1) !important;
+    border-color: rgba(129, 140, 248, 0.5) !important;
+    color: #818cf8 !important;
+    box-shadow: none !important;
+}
+
+/* Features and CTA dropdown menus - same as Hero */
+#featuresCustomDropdownMenu,
+#ctaCustomDropdownMenu {
+    background: rgba(0, 0, 10, 0.95) !important;
+    border: 1px solid rgba(129, 140, 248, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    z-index: 999999 !important;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+#featuresCustomDropdownMenu .dropdown-item,
+#ctaCustomDropdownMenu .dropdown-item {
+    color: #818cf8 !important;
+    background: transparent !important;
+    padding: 0.5rem 1rem !important;
+}
+#featuresCustomDropdownMenu .dropdown-item:hover,
+#ctaCustomDropdownMenu .dropdown-item:hover {
+    background: rgba(129, 140, 248, 0.1) !important;
+    color: #818cf8 !important;
+}
+
+/* Features / CTA form layout - match hero form row/col */
+#featuresEditForm .row,
+#ctaEditForm .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+}
+#featuresEditForm .col-md-6,
+#ctaEditForm .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+@media (max-width: 768px) {
+    #featuresEditForm .col-md-6,
+    #ctaEditForm .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
 }

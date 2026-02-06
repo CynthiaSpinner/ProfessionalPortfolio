@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "../components/HeadingGroup";
 import Footer from "../components/Footer";
@@ -7,6 +7,25 @@ import Header from "../components/Header";
 import "../styles/Home.css";
 import CTA from "../components/CTA";
 import { PortfolioService } from "../services/PortfolioService";
+
+const defaultFeatures = {
+  sectionTitle: "Key Skills & Technologies",
+  sectionSubtitle: "Explore my expertise across different domains",
+  features: [
+    { title: "Frontend Development", subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap", description: "", icon: "fas fa-code", link: "/projects?category=frontend" },
+    { title: "Backend Development", subtitle: ".NET Core, C#, RESTful APIs, MySQL", description: "", icon: "fas fa-server", link: "/projects?category=backend" },
+    { title: "Design & Tools", subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker", description: "", icon: "fas fa-palette", link: "/projects?category=design" }
+  ],
+  lastModified: null
+};
+
+const defaultCTA = {
+  title: "Ready to Start a Project?",
+  subtitle: "Let's work together to bring your ideas to life.",
+  buttonText: "Get in Touch",
+  buttonLink: "/contact",
+  lastModified: null
+};
 
 const Home = () => {
   const [heroData, setHeroData] = useState({
@@ -21,129 +40,126 @@ const Home = () => {
     overlayOpacity: 0.5,
     lastModified: null
   });
+  const [featuresData, setFeaturesData] = useState(defaultFeatures);
+  const [ctaData, setCtaData] = useState(defaultCTA);
   const [loading, setLoading] = useState(true);
 
+  const fetchHeroData = useCallback(async () => {
+    try {
+      const data = await PortfolioService.getHeroSection();
+      setHeroData(prev => (data.lastModified !== prev.lastModified || JSON.stringify(prev) !== JSON.stringify(data) ? data : prev));
+    } catch (error) {
+      console.error("Error fetching hero data:", error);
+    }
+  }, []);
+
+  const fetchFeaturesData = useCallback(async () => {
+    try {
+      const data = await PortfolioService.getFeatures();
+      setFeaturesData(prev => (data.lastModified !== prev.lastModified || JSON.stringify(prev) !== JSON.stringify(data) ? data : prev));
+    } catch (error) {
+      console.error("Error fetching features data:", error);
+    }
+  }, []);
+
+  const fetchCTAData = useCallback(async () => {
+    try {
+      const data = await PortfolioService.getCTA();
+      setCtaData(prev => (data.lastModified !== prev.lastModified || JSON.stringify(prev) !== JSON.stringify(data) ? data : prev));
+    } catch (error) {
+      console.error("Error fetching CTA data:", error);
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchHeroData = async () => {
+    let cancelled = false;
+
+    const loadAll = async () => {
       try {
-        const data = await PortfolioService.getHeroSection();
-        
-        // Only update if data has actually changed to prevent unnecessary re-renders
-        if (data.lastModified !== heroData.lastModified) {
-          setHeroData(prevData => {
-            // Deep comparison to avoid unnecessary updates
-            if (JSON.stringify(prevData) !== JSON.stringify(data)) {
-              console.log("Hero data updated:", new Date(data.lastModified));
-              return data;
-            }
-            return prevData;
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching hero data:", error);
-        // Keep default values if fetch fails
+        await Promise.all([fetchHeroData(), fetchFeaturesData(), fetchCTAData()]);
+      } catch (e) {
+        console.error("Error loading home data:", e);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
+    loadAll();
 
-    // Initial fetch
-    fetchHeroData();
-
-    // Set up WebSocket connection for real-time updates (NO POLLING!)
     const getWebSocketUrl = () => {
       if (process.env.NODE_ENV === 'production') {
-        // Prefer explicit WS URL (e.g. Netlify env); otherwise use Render backend
-        if (process.env.REACT_APP_WS_URL) {
-          return process.env.REACT_APP_WS_URL;
-        }
+        if (process.env.REACT_APP_WS_URL) return process.env.REACT_APP_WS_URL;
         return `wss://professionalportfolio-9a6n.onrender.com/ws/portfolio`;
       }
-      // In development, connect to the ASP.NET Core backend directly
       return `wss://localhost:7094/ws/portfolio`;
     };
-    
+
     let ws = null;
     let reconnectAttempts = 0;
     const maxReconnectAttempts = 3;
     let reconnectTimeout = null;
     let fallbackPollingInterval = null;
-    
+
     const connectWebSocket = () => {
       try {
         ws = new WebSocket(getWebSocketUrl());
-        
+
         ws.onopen = () => {
           console.log('WebSocket connected for real-time updates');
-          reconnectAttempts = 0; // Reset reconnect attempts on successful connection
-          
-          // Clear any fallback polling if WebSocket is working
+          reconnectAttempts = 0;
           if (fallbackPollingInterval) {
             clearInterval(fallbackPollingInterval);
             fallbackPollingInterval = null;
           }
         };
-        
+
         ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          if (data.type === 'heroDataUpdated') {
-            console.log('Real-time update received, refreshing data...');
-            fetchHeroData();
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'heroDataUpdated') {
+              fetchHeroData();
+            } else if (data.type === 'featuresDataUpdated') {
+              fetchFeaturesData();
+            } else if (data.type === 'ctaDataUpdated') {
+              fetchCTAData();
+            }
+          } catch (e) {
+            console.error('WebSocket message parse error:', e);
           }
         };
-        
-        ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
-        };
-        
+
+        ws.onerror = (error) => console.error('WebSocket error:', error);
+
         ws.onclose = (event) => {
-          console.log('WebSocket connection closed');
-          
-          // Try to reconnect if not a normal closure
           if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
             reconnectAttempts++;
-            console.log(`WebSocket reconnection attempt ${reconnectAttempts}/${maxReconnectAttempts}`);
-            
-            reconnectTimeout = setTimeout(() => {
-              connectWebSocket();
-            }, 2000 * reconnectAttempts); // Exponential backoff
+            reconnectTimeout = setTimeout(connectWebSocket, 2000 * reconnectAttempts);
           } else if (reconnectAttempts >= maxReconnectAttempts) {
-            console.log('WebSocket reconnection failed, falling back to polling');
-            
-            // Fallback to polling if WebSocket fails
             fallbackPollingInterval = setInterval(() => {
-              console.log('Fallback polling: checking for updates...');
               fetchHeroData();
-            }, 5000); // Poll every 5 seconds as fallback
+              fetchFeaturesData();
+              fetchCTAData();
+            }, 5000);
           }
         };
       } catch (error) {
         console.error('Failed to create WebSocket connection:', error);
-        
-        // Fallback to polling if WebSocket creation fails
         fallbackPollingInterval = setInterval(() => {
-          console.log('Fallback polling: checking for updates...');
           fetchHeroData();
+          fetchFeaturesData();
+          fetchCTAData();
         }, 5000);
       }
     };
-    
-    // Start WebSocket connection
+
     connectWebSocket();
 
-    // Cleanup on component unmount
     return () => {
-      if (ws) {
-        ws.close();
-      }
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
-      }
-      if (fallbackPollingInterval) {
-        clearInterval(fallbackPollingInterval);
-      }
+      cancelled = true;
+      if (ws) ws.close();
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
+      if (fallbackPollingInterval) clearInterval(fallbackPollingInterval);
     };
-  }, [heroData.lastModified]); // Add heroData.lastModified as dependency
+  }, [fetchHeroData, fetchFeaturesData, fetchCTAData]);
 
   if (loading) {
     return (
@@ -156,6 +172,8 @@ const Home = () => {
       </div>
     );
   }
+
+  const { sectionTitle, sectionSubtitle, features } = featuresData;
 
   return (
     <div className="home-page">
@@ -172,50 +190,40 @@ const Home = () => {
         showButtons={true}
       />
 
-      {/* Features List Section */}
       <section className="features-section py-5">
         <Container>
           <HeadingGroup
-            title="Key Skills & Technologies"
+            title={sectionTitle}
+            subtitle={sectionSubtitle}
             className="text-center mb-5"
           />
           <Row className="g-4">
-            <Col md={4}>
-              <Card>
-                <HeadingGroup
-                  title="Frontend Development"
-                  subtitle="React, JavaScript, HTML5, CSS3, Bootstrap"
-                />
-              </Card>
-            </Col>
- 
-            <Col md={4}>
-              <Card>
-                <HeadingGroup
-                  title="Backend Development"
-                  subtitle=".NET Core, C#, RESTful APIs, MySQL"
-                />
-              </Card>
-            </Col>
-            <Col md={4}>
-              <Card>
-                <HeadingGroup
-                  title="Design & Tools"
-                  subtitle="Adobe Creative Suite, UI/UX Design, Git, Docker"
-                />
-              </Card>
-            </Col>
+            {(features || []).slice(0, 3).map((f, i) => (
+              <Col key={i} md={4}>
+                <Card>
+                  {f.icon && <div className="mb-2"><i className={f.icon} aria-hidden="true" /></div>}
+                  <HeadingGroup
+                    title={f.title}
+                    subtitle={f.subtitle}
+                  />
+                  {f.description && <p className="mb-0 text-muted small">{f.description}</p>}
+                  {f.link && (
+                    <a href={f.link} className="stretched-link mt-2 d-inline-block small">Learn more</a>
+                  )}
+                </Card>
+              </Col>
+            ))}
           </Row>
         </Container>
       </section>
 
-      {/* CTA Section */}
       <CTA
-        title="Ready to Start a Project?"
-        subtitle="Let's work together to bring your ideas to life."
+        title={ctaData.title}
+        subtitle={ctaData.subtitle}
+        buttonText={ctaData.buttonText}
+        buttonHref={ctaData.buttonLink}
       />
 
-      
       <Footer />
     </div>
   );
