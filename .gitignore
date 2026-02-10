@@ -260,11 +260,14 @@ yarn-error.log
 .env.test
 .env.test.local
 
-# App settings
+# App settings 
 appsettings.json
+appsettings.Development.json
 appsettings.*.json
 !appsettings.example.json
 !appsettings.Development.example.json
+**/appsettings.json
+**/appsettings.Development.json
 
 # Build results
 [Dd]ebug/

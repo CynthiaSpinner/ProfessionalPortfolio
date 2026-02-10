@@ -143,9 +143,9 @@ namespace Portfolio.Controllers
         }
 
         /// <summary>
-        /// One-time diagnostic: check DB connection and list admin usernames + stored password hashes.
+        /// One-time diagnostic: check DB connection, list tables/columns, and verify expected schema (e.g. hero image columns).
         /// Only works when ADMIN_RESET_SECRET (or DEBUG_DB_SECRET) is set. GET /Admin/CheckDb?secret=your_secret
-        /// Remove the env var after use. Share the returned hash (not your password) to compare hashing.
+        /// Remove the env var after use.
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
@@ -161,16 +161,21 @@ namespace Portfolio.Controllers
             var connectionOk = false;
             string? connectionError = null;
             var admins = new List<object>();
+            List<string>? tables = null;
+            object? schemaCheck = null;
+            string? providerName = null;
 
             try
             {
                 await _context.Database.CanConnectAsync();
                 connectionOk = true;
+                var conn = _context.Database.GetDbConnection();
+                providerName = conn.GetType().Name;
             }
             catch (Exception ex)
             {
                 connectionError = ex.Message;
-                return Ok(new { connectionOk = false, connectionError, admins });
+                return Ok(new { connectionOk = false, connectionError, admins, tables, schemaCheck, providerName });
             }
 
             try
@@ -185,7 +190,98 @@ namespace Portfolio.Controllers
                 connectionError = $"Query failed: {ex.Message}";
             }
 
-            return Ok(new { connectionOk, connectionError, admins });
+            // Schema check: list tables and HomePages columns (to verify hero image columns exist)
+            try
+            {
+                await _context.Database.OpenConnectionAsync();
+                var conn = _context.Database.GetDbConnection();
+                var isPostgres = conn.GetType().Name.Contains("Npgsql", StringComparison.OrdinalIgnoreCase);
+
+                var expectedHeroColumns = new[] { "HeaderBackgroundImageData", "HeaderBackgroundImageContentType" };
+
+                if (isPostgres)
+                {
+                    // Postgres: information_schema
+                    var tableList = new List<string>();
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' ORDER BY table_name";
+                        using var r = await cmd.ExecuteReaderAsync();
+                        while (await r.ReadAsync()) tableList.Add(r.GetString(0));
+                    }
+                    tables = tableList;
+
+                    var homePageColumnNames = new List<string>();
+                    var homePageColumnsDetail = new List<object>();
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'HomePages' ORDER BY ordinal_position";
+                        using var r = await cmd.ExecuteReaderAsync();
+                        while (await r.ReadAsync())
+                        {
+                            var col = r.GetString(0);
+                            var typ = r.GetString(1);
+                            homePageColumnNames.Add(col);
+                            homePageColumnsDetail.Add(new { column = col, type = typ });
+                        }
+                    }
+                    var heroColumnsOk = expectedHeroColumns.All(c => homePageColumnNames.Contains(c, StringComparer.OrdinalIgnoreCase));
+                    schemaCheck = new
+                    {
+                        table = "HomePages",
+                        columns = homePageColumnsDetail,
+                        expectedHeroColumns = expectedHeroColumns,
+                        heroColumnsOk,
+                        message = heroColumnsOk ? "HomePages has required hero image columns." : "Missing one or more hero columns. On Postgres run add-hero-image-columns.sql once."
+                    };
+                }
+                else
+                {
+                    // SQL Server: INFORMATION_SCHEMA
+                    var tableList = new List<string>();
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME";
+                        using var r = await cmd.ExecuteReaderAsync();
+                        while (await r.ReadAsync()) tableList.Add(r.GetString(0));
+                    }
+                    tables = tableList;
+
+                    var homePageColumnNames = new List<string>();
+                    var homePageColumnsDetail = new List<object>();
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'HomePages' ORDER BY ORDINAL_POSITION";
+                        using var r = await cmd.ExecuteReaderAsync();
+                        while (await r.ReadAsync())
+                        {
+                            var col = r.GetString(0);
+                            var typ = r.GetString(1);
+                            homePageColumnNames.Add(col);
+                            homePageColumnsDetail.Add(new { column = col, type = typ });
+                        }
+                    }
+                    var heroColumnsOk = expectedHeroColumns.All(c => homePageColumnNames.Contains(c, StringComparer.OrdinalIgnoreCase));
+                    schemaCheck = new
+                    {
+                        table = "HomePages",
+                        columns = homePageColumnsDetail,
+                        expectedHeroColumns = expectedHeroColumns,
+                        heroColumnsOk,
+                        message = heroColumnsOk ? "HomePages has required hero image columns." : "Missing one or more hero columns (run migrations for SQL Server)."
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                schemaCheck = new { error = ex.Message, hint = "Could not read schema. Check DB user has permission to read information_schema." };
+            }
+            finally
+            {
+                await _context.Database.CloseConnectionAsync();
+            }
+
+            return Ok(new { connectionOk, connectionError, admins, tables, schemaCheck, providerName });
         }
 
         /// <summary>
@@ -255,9 +351,13 @@ namespace Portfolio.Controllers
         {
             try
             {
+                _logger.LogInformation("[Hero] SaveHeroSection called. HeroBackgroundImage: {HasFile}, Length: {Length}, ContentType: {ContentType}, FileName: {FileName}",
+                    HeroBackgroundImage != null, HeroBackgroundImage?.Length ?? 0, HeroBackgroundImage?.ContentType ?? "(null)", HeroBackgroundImage?.FileName ?? "(null)");
+
                 if (!ModelState.IsValid)
                 {
                     var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    _logger.LogWarning("[Hero] ModelState invalid: {Errors}", string.Join(", ", errors));
                     return Json(new { success = false, message = string.Join(", ", errors) });
                 }
 
@@ -268,6 +368,7 @@ namespace Portfolio.Controllers
                 {
                     homePage = new HomePage();
                     _context.HomePages.Add(homePage);
+                    _logger.LogInformation("[Hero] Created new HomePage entity.");
                 }
 
                 // Update hero section properties
@@ -286,8 +387,10 @@ namespace Portfolio.Controllers
                 {
                     var allowed = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
                     var contentType = HeroBackgroundImage.ContentType?.ToLowerInvariant() ?? "";
+                    _logger.LogInformation("[Hero] Processing uploaded file: ContentType={ContentType}, Length={Length} bytes.", contentType, HeroBackgroundImage.Length);
                     if (!allowed.Contains(contentType))
                     {
+                        _logger.LogWarning("[Hero] Rejected invalid image type: {ContentType}. Allowed: JPEG, PNG, GIF, WebP.", contentType);
                         return Json(new { success = false, message = "Invalid image type. Use JPEG, PNG, GIF, or WebP." });
                     }
                     using (var ms = new MemoryStream())
@@ -297,6 +400,7 @@ namespace Portfolio.Controllers
                     }
                     homePage.HeaderBackgroundImageContentType = contentType;
                     homePage.HeaderBackgroundImageUrl = null; // frontend will use /api/portfolio/hero-image
+                    _logger.LogInformation("[Hero] Image stored in memory. Data length: {Bytes} bytes. Saving to DB.", homePage.HeaderBackgroundImageData?.Length ?? 0);
                 }
                 else
                 {
@@ -306,16 +410,21 @@ namespace Portfolio.Controllers
                     {
                         homePage.HeaderBackgroundImageData = null;
                         homePage.HeaderBackgroundImageContentType = null;
+                        _logger.LogInformation("[Hero] No file and no URL: cleared stored image and URL.");
                     }
                     else
                     {
                         homePage.HeaderBackgroundImageData = null;
                         homePage.HeaderBackgroundImageContentType = null;
+                        _logger.LogInformation("[Hero] No file; using URL only. HeaderBackgroundImageUrl set (length {Len}).", homePage.HeaderBackgroundImageUrl?.Length ?? 0);
                     }
                 }
 
                 // Single save operation
+                _logger.LogInformation("[Hero] Calling SaveChangesAsync...");
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("[Hero] SaveChangesAsync completed. HeaderBackgroundImageData present: {HasData}, length: {Bytes}.",
+                    homePage.HeaderBackgroundImageData != null, homePage.HeaderBackgroundImageData?.Length ?? 0);
 
                 // Force cache refresh to ensure fresh data (only if it's the service with caching)
                 if (_homePageService is Services.HomePageService homePageService)
@@ -355,7 +464,7 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving hero section");
+                _logger.LogError(ex, "[Hero] Error saving hero section. HeroBackgroundImage received: {HasFile}, Length: {Length}", HeroBackgroundImage != null, HeroBackgroundImage?.Length ?? 0);
                 return Json(new { success = false, message = "An error occurred while saving the hero section." });
             }
         }

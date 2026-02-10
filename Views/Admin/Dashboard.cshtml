@@ -1172,6 +1172,13 @@
                     
                     // Step 2: Save to frontend
                     const formData = new FormData(heroForm);
+                    const fileInput = heroForm.querySelector('input[name="HeroBackgroundImage"]');
+                    const heroFile = fileInput?.files?.[0];
+                    console.log('[Hero] Submitting hero form. Image file:', heroFile ? { name: heroFile.name, size: heroFile.size, type: heroFile.type } : 'none');
+                    for (const [key, value] of formData.entries()) {
+                        if (value instanceof File) console.log('[Hero] FormData:', key, '(File)', value.name, value.size, value.type);
+                        else console.log('[Hero] FormData:', key, value);
+                    }
                     
                     const response = await fetch('/Admin/SaveHeroSection', {
                         method: 'POST',
@@ -1182,6 +1189,7 @@
                     });
                     
                     const result = await response.json();
+                    console.log('[Hero] Response status:', response.status, 'result:', result.success ? 'success' : 'failed', result.message || '', result.data ? { backgroundImageUrl: result.data.backgroundImageUrl } : '');
                     
                     if (result.success) {
                         // Show success message
@@ -1199,11 +1207,11 @@
                         // Frontend will automatically detect changes within 3 seconds
                         console.log('Changes saved successfully - frontend will update automatically');
                     } else {
-                        // Show error message
+                        console.warn('[Hero] Save failed:', result.message);
                         showNotification('Error!', result.message, 'error');
                     }
                 } catch (error) {
-                    console.error('Error saving:', error);
+                    console.error('[Hero] Error saving:', error);
                     showNotification('Error!', 'An unexpected error occurred. Please try again.', 'error');
                 } finally {
                     // Restore button state
