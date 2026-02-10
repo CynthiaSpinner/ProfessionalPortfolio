@@ -2,8 +2,21 @@
   padding: 6rem 0;
   position: relative;
   overflow: hidden;
+  min-height: 50vh;
+  box-sizing: border-box;
 }
 
+/* Background image layer - keeps image inside hero, no overflow */
+.page-header__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  z-index: 0;
+}
+
+/* Soft top shadow that blends with any image – neutral, fades into the photo */
 .page-header::before {
   content: '';
   position: absolute;
@@ -12,11 +25,14 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(
-    135deg,
-    rgba(0, 0, 10, 0.7),
-    rgba(5, 5, 25, 0.5)
+    to bottom,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.2) 35%,
+    rgba(0, 0, 0, 0.08) 60%,
+    transparent 100%
   );
   z-index: 1;
+  pointer-events: none;
 }
 
 .page-header h1 {
@@ -44,6 +60,7 @@
 @media (max-width: 768px) {
   .page-header {
     padding: 4rem 0;
+    min-height: 45vh;
   }
 
   .page-header h1 {

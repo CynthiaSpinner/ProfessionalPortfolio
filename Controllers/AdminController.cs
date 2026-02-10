@@ -464,8 +464,13 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[Hero] Error saving hero section. HeroBackgroundImage received: {HasFile}, Length: {Length}", HeroBackgroundImage != null, HeroBackgroundImage?.Length ?? 0);
-                return Json(new { success = false, message = "An error occurred while saving the hero section." });
+                var msg = ex.Message; var inner = ex.InnerException?.Message ?? "";
+                _logger.LogError(ex, "[Hero] Error saving hero section. Message: {Msg}. Inner: {Inner}. HeroBackgroundImage: {HasFile}, Length: {Length}", msg, inner, HeroBackgroundImage != null, HeroBackgroundImage?.Length ?? 0);
+                var isColumnError = msg.Contains("column", StringComparison.OrdinalIgnoreCase) || msg.Contains("does not exist", StringComparison.OrdinalIgnoreCase) || inner.Contains("column", StringComparison.OrdinalIgnoreCase);
+                var userMessage = isColumnError
+                    ? "Database may be missing hero image columns. On Render Postgres, run add-hero-image-columns.sql once (see project root), then try again."
+                    : "An error occurred while saving the hero section. Check server logs for details.";
+                return Json(new { success = false, message = userMessage });
             }
         }
 
