@@ -89,8 +89,6 @@ var fromEnv = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE
 var isPostgres = fromEnv || connectionString.StartsWith("Host=", StringComparison.OrdinalIgnoreCase) || connectionString.Contains("Database=");
 builder.Services.AddDbContext<PortfolioContext>(options =>
 {
-    // Allow Migrate() to run when snapshot was generated for a different provider (e.g. SQL Server) but we run on Postgres
-    options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
     if (isPostgres)
     {
         options.UseNpgsql(connectionString, npgsqlOptions =>
@@ -117,21 +115,8 @@ builder.Services.AddDbContext<PortfolioContext>(options =>
 
 var app = builder.Build();
 
-// Apply pending EF migrations at startup (e.g. on Render so you don't run DB scripts manually)
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<PortfolioContext>();
-    try
-    {
-        db.Database.Migrate();
-    }
-    catch (Exception ex)
-    {
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Migrations failed at startup. Fix the database and redeploy.");
-        throw;
-    }
-}
+// We do NOT run db.Database.Migrate() here: migrations are SQL Server-specific and fail on Postgres.
+// To add hero image columns on Render: run add-hero-image-columns.sql once in your Postgres DB.
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
