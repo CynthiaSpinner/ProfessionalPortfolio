@@ -2,6 +2,7 @@
   background: #050510;
   padding: 1rem 0;
   border-bottom: 1px solid rgba(129, 140, 248, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .navbar-container {
