@@ -18,32 +18,41 @@ const Header = ({
   showButtons = false,
   refreshing = false
 }) => {
-  // Build background style
-  let backgroundStyle = {};
-  
-  if (backgroundVideoUrl) {
-    backgroundStyle = {
-      position: 'relative',
-      overflow: 'hidden'
-    };
-  } else if (backgroundImageUrl) {
-    backgroundStyle = {
-      backgroundImage: `url(${backgroundImageUrl})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      position: 'relative'
-    };
-  } else {
-    backgroundStyle = {
-      background: "linear-gradient(135deg, rgba(75, 75, 90, 0.3), rgba(85, 85, 105, 0.2), rgba(227, 235, 255, 0.1))"
-    };
-  }
+  const isImage = !!backgroundImageUrl && !backgroundVideoUrl;
+  const isVideo = !!backgroundVideoUrl;
+  const hasMedia = isImage || isVideo;
+
+  const backgroundLayerStyle = isImage
+    ? {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        zIndex: 0
+      }
+    : {};
 
   return (
-    <header className="page-header" style={backgroundStyle}>
+    <header
+      className="page-header"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        ...(!hasMedia && {
+          background: "linear-gradient(135deg, rgba(75, 75, 90, 0.3), rgba(85, 85, 105, 0.2), rgba(227, 235, 255, 0.1))"
+        })
+      }}
+    >
+      {/* Image background layer - contained so it never overflows */}
+      {isImage && <div className="page-header__bg" style={backgroundLayerStyle} aria-hidden="true" />}
+
       {/* Video Background */}
-      {backgroundVideoUrl && (
+      {isVideo && (
         <video
           autoPlay
           muted
@@ -64,7 +73,7 @@ const Header = ({
       )}
 
       {/* Overlay */}
-      {(backgroundImageUrl || backgroundVideoUrl) && (
+      {hasMedia && (
         <div
           style={{
             position: 'absolute',
