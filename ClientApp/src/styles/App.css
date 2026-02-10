@@ -177,7 +177,7 @@ section {
 
 main {
   flex: 1;
-  padding-top: 2rem;
+  padding-top: 0;
   padding-bottom: 2rem;
 }
 
