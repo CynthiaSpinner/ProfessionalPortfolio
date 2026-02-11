@@ -24,7 +24,8 @@
   --text-muted: #6b7280;
   --text-light: #e5e7eb;
   --text-primary: #e5e7eb;
-  --text-subtitle: #cbd5e1;
+  /* Subtitle & description only: green-gray to match site palette, not white */
+  --text-subtitle: #7a8c85;
   --bg-dark: #050510;
   --bg-light: #f3f4f6;
 }
