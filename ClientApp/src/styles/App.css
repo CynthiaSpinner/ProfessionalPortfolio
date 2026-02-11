@@ -24,8 +24,8 @@
   --text-muted: #6b7280;
   --text-light: #e5e7eb;
   --text-primary: #e5e7eb;
-  /* Subtitle & description only: muted blue-gray, more blue */
-  --text-subtitle: #6b7c92;
+  /* Subtitle & description only: blue-gray, stands out slightly */
+  --text-subtitle: #6e85a0;
   --bg-dark: #050510;
   --bg-light: #f3f4f6;
 }
