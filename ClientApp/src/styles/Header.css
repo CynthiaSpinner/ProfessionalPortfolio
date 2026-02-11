@@ -18,14 +18,14 @@
   justify-content: center;
 }
 
-/* Hero image - strictly inside hero, no stretch */
+/* Hero image - full image visible at all sizes (contain), no crop */
 .page-header__bg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   z-index: 0;
   display: block;
