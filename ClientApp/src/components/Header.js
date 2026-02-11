@@ -110,7 +110,7 @@ const Header = ({
           <Col lg={8} className="text-center">
             <HeadingGroup title={title} subtitle={subtitle} />
             {description && (
-              <p className="lead mt-3" style={{ color: "#6b7280", fontSize: "1.1rem" }}>
+              <p className="lead mt-3 heading-group__lead" style={{ color: "var(--text-subtitle)", fontSize: "1.1rem" }}>
                 {description}
               </p>
             )}

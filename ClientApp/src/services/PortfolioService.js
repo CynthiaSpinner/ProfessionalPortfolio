@@ -67,9 +67,9 @@ export const PortfolioService = {
         sectionTitle: "Key Skills & Technologies",
         sectionSubtitle: "Explore my expertise across different domains",
         features: [
-          { title: "Frontend Development", subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap", description: "", icon: "fas fa-code", link: "/projects?category=frontend" },
-          { title: "Backend Development", subtitle: ".NET Core, C#, RESTful APIs, MySQL", description: "", icon: "fas fa-server", link: "/projects?category=backend" },
-          { title: "Design & Tools", subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker", description: "", icon: "fas fa-palette", link: "/projects?category=design" }
+          { title: "Frontend Development", subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap", description: "", link: "/projects?category=frontend" },
+          { title: "Backend Development", subtitle: ".NET Core, C#, RESTful APIs, MySQL", description: "", link: "/projects?category=backend" },
+          { title: "Design & Tools", subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker", description: "", link: "/projects?category=design" }
         ],
         lastModified: new Date().toISOString()
       };
