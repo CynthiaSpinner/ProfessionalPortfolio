@@ -181,9 +181,9 @@ namespace Portfolio.Controllers
                         sectionSubtitle = "Explore my expertise across different domains",
                         features = new[]
                         {
-                            new { title = "Frontend Development", subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap", description = "", link = "/projects?category=frontend" },
-                            new { title = "Backend Development", subtitle = ".NET Core, C#, RESTful APIs, SQL Server", description = "", link = "/projects?category=backend" },
-                            new { title = "Design & Tools", subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker", description = "", link = "/projects?category=design" }
+                            new { title = "Frontend Development", subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap", description = "", link = "/projects?category=frontend", linkText = "Learn more" },
+                            new { title = "Backend Development", subtitle = ".NET Core, C#, RESTful APIs, SQL Server", description = "", link = "/projects?category=backend", linkText = "Learn more" },
+                            new { title = "Design & Tools", subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker", description = "", link = "/projects?category=design", linkText = "Learn more" }
                         },
                         lastModified = DateTime.UtcNow
                     });
@@ -194,9 +194,9 @@ namespace Portfolio.Controllers
                     sectionSubtitle = section.SectionSubtitle,
                     features = new[]
                     {
-                        new { title = section.Feature1Title, subtitle = section.Feature1Subtitle, description = section.Feature1Description ?? "", link = section.Feature1Link ?? "" },
-                        new { title = section.Feature2Title, subtitle = section.Feature2Subtitle, description = section.Feature2Description ?? "", link = section.Feature2Link ?? "" },
-                        new { title = section.Feature3Title, subtitle = section.Feature3Subtitle, description = section.Feature3Description ?? "", link = section.Feature3Link ?? "" }
+                        new { title = section.Feature1Title, subtitle = section.Feature1Subtitle, description = section.Feature1Description ?? "", link = section.Feature1Link ?? "", linkText = section.Feature1LinkText ?? "Learn more" },
+                        new { title = section.Feature2Title, subtitle = section.Feature2Subtitle, description = section.Feature2Description ?? "", link = section.Feature2Link ?? "", linkText = section.Feature2LinkText ?? "Learn more" },
+                        new { title = section.Feature3Title, subtitle = section.Feature3Subtitle, description = section.Feature3Description ?? "", link = section.Feature3Link ?? "", linkText = section.Feature3LinkText ?? "Learn more" }
                     },
                     lastModified = section.UpdatedAt
                 });

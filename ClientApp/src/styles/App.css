@@ -308,39 +308,6 @@ p.lead {
   line-height: 1.6;
 }
 
-/* Project cards: description and subtitle use heading-group styles (override Projects.css) */
-.project-description p.heading-group__lead,
-.project-card .heading-group__subtitle {
-  color: var(--text-subtitle) !important;
-  font-family: inherit;
-}
-.project-description p.heading-group__lead {
-  font-size: 1.125rem;
-  line-height: 1.6;
-}
-.project-card .heading-group__subtitle {
-  font-size: 0.9375rem;
-  line-height: 1.5;
-}
-.project-description ul,
-.project-description ul li {
-  color: var(--text-subtitle) !important;
-}
-
-/* Features section cards: subtitle + description use heading-group styles */
-.features-section .heading-group__subtitle {
-  color: var(--text-subtitle) !important;
-  font-family: inherit;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-}
-.features-section .heading-group__lead {
-  color: var(--text-subtitle) !important;
-  font-family: inherit;
-  font-size: 1.125rem;
-  line-height: 1.6;
-}
-
 /* Features section "Learn more" link – primary color, not white */
 .features-section-link {
   color: var(--primary) !important;

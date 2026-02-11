@@ -143,16 +143,13 @@ namespace Portfolio.Controllers
         }
 
         /// <summary>
-        /// One-time diagnostic: check DB connection, list tables/columns, and verify expected schema (e.g. hero image columns).
-        /// Only works when ADMIN_RESET_SECRET (or DEBUG_DB_SECRET) is set. GET /Admin/CheckDb?secret=your_secret
-        /// Remove the env var after use.
+        /// One-time diagnostic: check DB connection and schema. GET /Admin/CheckDb?secret=your_ADMIN_RESET_SECRET
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> CheckDb([FromQuery] string? secret)
         {
-            var expectedSecret = _configuration["ADMIN_RESET_SECRET"] ?? Environment.GetEnvironmentVariable("ADMIN_RESET_SECRET")
-                ?? _configuration["DEBUG_DB_SECRET"] ?? Environment.GetEnvironmentVariable("DEBUG_DB_SECRET");
+            var expectedSecret = _configuration["ADMIN_RESET_SECRET"] ?? Environment.GetEnvironmentVariable("ADMIN_RESET_SECRET");
             if (string.IsNullOrEmpty(expectedSecret) || secret != expectedSecret)
             {
                 return Unauthorized();
@@ -285,9 +282,7 @@ namespace Portfolio.Controllers
         }
 
         /// <summary>
-        /// One-time: sync an admin's password hash in the DB to match this app's hashing (SHA256+Base64).
-        /// Only works when ADMIN_RESET_SECRET env var is set. Call once then remove the env var.
-        /// POST body: secret=your_ADMIN_RESET_SECRET&amp;username=admin&amp;newPassword=yourpassword
+        /// One-time: sync an admin's password hash in the DB. POST body: secret, username, newPassword
         /// </summary>
         [HttpPost]
         [AllowAnonymous]
@@ -308,7 +303,7 @@ namespace Portfolio.Controllers
             admin.PasswordHash = HashPassword(newPassword);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Password hash updated for admin {Username}", username);
-            return Ok("Password updated. Remove ADMIN_RESET_SECRET from env.");
+            return Ok("Password updated.");
         }
 
         [Authorize(Roles = "Admin,ReadOnly")]
@@ -708,14 +703,17 @@ namespace Portfolio.Controllers
                 featuresSection.Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap";
                 featuresSection.Feature1Description = model.Feature1Description ?? "";
                 featuresSection.Feature1Link = model.Feature1Link ?? "/projects?category=frontend";
+                featuresSection.Feature1LinkText = model.Feature1LinkText ?? "Learn more";
                 featuresSection.Feature2Title = model.Feature2Title ?? "Backend Development";
                 featuresSection.Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, SQL Server";
                 featuresSection.Feature2Description = model.Feature2Description ?? "";
                 featuresSection.Feature2Link = model.Feature2Link ?? "/projects?category=backend";
+                featuresSection.Feature2LinkText = model.Feature2LinkText ?? "Learn more";
                 featuresSection.Feature3Title = model.Feature3Title ?? "Design & Tools";
                 featuresSection.Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker";
                 featuresSection.Feature3Description = model.Feature3Description ?? "";
                 featuresSection.Feature3Link = model.Feature3Link ?? "/projects?category=design";
+                featuresSection.Feature3LinkText = model.Feature3LinkText ?? "Learn more";
                 featuresSection.IsActive = model.IsActive;
                 featuresSection.DisplayOrder = model.DisplayOrder;
                 featuresSection.UpdatedAt = DateTime.UtcNow;
@@ -751,14 +749,17 @@ namespace Portfolio.Controllers
                     feature1Subtitle = featuresSection.Feature1Subtitle,
                     feature1Description = featuresSection.Feature1Description,
                     feature1Link = featuresSection.Feature1Link,
+                    feature1LinkText = featuresSection.Feature1LinkText,
                     feature2Title = featuresSection.Feature2Title,
                     feature2Subtitle = featuresSection.Feature2Subtitle,
                     feature2Description = featuresSection.Feature2Description,
                     feature2Link = featuresSection.Feature2Link,
+                    feature2LinkText = featuresSection.Feature2LinkText,
                     feature3Title = featuresSection.Feature3Title,
                     feature3Subtitle = featuresSection.Feature3Subtitle,
                     feature3Description = featuresSection.Feature3Description,
                     feature3Link = featuresSection.Feature3Link,
+                    feature3LinkText = featuresSection.Feature3LinkText,
                     isActive = featuresSection.IsActive,
                     displayOrder = featuresSection.DisplayOrder,
                     updatedAt = featuresSection.UpdatedAt
@@ -793,14 +794,17 @@ namespace Portfolio.Controllers
                     feature1Subtitle = template.Feature1Subtitle ?? "",
                     feature1Description = template.Feature1Description ?? "",
                     feature1Link = template.Feature1Link ?? "",
+                    feature1LinkText = template.Feature1LinkText ?? "",
                     feature2Title = template.Feature2Title ?? "",
                     feature2Subtitle = template.Feature2Subtitle ?? "",
                     feature2Description = template.Feature2Description ?? "",
                     feature2Link = template.Feature2Link ?? "",
+                    feature2LinkText = template.Feature2LinkText ?? "",
                     feature3Title = template.Feature3Title ?? "",
                     feature3Subtitle = template.Feature3Subtitle ?? "",
                     feature3Description = template.Feature3Description ?? "",
                     feature3Link = template.Feature3Link ?? "",
+                    feature3LinkText = template.Feature3LinkText ?? "",
                     createdAt = template.CreatedAt,
                     updatedAt = template.UpdatedAt
                 };
@@ -868,14 +872,17 @@ namespace Portfolio.Controllers
                         Feature1Subtitle = model.Feature1Subtitle ?? "",
                         Feature1Description = model.Feature1Description ?? "",
                         Feature1Link = model.Feature1Link ?? "",
+                        Feature1LinkText = model.Feature1LinkText ?? "Learn more",
                         Feature2Title = model.Feature2Title ?? "",
                         Feature2Subtitle = model.Feature2Subtitle ?? "",
                         Feature2Description = model.Feature2Description ?? "",
                         Feature2Link = model.Feature2Link ?? "",
+                        Feature2LinkText = model.Feature2LinkText ?? "Learn more",
                         Feature3Title = model.Feature3Title ?? "",
                         Feature3Subtitle = model.Feature3Subtitle ?? "",
                         Feature3Description = model.Feature3Description ?? "",
                         Feature3Link = model.Feature3Link ?? "",
+                        Feature3LinkText = model.Feature3LinkText ?? "Learn more",
                         CreatedAt = DateTime.UtcNow
                     };
                     _context.FeaturesTemplates.Add(template);
@@ -891,14 +898,17 @@ namespace Portfolio.Controllers
                     template.Feature1Subtitle = model.Feature1Subtitle ?? template.Feature1Subtitle;
                     template.Feature1Description = model.Feature1Description ?? "";
                     template.Feature1Link = model.Feature1Link ?? template.Feature1Link;
+                    template.Feature1LinkText = model.Feature1LinkText ?? template.Feature1LinkText ?? "Learn more";
                     template.Feature2Title = model.Feature2Title ?? template.Feature2Title;
                     template.Feature2Subtitle = model.Feature2Subtitle ?? template.Feature2Subtitle;
                     template.Feature2Description = model.Feature2Description ?? "";
                     template.Feature2Link = model.Feature2Link ?? template.Feature2Link;
+                    template.Feature2LinkText = model.Feature2LinkText ?? template.Feature2LinkText ?? "Learn more";
                     template.Feature3Title = model.Feature3Title ?? template.Feature3Title;
                     template.Feature3Subtitle = model.Feature3Subtitle ?? template.Feature3Subtitle;
                     template.Feature3Description = model.Feature3Description ?? "";
                     template.Feature3Link = model.Feature3Link ?? template.Feature3Link;
+                    template.Feature3LinkText = model.Feature3LinkText ?? template.Feature3LinkText ?? "Learn more";
                     template.UpdatedAt = DateTime.UtcNow;
                 }
                 await _context.SaveChangesAsync();
@@ -1188,14 +1198,17 @@ namespace Portfolio.Controllers
             public string? Feature1Subtitle { get; set; }
             public string? Feature1Description { get; set; }
             public string? Feature1Link { get; set; }
+            public string? Feature1LinkText { get; set; }
             public string? Feature2Title { get; set; }
             public string? Feature2Subtitle { get; set; }
             public string? Feature2Description { get; set; }
             public string? Feature2Link { get; set; }
+            public string? Feature2LinkText { get; set; }
             public string? Feature3Title { get; set; }
             public string? Feature3Subtitle { get; set; }
             public string? Feature3Description { get; set; }
             public string? Feature3Link { get; set; }
+            public string? Feature3LinkText { get; set; }
             public bool IsActive { get; set; } = true;
             public int DisplayOrder { get; set; } = 1;
         }
@@ -1210,14 +1223,17 @@ namespace Portfolio.Controllers
             public string? Feature1Subtitle { get; set; }
             public string? Feature1Description { get; set; }
             public string? Feature1Link { get; set; }
+            public string? Feature1LinkText { get; set; }
             public string? Feature2Title { get; set; }
             public string? Feature2Subtitle { get; set; }
             public string? Feature2Description { get; set; }
             public string? Feature2Link { get; set; }
+            public string? Feature2LinkText { get; set; }
             public string? Feature3Title { get; set; }
             public string? Feature3Subtitle { get; set; }
             public string? Feature3Description { get; set; }
             public string? Feature3Link { get; set; }
+            public string? Feature3LinkText { get; set; }
         }
 
         public class CTASectionModel

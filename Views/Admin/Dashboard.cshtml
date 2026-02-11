@@ -374,6 +374,10 @@
                                                 <label for="feature1Link" class="form-label" style="color: #9ca3af !important;">Link</label>
                                                 <input type="text" class="form-control" id="feature1Link" name="Feature1Link" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="feature1LinkText" class="form-label" style="color: #9ca3af !important;">Link text</label>
+                                                <input type="text" class="form-control" id="feature1LinkText" name="Feature1LinkText" maxlength="100" placeholder="e.g. Learn more" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
                                         <div class="mb-3">
                                             <label for="feature1Description" class="form-label" style="color: #9ca3af !important;">Description</label>
                                             <textarea class="form-control" id="feature1Description" name="Feature1Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
@@ -397,6 +401,10 @@
                                                 <label for="feature2Link" class="form-label" style="color: #9ca3af !important;">Link</label>
                                                 <input type="text" class="form-control" id="feature2Link" name="Feature2Link" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="feature2LinkText" class="form-label" style="color: #9ca3af !important;">Link text</label>
+                                                <input type="text" class="form-control" id="feature2LinkText" name="Feature2LinkText" maxlength="100" placeholder="e.g. Learn more" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
                                         <div class="mb-3">
                                             <label for="feature2Description" class="form-label" style="color: #9ca3af !important;">Description</label>
                                             <textarea class="form-control" id="feature2Description" name="Feature2Description" maxlength="500" rows="2" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
@@ -419,6 +427,10 @@
                                         <div class="mb-3">
                                                 <label for="feature3Link" class="form-label" style="color: #9ca3af !important;">Link</label>
                                                 <input type="text" class="form-control" id="feature3Link" name="Feature3Link" maxlength="200" required style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="feature3LinkText" class="form-label" style="color: #9ca3af !important;">Link text</label>
+                                                <input type="text" class="form-control" id="feature3LinkText" name="Feature3LinkText" maxlength="100" placeholder="e.g. Learn more" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;">
                                             </div>
                                         <div class="mb-3">
                                             <label for="feature3Description" class="form-label" style="color: #9ca3af !important;">Description</label>
@@ -664,9 +676,9 @@
                     const d = result.data;
                     const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
                     set('featuresTitle', d.sectionTitle); set('featuresSubtitle', d.sectionSubtitle);
-                    set('feature1Title', d.feature1Title); set('feature1Subtitle', d.feature1Subtitle); set('feature1Link', d.feature1Link); set('feature1Description', d.feature1Description);
-                    set('feature2Title', d.feature2Title); set('feature2Subtitle', d.feature2Subtitle); set('feature2Link', d.feature2Link); set('feature2Description', d.feature2Description);
-                    set('feature3Title', d.feature3Title); set('feature3Subtitle', d.feature3Subtitle); set('feature3Link', d.feature3Link); set('feature3Description', d.feature3Description);
+                    set('feature1Title', d.feature1Title); set('feature1Subtitle', d.feature1Subtitle); set('feature1Link', d.feature1Link); set('feature1LinkText', d.feature1LinkText); set('feature1Description', d.feature1Description);
+                    set('feature2Title', d.feature2Title); set('feature2Subtitle', d.feature2Subtitle); set('feature2Link', d.feature2Link); set('feature2LinkText', d.feature2LinkText); set('feature2Description', d.feature2Description);
+                    set('feature3Title', d.feature3Title); set('feature3Subtitle', d.feature3Subtitle); set('feature3Link', d.feature3Link); set('feature3LinkText', d.feature3LinkText); set('feature3Description', d.feature3Description);
                 }
             } catch (e) { console.error('Load features error', e); }
         }
@@ -711,9 +723,9 @@
                     const d = result.data;
                     const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
                     set('featuresTitle', d.sectionTitle); set('featuresSubtitle', d.sectionSubtitle);
-                    set('feature1Title', d.feature1Title); set('feature1Subtitle', d.feature1Subtitle); set('feature1Link', d.feature1Link); set('feature1Description', d.feature1Description);
-                    set('feature2Title', d.feature2Title); set('feature2Subtitle', d.feature2Subtitle); set('feature2Link', d.feature2Link); set('feature2Description', d.feature2Description);
-                    set('feature3Title', d.feature3Title); set('feature3Subtitle', d.feature3Subtitle); set('feature3Link', d.feature3Link); set('feature3Description', d.feature3Description);
+                    set('feature1Title', d.feature1Title); set('feature1Subtitle', d.feature1Subtitle); set('feature1Link', d.feature1Link); set('feature1LinkText', d.feature1LinkText); set('feature1Description', d.feature1Description);
+                    set('feature2Title', d.feature2Title); set('feature2Subtitle', d.feature2Subtitle); set('feature2Link', d.feature2Link); set('feature2LinkText', d.feature2LinkText); set('feature2Description', d.feature2Description);
+                    set('feature3Title', d.feature3Title); set('feature3Subtitle', d.feature3Subtitle); set('feature3Link', d.feature3Link); set('feature3LinkText', d.feature3LinkText); set('feature3Description', d.feature3Description);
                 }
             } catch (e) { console.error('Load features template error', e); }
         }
@@ -741,9 +753,9 @@
                     if (t) formData.append('Id', t.id);
                     formData.append('Nickname', nickname);
                     formData.append('SectionTitle', formData.get('SectionTitle'));
-                    formData.append('Feature1Title', formData.get('Feature1Title')); formData.append('Feature1Subtitle', formData.get('Feature1Subtitle')); formData.append('Feature1Description', formData.get('Feature1Description')); formData.append('Feature1Link', formData.get('Feature1Link'));
-                    formData.append('Feature2Title', formData.get('Feature2Title')); formData.append('Feature2Subtitle', formData.get('Feature2Subtitle')); formData.append('Feature2Description', formData.get('Feature2Description')); formData.append('Feature2Link', formData.get('Feature2Link'));
-                    formData.append('Feature3Title', formData.get('Feature3Title')); formData.append('Feature3Subtitle', formData.get('Feature3Subtitle')); formData.append('Feature3Description', formData.get('Feature3Description')); formData.append('Feature3Link', formData.get('Feature3Link'));
+                    formData.append('Feature1Title', formData.get('Feature1Title')); formData.append('Feature1Subtitle', formData.get('Feature1Subtitle')); formData.append('Feature1Description', formData.get('Feature1Description')); formData.append('Feature1Link', formData.get('Feature1Link')); formData.append('Feature1LinkText', formData.get('Feature1LinkText'));
+                    formData.append('Feature2Title', formData.get('Feature2Title')); formData.append('Feature2Subtitle', formData.get('Feature2Subtitle')); formData.append('Feature2Description', formData.get('Feature2Description')); formData.append('Feature2Link', formData.get('Feature2Link')); formData.append('Feature2LinkText', formData.get('Feature2LinkText'));
+                    formData.append('Feature3Title', formData.get('Feature3Title')); formData.append('Feature3Subtitle', formData.get('Feature3Subtitle')); formData.append('Feature3Description', formData.get('Feature3Description')); formData.append('Feature3Link', formData.get('Feature3Link')); formData.append('Feature3LinkText', formData.get('Feature3LinkText'));
                     const saveResp = await fetch(t ? '/Admin/SaveFeaturesTemplate' : '/Admin/SaveFeaturesTemplate', { method: 'POST', body: formData });
                     const saveRes = await saveResp.json();
                     if (!saveRes.success) { alert(saveRes.message); return; }
