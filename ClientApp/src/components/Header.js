@@ -29,10 +29,10 @@ const Header = ({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        objectPosition: 'center center',
         zIndex: 0
       }
     : {};
@@ -48,23 +48,21 @@ const Header = ({
         })
       }}
     >
-      {/* Image background layer - fills hero, contained */}
-      {isImage && <div className="page-header__bg" style={backgroundLayerStyle} aria-hidden="true" />}
+      {/* Image: img with object-fit cover so it fits inside hero without stretching */}
+      {isImage && (
+        <img
+          src={backgroundImageUrl}
+          alt=""
+          className="page-header__bg"
+          style={backgroundLayerStyle}
+          aria-hidden="true"
+        />
+      )}
 
-      {/* Nav shadow: soft gradient over the image at the top, blends into the image */}
+      {/* Nav shadow over the image - visible gradient that blends into the image */}
       {hasMedia && (
         <div
           className="page-header__nav-shadow"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '32%',
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 40%, transparent 100%)',
-            zIndex: 1,
-            pointerEvents: 'none'
-          }}
           aria-hidden="true"
         />
       )}
