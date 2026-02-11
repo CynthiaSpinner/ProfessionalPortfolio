@@ -163,20 +163,21 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="home-page">
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", background: "#050510" }}>
+      <div className="home-page" style={{ minHeight: "100vh" }}>
+        <div style={{ position: "fixed", inset: 0, background: "#050510", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem", zIndex: 9999 }}>
           <div
             role="status"
             aria-label="Loading"
             style={{
               width: 56,
               height: 56,
-              border: "3px solid rgba(129, 140, 248, 0.2)",
+              border: "3px solid rgba(129, 140, 248, 0.25)",
               borderTopColor: "#818cf8",
               borderRadius: "50%",
               animation: "spin 0.9s linear infinite",
             }}
           />
+          <p style={{ color: "#a5b4fc", fontSize: "1.1rem", margin: 0, fontWeight: 500 }}>Creating your experience…</p>
         </div>
       </div>
     );
