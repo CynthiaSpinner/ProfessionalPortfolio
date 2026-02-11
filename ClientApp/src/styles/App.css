@@ -290,12 +290,22 @@ section {
   padding: 4rem 0;
 }
 
-/* Consistent subtitle and paragraph color across hero, features, and rest of page */
+/* Heading group: subtitle + description – same font, subtitle slightly smaller, description slightly larger (common pattern) */
 .heading-group__subtitle,
 .heading-group__lead,
 .lead.heading-group__lead,
 p.lead {
   color: var(--text-subtitle) !important;
+  font-family: inherit;
+}
+.heading-group__subtitle {
+  font-size: 0.9375rem; /* 15px – a bit smaller */
+  line-height: 1.5;
+}
+.heading-group__lead,
+.lead.heading-group__lead {
+  font-size: 1.125rem; /* 18px – a bit larger for readability */
+  line-height: 1.6;
 }
 
 /* Features section "Learn more" link – primary color, not white */
