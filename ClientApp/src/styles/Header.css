@@ -6,14 +6,29 @@
   box-sizing: border-box;
 }
 
-/* Background image layer - keeps image inside hero, no overflow */
+/* Background image layer - fills hero, no overflow */
 .page-header__bg {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-size: cover !important;
-  background-position: center !important;
+  background-position: center center !important;
   background-repeat: no-repeat !important;
   z-index: 0;
+}
+
+/* Nav shadow overlay - sits over the image, blends into it */
+.page-header__nav-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 40%, transparent 100%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* No gradient overlay here – shadow comes from the navbar’s box-shadow so the image stays clean */
