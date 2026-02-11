@@ -48,8 +48,26 @@ const Header = ({
         })
       }}
     >
-      {/* Image background layer - contained so it never overflows */}
+      {/* Image background layer - fills hero, contained */}
       {isImage && <div className="page-header__bg" style={backgroundLayerStyle} aria-hidden="true" />}
+
+      {/* Nav shadow: soft gradient over the image at the top, blends into the image */}
+      {hasMedia && (
+        <div
+          className="page-header__nav-shadow"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '32%',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 40%, transparent 100%)',
+            zIndex: 1,
+            pointerEvents: 'none'
+          }}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Video Background */}
       {isVideo && (
