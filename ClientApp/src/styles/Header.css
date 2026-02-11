@@ -6,7 +6,19 @@
   box-sizing: border-box;
 }
 
-/* Hero image - fits inside section, no stretch (aspect ratio preserved) */
+/* When hero has image/video, fix height so image has a real box (no stretch) */
+.page-header:has(.page-header__bg),
+.page-header:has(video) {
+  height: 70vh;
+  min-height: 400px;
+  max-height: 900px;
+  padding: 4rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hero image - strictly inside hero, no stretch */
 .page-header__bg {
   position: absolute;
   top: 0;
@@ -17,6 +29,8 @@
   object-position: center center;
   z-index: 0;
   display: block;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 /* Nav shadow overlay - stronger, over the image, blends into it */
@@ -65,6 +79,12 @@
   .page-header {
     padding: 4rem 0;
     min-height: 45vh;
+  }
+
+  .page-header:has(.page-header__bg),
+  .page-header:has(video) {
+    height: 55vh;
+    min-height: 360px;
   }
 
   .page-header h1 {
