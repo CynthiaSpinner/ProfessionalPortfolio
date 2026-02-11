@@ -21,7 +21,7 @@ const ProjectCard = ({ project }) => {
         <Col lg={6}>
           <HeadingGroup title={project.title} subtitle={project.subtitle} />
           <div className="project-description">
-            <p className="heading-group__lead">{project.description}</p>
+            <p>{project.description}</p>
             <ul>
               {project.features.map((feature, index) => (
                 <li key={index}>{feature}</li>
