@@ -18,6 +18,8 @@ const MAIN_TITLE = "CodeSpinner & Design";
 
 function App() {
   useEffect(() => {
+    const loadingEl = document.getElementById("app-loading");
+    if (loadingEl && loadingEl.parentNode) loadingEl.remove();
     document.title = MAIN_TITLE;
     const favicon = document.getElementById("favicon") || document.querySelector('link[rel="icon"]');
     if (favicon && favicon.href !== MAIN_FAVICON) {
