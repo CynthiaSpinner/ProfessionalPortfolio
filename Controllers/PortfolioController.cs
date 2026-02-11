@@ -70,7 +70,10 @@ namespace Portfolio.Controllers
                 if (homePage == null)
                     return Json(GetDefaultHeroJson(DateTime.UtcNow));
 
-                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                var scheme = Request.Scheme;
+                if (scheme == "http" && Request.Host.Host?.Contains("onrender.com", StringComparison.OrdinalIgnoreCase) == true)
+                    scheme = "https";
+                var baseUrl = $"{scheme}://{Request.Host}";
                 var version = (homePage.UpdatedAt ?? homePage.CreatedAt).Ticks;
                 var backgroundImageUrl = homePage.HeaderBackgroundImageData != null
                     ? $"{baseUrl}/api/portfolio/hero-image?v={version}"
