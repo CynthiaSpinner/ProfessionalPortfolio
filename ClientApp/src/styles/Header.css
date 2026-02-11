@@ -6,27 +6,33 @@
   box-sizing: border-box;
 }
 
-/* Background image layer - fills hero, no overflow */
+/* Hero image - fits inside section, no stretch (aspect ratio preserved) */
 .page-header__bg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
+  object-fit: cover;
+  object-position: center center;
   z-index: 0;
+  display: block;
 }
 
-/* Nav shadow overlay - sits over the image, blends into it */
+/* Nav shadow overlay - stronger, over the image, blends into it */
 .page-header__nav-shadow {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 32%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 40%, transparent 100%);
+  height: 42%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.35) 25%,
+    rgba(0, 0, 0, 0.12) 55%,
+    transparent 100%
+  );
   z-index: 1;
   pointer-events: none;
 }
