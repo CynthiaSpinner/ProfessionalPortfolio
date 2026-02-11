@@ -16,10 +16,10 @@ import "./styles/App.css";
 const MAIN_FAVICON = "https://professionalportfolio-9a6n.onrender.com/favicon.svg";
 const MAIN_TITLE = "CodeSpinner & Design";
 
+const LOADING_MIN_MS = 2000;
+
 function App() {
   useEffect(() => {
-    const loadingEl = document.getElementById("app-loading");
-    if (loadingEl && loadingEl.parentNode) loadingEl.remove();
     document.title = MAIN_TITLE;
     const favicon = document.getElementById("favicon") || document.querySelector('link[rel="icon"]');
     if (favicon && favicon.href !== MAIN_FAVICON) {
@@ -27,6 +27,13 @@ function App() {
     }
     const shortcuts = document.querySelectorAll('link[rel="shortcut icon"], link[rel="apple-touch-icon"]');
     shortcuts.forEach((link) => { link.href = MAIN_FAVICON; });
+
+    const loadingEl = document.getElementById("app-loading");
+    const removeLoading = () => {
+      if (loadingEl && loadingEl.parentNode) loadingEl.remove();
+    };
+    const t = setTimeout(removeLoading, LOADING_MIN_MS);
+    return () => clearTimeout(t);
   }, []);
 
   return (
