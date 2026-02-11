@@ -215,7 +215,7 @@ const Home = () => {
                     title={f.title}
                     subtitle={f.subtitle}
                   />
-                  {f.description && <p className="mb-0 small" style={{ color: "var(--text-subtitle)" }}>{f.description}</p>}
+                  {f.description && <p className="mb-0 heading-group__lead">{f.description}</p>}
                   {f.link && (
                     <a href={f.link} className="stretched-link mt-2 d-inline-block small features-section-link">Learn more</a>
                   )}
