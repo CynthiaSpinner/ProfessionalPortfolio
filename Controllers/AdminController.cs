@@ -707,17 +707,14 @@ namespace Portfolio.Controllers
                 featuresSection.Feature1Title = model.Feature1Title ?? "Frontend Development";
                 featuresSection.Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap";
                 featuresSection.Feature1Description = model.Feature1Description ?? "";
-                featuresSection.Feature1Icon = model.Feature1Icon ?? "fas fa-code";
                 featuresSection.Feature1Link = model.Feature1Link ?? "/projects?category=frontend";
                 featuresSection.Feature2Title = model.Feature2Title ?? "Backend Development";
                 featuresSection.Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, SQL Server";
                 featuresSection.Feature2Description = model.Feature2Description ?? "";
-                featuresSection.Feature2Icon = model.Feature2Icon ?? "fas fa-server";
                 featuresSection.Feature2Link = model.Feature2Link ?? "/projects?category=backend";
                 featuresSection.Feature3Title = model.Feature3Title ?? "Design & Tools";
                 featuresSection.Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker";
                 featuresSection.Feature3Description = model.Feature3Description ?? "";
-                featuresSection.Feature3Icon = model.Feature3Icon ?? "fas fa-palette";
                 featuresSection.Feature3Link = model.Feature3Link ?? "/projects?category=design";
                 featuresSection.IsActive = model.IsActive;
                 featuresSection.DisplayOrder = model.DisplayOrder;
@@ -753,17 +750,14 @@ namespace Portfolio.Controllers
                     feature1Title = featuresSection.Feature1Title,
                     feature1Subtitle = featuresSection.Feature1Subtitle,
                     feature1Description = featuresSection.Feature1Description,
-                    feature1Icon = featuresSection.Feature1Icon,
                     feature1Link = featuresSection.Feature1Link,
                     feature2Title = featuresSection.Feature2Title,
                     feature2Subtitle = featuresSection.Feature2Subtitle,
                     feature2Description = featuresSection.Feature2Description,
-                    feature2Icon = featuresSection.Feature2Icon,
                     feature2Link = featuresSection.Feature2Link,
                     feature3Title = featuresSection.Feature3Title,
                     feature3Subtitle = featuresSection.Feature3Subtitle,
                     feature3Description = featuresSection.Feature3Description,
-                    feature3Icon = featuresSection.Feature3Icon,
                     feature3Link = featuresSection.Feature3Link,
                     isActive = featuresSection.IsActive,
                     displayOrder = featuresSection.DisplayOrder,
@@ -798,17 +792,14 @@ namespace Portfolio.Controllers
                     feature1Title = template.Feature1Title ?? "",
                     feature1Subtitle = template.Feature1Subtitle ?? "",
                     feature1Description = template.Feature1Description ?? "",
-                    feature1Icon = template.Feature1Icon ?? "",
                     feature1Link = template.Feature1Link ?? "",
                     feature2Title = template.Feature2Title ?? "",
                     feature2Subtitle = template.Feature2Subtitle ?? "",
                     feature2Description = template.Feature2Description ?? "",
-                    feature2Icon = template.Feature2Icon ?? "",
                     feature2Link = template.Feature2Link ?? "",
                     feature3Title = template.Feature3Title ?? "",
                     feature3Subtitle = template.Feature3Subtitle ?? "",
                     feature3Description = template.Feature3Description ?? "",
-                    feature3Icon = template.Feature3Icon ?? "",
                     feature3Link = template.Feature3Link ?? "",
                     createdAt = template.CreatedAt,
                     updatedAt = template.UpdatedAt
@@ -876,17 +867,14 @@ namespace Portfolio.Controllers
                         Feature1Title = model.Feature1Title ?? "",
                         Feature1Subtitle = model.Feature1Subtitle ?? "",
                         Feature1Description = model.Feature1Description ?? "",
-                        Feature1Icon = model.Feature1Icon ?? "",
                         Feature1Link = model.Feature1Link ?? "",
                         Feature2Title = model.Feature2Title ?? "",
                         Feature2Subtitle = model.Feature2Subtitle ?? "",
                         Feature2Description = model.Feature2Description ?? "",
-                        Feature2Icon = model.Feature2Icon ?? "",
                         Feature2Link = model.Feature2Link ?? "",
                         Feature3Title = model.Feature3Title ?? "",
                         Feature3Subtitle = model.Feature3Subtitle ?? "",
                         Feature3Description = model.Feature3Description ?? "",
-                        Feature3Icon = model.Feature3Icon ?? "",
                         Feature3Link = model.Feature3Link ?? "",
                         CreatedAt = DateTime.UtcNow
                     };
@@ -902,17 +890,14 @@ namespace Portfolio.Controllers
                     template.Feature1Title = model.Feature1Title ?? template.Feature1Title;
                     template.Feature1Subtitle = model.Feature1Subtitle ?? template.Feature1Subtitle;
                     template.Feature1Description = model.Feature1Description ?? "";
-                    template.Feature1Icon = model.Feature1Icon ?? "";
                     template.Feature1Link = model.Feature1Link ?? template.Feature1Link;
                     template.Feature2Title = model.Feature2Title ?? template.Feature2Title;
                     template.Feature2Subtitle = model.Feature2Subtitle ?? template.Feature2Subtitle;
                     template.Feature2Description = model.Feature2Description ?? "";
-                    template.Feature2Icon = model.Feature2Icon ?? "";
                     template.Feature2Link = model.Feature2Link ?? template.Feature2Link;
                     template.Feature3Title = model.Feature3Title ?? template.Feature3Title;
                     template.Feature3Subtitle = model.Feature3Subtitle ?? template.Feature3Subtitle;
                     template.Feature3Description = model.Feature3Description ?? "";
-                    template.Feature3Icon = model.Feature3Icon ?? "";
                     template.Feature3Link = model.Feature3Link ?? template.Feature3Link;
                     template.UpdatedAt = DateTime.UtcNow;
                 }
@@ -1202,17 +1187,14 @@ namespace Portfolio.Controllers
             public string? Feature1Title { get; set; }
             public string? Feature1Subtitle { get; set; }
             public string? Feature1Description { get; set; }
-            public string? Feature1Icon { get; set; }
             public string? Feature1Link { get; set; }
             public string? Feature2Title { get; set; }
             public string? Feature2Subtitle { get; set; }
             public string? Feature2Description { get; set; }
-            public string? Feature2Icon { get; set; }
             public string? Feature2Link { get; set; }
             public string? Feature3Title { get; set; }
             public string? Feature3Subtitle { get; set; }
             public string? Feature3Description { get; set; }
-            public string? Feature3Icon { get; set; }
             public string? Feature3Link { get; set; }
             public bool IsActive { get; set; } = true;
             public int DisplayOrder { get; set; } = 1;
@@ -1227,17 +1209,14 @@ namespace Portfolio.Controllers
             public string? Feature1Title { get; set; }
             public string? Feature1Subtitle { get; set; }
             public string? Feature1Description { get; set; }
-            public string? Feature1Icon { get; set; }
             public string? Feature1Link { get; set; }
             public string? Feature2Title { get; set; }
             public string? Feature2Subtitle { get; set; }
             public string? Feature2Description { get; set; }
-            public string? Feature2Icon { get; set; }
             public string? Feature2Link { get; set; }
             public string? Feature3Title { get; set; }
             public string? Feature3Subtitle { get; set; }
             public string? Feature3Description { get; set; }
-            public string? Feature3Icon { get; set; }
             public string? Feature3Link { get; set; }
         }
 

@@ -12,9 +12,9 @@ const defaultFeatures = {
   sectionTitle: "Key Skills & Technologies",
   sectionSubtitle: "Explore my expertise across different domains",
   features: [
-    { title: "Frontend Development", subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap", description: "", icon: "fas fa-code", link: "/projects?category=frontend" },
-    { title: "Backend Development", subtitle: ".NET Core, C#, RESTful APIs, MySQL", description: "", icon: "fas fa-server", link: "/projects?category=backend" },
-    { title: "Design & Tools", subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker", description: "", icon: "fas fa-palette", link: "/projects?category=design" }
+    { title: "Frontend Development", subtitle: "React, JavaScript, HTML5, CSS3, Bootstrap", description: "", link: "/projects?category=frontend" },
+    { title: "Backend Development", subtitle: ".NET Core, C#, RESTful APIs, MySQL", description: "", link: "/projects?category=backend" },
+    { title: "Design & Tools", subtitle: "Adobe Creative Suite, UI/UX Design, Git, Docker", description: "", link: "/projects?category=design" }
   ],
   lastModified: null
 };
@@ -211,14 +211,13 @@ const Home = () => {
             {(features || []).slice(0, 3).map((f, i) => (
               <Col key={i} md={4}>
                 <Card>
-                  {f.icon && <div className="mb-2"><i className={f.icon} aria-hidden="true" /></div>}
                   <HeadingGroup
                     title={f.title}
                     subtitle={f.subtitle}
                   />
-                  {f.description && <p className="mb-0 text-muted small">{f.description}</p>}
+                  {f.description && <p className="mb-0 small" style={{ color: "var(--text-subtitle)" }}>{f.description}</p>}
                   {f.link && (
-                    <a href={f.link} className="stretched-link mt-2 d-inline-block small">Learn more</a>
+                    <a href={f.link} className="stretched-link mt-2 d-inline-block small features-section-link">Learn more</a>
                   )}
                 </Card>
               </Col>
