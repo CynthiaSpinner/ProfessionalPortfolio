@@ -436,7 +436,10 @@ namespace Portfolio.Controllers
                 // Broadcast WebSocket message to all connected clients
                 await _webSocketService.BroadcastHeroDataUpdatedAsync();
 
-                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                var scheme = Request.Scheme;
+                if (scheme == "http" && Request.Host.Host?.Contains("onrender.com", StringComparison.OrdinalIgnoreCase) == true)
+                    scheme = "https";
+                var baseUrl = $"{scheme}://{Request.Host}";
                 var hp = updatedHomePage ?? homePage;
                 var hasStoredImage = hp.HeaderBackgroundImageData != null;
                 var version = (hp.UpdatedAt ?? hp.CreatedAt).Ticks;

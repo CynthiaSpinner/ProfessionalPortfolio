@@ -5,11 +5,20 @@ using Portfolio.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Memory;
 using System.Net.WebSockets;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// When behind a proxy (e.g. Render), use X-Forwarded-Proto so Request.Scheme is https and URLs we build are HTTPS
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -114,6 +123,9 @@ builder.Services.AddDbContext<PortfolioContext>(options =>
 });
 
 var app = builder.Build();
+
+// Use forwarded headers first so Request.Scheme is https when the client connected via HTTPS (e.g. behind Render)
+app.UseForwardedHeaders();
 
 // We do NOT run db.Database.Migrate() here: migrations are SQL Server-specific and fail on Postgres.
 // To add hero image columns on Render: run add-hero-image-columns.sql once in your Postgres DB.
