@@ -26,17 +26,17 @@ const Navbar = () => {
             padding: "0 10px",
             transition: "all 0.3s ease",
             display: "flex",
-            alignItems: "center",
+            alignItems: "baseline",
             marginRight: "auto"
           }}
         >
           <span className="navbar-brand__word">
-            <span>C</span>
+            <span className="logo-cap">C</span>
             <span className="gradient-text">ode</span>
-            <span>S</span>
+            <span className="logo-cap">S</span>
             <span className="gradient-text">pinner</span>
           </span>
-          <span> & D</span>
+          <span className="logo-cap"> & D</span>
           <span className="gradient-text">esign</span>
         </h1>
         <button

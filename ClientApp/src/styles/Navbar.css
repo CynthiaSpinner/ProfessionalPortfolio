@@ -10,7 +10,7 @@
   position: relative;
   overflow: visible;
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   padding: 0 20px;
   height: 60px;
 }
@@ -62,7 +62,7 @@
   font-weight: 400;
   letter-spacing: -0.02em;
   position: relative;
-  top: -0.1em;
+  vertical-align: baseline;
   text-shadow: 0 0 20px rgba(129, 140, 248, 0.2),
     0 0 40px rgba(129, 140, 248, 0.1);
   background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
@@ -73,11 +73,14 @@
   animation: elegantFlow 8s ease infinite;
 }
 
+/* C, S, &, D larger like coderecall.pro footer logo */
+.navbar-brand .logo-cap {
+  font-size: 2.5rem;
+}
+
 .navbar-brand .gradient-text {
   font-size: 1.5rem;
-  top: 0;
   margin: 0;
-  padding-bottom: 5px;
 }
 
 /* CodeSpinner as one word: no gap between C-ode-S-pinner */
