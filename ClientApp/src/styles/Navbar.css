@@ -6,10 +6,10 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Align logo and nav links on the same horizontal line */
+/* Align logo and nav links by baseline (bottom of text) */
 .navbar .container {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   flex-wrap: wrap;
 }
 
