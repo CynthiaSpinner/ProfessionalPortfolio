@@ -67,7 +67,7 @@
   margin: 0 1px;
   font-family: "Playfair Display", serif;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -0.02em;
   position: relative;
   vertical-align: baseline;
@@ -194,6 +194,7 @@
 
 .navbar-nav {
   /* No transition */
+  margin-top: 0.8rem;
 }
 
 @media (max-width: 991.98px) {
