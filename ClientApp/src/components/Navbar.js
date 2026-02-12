@@ -36,7 +36,7 @@ const Navbar = () => {
             <span className="logo-cap">S</span>
             <span className="gradient-text">pinner</span>
           </span>
-          <span className="logo-cap"> & D</span>
+          <span> & D</span>
           <span className="gradient-text">esign</span>
         </h1>
         <button

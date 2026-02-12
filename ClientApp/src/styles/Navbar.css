@@ -54,7 +54,7 @@
 }
 
 .navbar-brand span {
-  font-size: 2.2rem;
+  font-size: 1.25rem;
   line-height: 1;
   margin: 0 1px;
   font-family: "Playfair Display", serif;
@@ -73,13 +73,13 @@
   animation: elegantFlow 8s ease infinite;
 }
 
-/* C, S, &, D larger like coderecall.pro footer logo */
+/* Only C and S slightly larger than the rest */
 .navbar-brand .logo-cap {
-  font-size: 2.5rem;
+  font-size: 1.45rem;
 }
 
 .navbar-brand .gradient-text {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin: 0;
 }
 
