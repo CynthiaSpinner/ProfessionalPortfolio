@@ -58,7 +58,7 @@ const Navbar = () => {
               width: "100%",
               display: "flex",
               justifyContent: "space-between",
-              marginTop: "0.15rem",
+              marginTop: 0,
               padding: "0 2rem"
             }}
           >
