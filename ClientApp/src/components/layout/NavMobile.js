@@ -16,7 +16,7 @@ const Navbar = () => {
     >
       <Container>
         <BootstrapNavbar.Brand as={Link} to="/">
-          Portfolio
+          CodeSpinner & Design
         </BootstrapNavbar.Brand>
         <BootstrapNavbar.Toggle aria-controls="navbar-nav" />
         <BootstrapNavbar.Collapse id="navbar-nav">

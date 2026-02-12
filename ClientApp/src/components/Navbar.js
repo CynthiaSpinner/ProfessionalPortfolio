@@ -30,10 +30,14 @@ const Navbar = () => {
             marginRight: "auto"
           }}
         >
-          <span>C</span>
-          <span className="gradient-text">ynthia </span>
-          <span>S</span>
-          <span className="gradient-text">pinner</span>
+          <span className="navbar-brand__word">
+            <span>C</span>
+            <span className="gradient-text">ode</span>
+            <span>S</span>
+            <span className="gradient-text">pinner</span>
+          </span>
+          <span> & D</span>
+          <span className="gradient-text">esign</span>
         </h1>
         <button
           className={`navbar-toggler ${isMenuOpen ? "menu-open" : ""}`}
