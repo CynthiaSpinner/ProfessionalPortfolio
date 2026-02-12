@@ -80,6 +80,15 @@
   padding-bottom: 5px;
 }
 
+/* CodeSpinner as one word: no gap between C-ode-S-pinner */
+.navbar-brand__word {
+  display: inline;
+  position: relative;
+}
+.navbar-brand__word span {
+  margin: 0;
+}
+
 .navbar-brand span::before,
 .navbar-brand span::after {
   content: "";
