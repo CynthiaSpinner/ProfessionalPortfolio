@@ -6,13 +6,12 @@
   box-sizing: border-box;
 }
 
-/* When hero has image/video: height scales with viewport, capped so image fills hero then stays at cap */
+/* When hero has image/video: height scales with viewport; below 1440px no cap */
 .page-header:has(.page-header__bg),
 .page-header:has(video) {
   width: 100%;
   min-height: 280px;
   height: 50vh;
-  max-height: 520px;
   padding: 4rem 0;
   display: flex;
   align-items: center;
@@ -22,10 +21,11 @@
   background-color: #0a0a0f;
 }
 
-/* At 1440px and up: center the hero, no stretch on ultra-wide */
+/* At 1440px and up: cap hero height, center the hero (no stretch on ultra-wide) */
 @media (min-width: 1440px) {
   .page-header:has(.page-header__bg),
   .page-header:has(video) {
+    max-height: 520px;
     max-width: 1440px;
     margin-left: auto;
     margin-right: auto;
