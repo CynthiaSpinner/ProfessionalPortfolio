@@ -1,9 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { PortfolioService } from "../services/PortfolioService";
 import "../styles/Navbar.css";
+
+const navLinkStyle = {
+  color: "#a5b4fc",
+  fontSize: "1rem",
+  padding: "0.5rem 0.75rem",
+  lineHeight: "1.2",
+};
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [navSettings, setNavSettings] = useState({ showGraphicDesignLink: true, showDesignLink: true });
+
+  useEffect(() => {
+    PortfolioService.getNavSettings().then(setNavSettings);
+  }, []);
 
   return (
     <nav
@@ -77,94 +90,41 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="/projects"
-                style={{
-                  color: "#a5b4fc",
-                  fontSize: "1rem",
-                  padding: "0.5rem 0.75rem",
-                  lineHeight: "1.2",
-                }}
-                onClick={() => setIsMenuOpen(false)}
-              >
+              <Link className="nav-link" to="/projects" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>
                 Projects
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="/graphic-design"
-                style={{
-                  color: "#a5b4fc",
-                  fontSize: "1rem",
-                  padding: "0.5rem 0.75rem",
-                  lineHeight: "1.2",
-                }}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Graphic Design
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="/design"
-                style={{
-                  color: "#a5b4fc",
-                  fontSize: "1rem",
-                  padding: "0.5rem 0.75rem",
-                  lineHeight: "1.2",
-                }}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Design
-              </Link>
-            </li>
+            {navSettings.showGraphicDesignLink && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/graphic-design" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>
+                  Graphic Design
+                </Link>
+              </li>
+            )}
+            {navSettings.showDesignLink && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/design" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>
+                  Design
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
               <Link
                 className="nav-link"
                 to="/about"
-                style={{
-                  color: "#a5b4fc",
-                  fontSize: "1rem",
-                  padding: "0.5rem 0.75rem",
-                  lineHeight: "1.2",
-                }}
+                style={navLinkStyle}
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
             </li>
             <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="/contact"
-                style={{
-                  color: "#a5b4fc",
-                  fontSize: "1rem",
-                  padding: "0.5rem 0.75rem",
-                  lineHeight: "1.2",
-                }}
-                onClick={() => setIsMenuOpen(false)}
-              >
+              <Link className="nav-link" to="/contact" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>
                 Contact
               </Link>
             </li>
             <li className="nav-item">
-              <a
-                className="nav-link"
-                href="https://professionalportfolio-9a6n.onrender.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: "#a5b4fc",
-                  fontSize: "1rem",
-                  padding: "0.5rem 0.75rem",
-                  lineHeight: "1.2",
-                }}
-                onClick={() => setIsMenuOpen(false)}
-              >
+              <a className="nav-link" href="https://professionalportfolio-9a6n.onrender.com" target="_blank" rel="noopener noreferrer" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>
                 Login
               </a>
             </li>
