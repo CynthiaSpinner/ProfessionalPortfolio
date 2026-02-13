@@ -9,19 +9,6 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Strip below navbar: shadow bleeds onto this (same color = invisible), particle fall extends past it onto hero */
-.navbar::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: 32px;
-  background: #1a1a1a; /* match navbar background so shadow blends in */
-  z-index: -1;
-  pointer-events: none;
-}
-
 /* Align logo and nav links by baseline (bottom of text); don't clip logo animation */
 .navbar .container {
   display: flex;
