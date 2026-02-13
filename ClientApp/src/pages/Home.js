@@ -4,6 +4,7 @@ import HeadingGroup from "../components/HeadingGroup";
 import Footer from "../components/Footer";
 import Card from "../components/Card";
 import Header from "../components/Header";
+import Button from "../components/Button";
 import "../styles/Home.css";
 import CTA from "../components/CTA";
 import { PortfolioService } from "../services/PortfolioService";
@@ -223,6 +224,19 @@ const Home = () => {
               </Col>
             ))}
           </Row>
+        </Container>
+      </section>
+
+      <section className="skills-teaser-section py-5">
+        <Container>
+          <HeadingGroup
+            title="My Skills"
+            subtitle="A quick look at my technical expertise and how I can help bring your ideas to life."
+            className="text-center mb-4"
+          />
+          <div className="text-center">
+            <Button href="/about">Learn more about my skills</Button>
+          </div>
         </Container>
       </section>
 

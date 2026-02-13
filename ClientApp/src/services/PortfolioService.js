@@ -91,4 +91,13 @@ export const PortfolioService = {
       };
     }
   },
+
+  async getNavSettings() {
+    try {
+      const { data } = await api.get("/portfolio/nav-settings");
+      return data;
+    } catch (err) {
+      return { showGraphicDesignLink: true, showDesignLink: true };
+    }
+  },
 };
