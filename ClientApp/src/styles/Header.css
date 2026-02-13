@@ -6,21 +6,33 @@
   box-sizing: border-box;
 }
 
-/* When hero has image/video: height range so image is always contained, never falls out */
+/* When hero has image/video: height scales with viewport, capped so image fills hero then stays at cap */
 .page-header:has(.page-header__bg),
 .page-header:has(video) {
   width: 100%;
-  min-height: 55vh;
-  max-height: 90vh;
+  min-height: 280px;
+  height: 50vh;
+  max-height: 520px;
   padding: 4rem 0;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+  background-color: #0a0a0f;
 }
 
-/* Hero image: always inside hero, cover area, anchor bottom-right so spider stays visible */
+/* At 1440px and up: center the hero, no stretch on ultra-wide */
+@media (min-width: 1440px) {
+  .page-header:has(.page-header__bg),
+  .page-header:has(video) {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Hero image: fill entire hero, contained (no crop), centered; scales with hero until hero hits cap */
 .page-header__bg {
   position: absolute;
   top: 0;
@@ -29,8 +41,8 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: right bottom;
+  object-fit: contain;
+  object-position: center center;
   z-index: -1;
   display: block;
   pointer-events: none;
@@ -44,8 +56,8 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: right bottom;
+  object-fit: contain;
+  object-position: center center;
   z-index: -1;
   display: block;
   pointer-events: none;
@@ -101,8 +113,9 @@
 
   .page-header:has(.page-header__bg),
   .page-header:has(video) {
-    min-height: 70vh;
-    max-height: 85vh;
+    min-height: 260px;
+    height: 50vh;
+    max-height: 480px;
     padding: 3rem 1rem;
     overflow: hidden;
   }
