@@ -102,7 +102,7 @@ const Header = ({
       )}
 
       {/* Content */}
-      <Container style={{ position: 'relative', zIndex: 3 }}>
+      <Container className="page-header__content" style={{ position: 'relative', zIndex: 3 }}>
         <Row className="justify-content-center">
           <Col lg={8} className="text-center">
             <HeadingGroup title={title} subtitle={subtitle} />

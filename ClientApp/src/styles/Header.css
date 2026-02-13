@@ -19,20 +19,19 @@
   position: relative;
   overflow: hidden;
   background-color: #0a0a0f;
+  box-sizing: border-box;
 }
 
-/* At 1440px and up: cap hero height, center the hero (no stretch on ultra-wide) */
+/* At 1440px and up: hero and image stop growing – fixed height so they don’t get ridiculous */
 @media (min-width: 1440px) {
   .page-header:has(.page-header__bg),
   .page-header:has(video) {
+    height: 520px;
     max-height: 520px;
-    max-width: 1440px;
-    margin-left: auto;
-    margin-right: auto;
   }
 }
 
-/* Hero image: fill entire hero, contained (no crop), centered; scales with hero until hero hits cap */
+/* Hero image: fill entire hero box, contained (no crop), centered; matches hero height */
 .page-header__bg {
   position: absolute;
   top: 0;
@@ -41,6 +40,8 @@
   bottom: 0;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center center;
   z-index: -1;
@@ -61,6 +62,12 @@
   z-index: -1;
   display: block;
   pointer-events: none;
+}
+
+/* Content: don’t shrink when hero is short (e.g. 425px) */
+.page-header .page-header__content {
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 /* Nav shadow overlay - stronger, over the image, blends into it */
@@ -113,9 +120,8 @@
 
   .page-header:has(.page-header__bg),
   .page-header:has(video) {
-    min-height: 260px;
-    height: 50vh;
-    max-height: 480px;
+    min-height: 300px;
+    height: 55vh;
     padding: 3rem 1rem;
     overflow: hidden;
   }
@@ -126,6 +132,21 @@
 
   .page-header p {
     font-size: 1rem;
+  }
+}
+
+/* Very small screens (e.g. 425px): more room so heading/button aren’t squished */
+@media (max-width: 480px) {
+  .page-header {
+    padding: 2rem 1rem;
+    min-height: 70vh;
+  }
+
+  .page-header:has(.page-header__bg),
+  .page-header:has(video) {
+    min-height: 360px;
+    height: 60vh;
+    padding: 2rem 1rem;
   }
 }
 
