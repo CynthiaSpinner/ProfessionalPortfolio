@@ -22,7 +22,7 @@
   box-sizing: border-box;
 }
 
-/* At 1440px and up: hero and image stop growing – fixed height so they don’t get ridiculous */
+/* At 1440px and up: hero and image stop growing; full image visible, background can show */
 @media (min-width: 1440px) {
   .page-header:has(.page-header__bg),
   .page-header:has(video) {
@@ -31,7 +31,7 @@
   }
 }
 
-/* Hero image: fill entire hero box, contained (no crop), centered; matches hero height */
+/* Hero image: below 1440px fill entire hero (cover, no background visible); never overflow hero */
 .page-header__bg {
   position: absolute;
   top: 0;
@@ -40,9 +40,7 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center center;
   z-index: -1;
   display: block;
@@ -57,11 +55,21 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center center;
   z-index: -1;
   display: block;
   pointer-events: none;
+}
+
+/* At 1440px and up: full image visible, centered, background can show on sides */
+@media (min-width: 1440px) {
+  .page-header__bg {
+    object-fit: contain;
+  }
+  .page-header:has(video) video {
+    object-fit: contain;
+  }
 }
 
 /* Content: don’t shrink when hero is short (e.g. 425px) */
