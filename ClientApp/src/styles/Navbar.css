@@ -9,6 +9,19 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Strip below navbar: shadow bleeds onto this (same color = invisible), particle fall extends past it onto hero */
+.navbar::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: #1a1a1a; /* match navbar background so shadow blends in */
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* Align logo and nav links by baseline (bottom of text); don't clip logo animation */
 .navbar .container {
   display: flex;
@@ -27,45 +40,7 @@
   align-self: center;
 }
 
-/* Glow: contained within logo area only, does not bleed into hero */
-.navbar-brand::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  top: auto;
-  background: radial-gradient(
-      circle at 30% 30%,
-      rgba(129, 140, 248, 0.08) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      circle at 70% 70%,
-      rgba(129, 140, 248, 0.08) 0%,
-      transparent 70%
-    );
-  animation: subtleShift 12s ease-in-out infinite;
-  z-index: -1;
-}
-
-.navbar-brand::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(129, 140, 248, 0.02) 50%,
-    transparent 100%
-  );
-  animation: refinedShimmer 4s ease-in-out infinite;
-  z-index: -1;
-}
+/* No radial/shimmer glow behind logo – was causing discoloration from bottom of letters */
 
 .navbar-brand span {
   font-size: 1.5rem;
@@ -77,8 +52,6 @@
   letter-spacing: -0.02em;
   position: relative;
   vertical-align: baseline;
-  text-shadow: 0 0 20px rgba(129, 140, 248, 0.2),
-    0 0 40px rgba(129, 140, 248, 0.1);
   background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #818cf8 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
