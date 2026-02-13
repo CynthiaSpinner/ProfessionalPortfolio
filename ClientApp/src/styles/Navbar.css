@@ -27,13 +27,15 @@
   align-self: center;
 }
 
+/* Glow: contained within logo area only, does not bleed into hero */
 .navbar-brand::before {
   content: "";
   position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  top: auto;
   background: radial-gradient(
       circle at 30% 30%,
       rgba(129, 140, 248, 0.08) 0%,
