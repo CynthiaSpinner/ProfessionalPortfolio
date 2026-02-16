@@ -1,6 +1,6 @@
 using Portfolio.Models.Portfolio;
 
-namespace Portfolio.Services.Interfaces
+namespace Portfolio.Data.Repositories
 {
     public interface ISkillsCategoryRepository
     {

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Models.Portfolio;
-using Portfolio.Services.Interfaces;
 
 namespace Portfolio.Data.Repositories
 {
