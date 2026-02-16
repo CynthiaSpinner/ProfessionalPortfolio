@@ -606,24 +606,50 @@
                         <span class="text-muted small">Loads Frontend, Backend, Databases, Tools, Practices with your provided skill lists.</span>
                     </div>
                     <hr style="border-color: rgba(129, 140, 248, 0.2);" />
-                    <h6 class="mb-2" style="color: #818cf8 !important;">Existing categories</h6>
-                    <ul class="list-group mb-4" id="skillsCategoryList" style="background: transparent; border-color: rgba(129, 140, 248, 0.2);">
-                        @foreach (var c in ViewBag.SkillsCategories)
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <h6 class="mb-0" style="color: #818cf8 !important;">Existing categories</h6>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnAddSkillsCategory">
+                            <i class="fas fa-plus"></i> Add category
+                        </button>
+                    </div>
+                    <p class="text-muted small mb-2" style="color: #9ca3af !important;">Click <strong>Add category</strong> to create a new one, or <strong>Edit</strong> on a card to update it. Use <strong>Cancel</strong> to close the form.</p>
+                    <div class="row g-3 mb-4" id="skillsCategoryList">
+                        @if (ViewBag.SkillsCategories != null && ((IEnumerable<object>)ViewBag.SkillsCategories).Any())
                         {
-                            var d = (dynamic)c;
-                            var skillCount = d.Skills?.Count ?? 0;
-                            var skillsStr = d.Skills != null ? string.Join("|", (IEnumerable<string>)d.Skills) : "";
-                            <li class="list-group-item d-flex justify-content-between align-items-center" style="background: rgba(10,10,20,0.6); color: #9ca3af; border-color: rgba(129, 140, 248, 0.2);" data-id="@d.Id" data-title="@d.Title" data-description="@(d.Description ?? "")" data-displayorder="@d.DisplayOrder" data-active="@d.IsActive" data-skills="@skillsStr">
-                                <span><strong style="color: #818cf8;">@d.Title</strong> <span class="badge bg-secondary ms-2">@skillCount skills</span></span>
-                                <span>
-                                    <button type="button" class="btn btn-sm btn-outline-primary me-1 editSkillsCatBtn">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger deleteSkillsCatBtn">Delete</button>
-                                </span>
-                            </li>
+                            @foreach (var c in ViewBag.SkillsCategories)
+                            {
+                                var d = (dynamic)c;
+                                var skillCount = d.Skills?.Count ?? 0;
+                                var skillsList = d.Skills != null ? (IEnumerable<string>)d.Skills : new List<string>();
+                                var skillsJson = System.Text.Json.JsonSerializer.Serialize(skillsList);
+                                <div class="col-12 col-sm-6 col-lg-4">
+                                    <div class="card skills-category-row h-100" style="background: rgba(10,10,20,0.6); border: 1px solid rgba(129, 140, 248, 0.2);" data-id="@d.Id" data-title="@d.Title" data-description="@(d.Description ?? "")" data-displayorder="@d.DisplayOrder" data-active="@d.IsActive" data-skills-json="@System.Net.WebUtility.HtmlEncode(skillsJson)">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title mb-2" style="color: #818cf8 !important;">@d.Title</h6>
+                                            <p class="card-text text-muted small mb-2" style="color: #9ca3af !important;"><span class="badge bg-secondary">@skillCount skills</span></p>
+                                            <div class="mt-auto pt-2 d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-primary editSkillsCatBtn"><i class="fas fa-edit"></i> Edit</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger deleteSkillsCatBtn"><i class="fas fa-trash"></i> Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         }
-                    </ul>
-                    <h6 class="mb-2" style="color: #818cf8 !important;">Add or edit category</h6>
-                    <form id="skillsCategoryForm" method="post" asp-action="SaveSkillsCategory" asp-controller="Admin">
+                        else
+                        {
+                            <div class="col-12">
+                                <div class="card" style="background: rgba(10,10,20,0.6); border: 1px solid rgba(129, 140, 248, 0.2);">
+                                    <div class="card-body text-muted" style="color: #9ca3af !important;">No categories yet. Click <strong>Add category</strong> above or use <strong>Load default skills</strong>.</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div id="skillsCategoryFormCard" class="mb-0" style="display: none;">
+                        <h6 class="mb-2" id="skillsFormHeading" style="color: #818cf8 !important;">Add new category</h6>
+                        <div class="card">
+                            <div class="card-body">
+                        <form id="skillsCategoryForm" method="post" asp-action="SaveSkillsCategory" asp-controller="Admin">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" id="skillsCategoryId" value="0" />
                         <div class="mb-3">
@@ -650,9 +676,12 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save category</button>
-                        <button type="button" class="btn btn-secondary ms-2" id="skillsCategoryCancelBtn" style="display: none;">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save category</button>
+                        <button type="button" class="btn btn-secondary ms-2" id="skillsCategoryCancelBtn"><i class="fas fa-times"></i> Cancel</button>
                     </form>
+                            </div>
+                        </div>
+                    </div>
                     }
                     else
                     {
@@ -1018,22 +1047,47 @@
             alert(res.message || (res.success ? 'Done.' : 'Error'));
             if (res.success) window.location.reload();
         });
+        const skillsCategoryFormCard = document.getElementById('skillsCategoryFormCard');
+        const skillsFormHeading = document.getElementById('skillsFormHeading');
+        function showSkillsForm(heading) {
+            if (skillsFormHeading) skillsFormHeading.textContent = heading;
+            if (skillsCategoryFormCard) skillsCategoryFormCard.style.display = 'block';
+            skillsCategoryFormCard?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        function clearSkillsForm() {
+            document.getElementById('skillsCategoryId').value = '0';
+            document.getElementById('skillsCategoryTitle').value = '';
+            document.getElementById('skillsCategoryDescription').value = '';
+            document.getElementById('skillsCategorySkillsText').value = '';
+            document.getElementById('skillsCategoryDisplayOrder').value = '1';
+            document.getElementById('skillsCategoryIsActive').checked = true;
+        }
+        const btnAddSkillsCategory = document.getElementById('btnAddSkillsCategory');
+        if (btnAddSkillsCategory) btnAddSkillsCategory.addEventListener('click', function() {
+            clearSkillsForm();
+            showSkillsForm('Add new category');
+        });
         document.querySelectorAll('.editSkillsCatBtn').forEach(btn => {
             btn.addEventListener('click', function() {
-                const li = this.closest('li');
+                const li = this.closest('.skills-category-row');
                 document.getElementById('skillsCategoryId').value = li.dataset.id;
                 document.getElementById('skillsCategoryTitle').value = li.dataset.title || '';
                 document.getElementById('skillsCategoryDescription').value = li.dataset.description || '';
-                document.getElementById('skillsCategorySkillsText').value = (li.dataset.skills || '').replace(/\|/g, '\n');
+                let skillsText = '';
+                try {
+                    const raw = li.dataset.skillsJson;
+                    if (raw) skillsText = (JSON.parse(raw) || []).join('\n');
+                } catch (_) { skillsText = (li.dataset.skills || '').replace(/\|/g, '\n'); }
+                document.getElementById('skillsCategorySkillsText').value = skillsText;
                 document.getElementById('skillsCategoryDisplayOrder').value = li.dataset.displayorder || '0';
                 document.getElementById('skillsCategoryIsActive').checked = li.dataset.active === 'True';
-                document.getElementById('skillsCategoryCancelBtn').style.display = 'inline-block';
+                showSkillsForm('Editing: ' + (li.dataset.title || ''));
             });
         });
         document.querySelectorAll('.deleteSkillsCatBtn').forEach(btn => {
             btn.addEventListener('click', async function() {
-                const li = this.closest('li');
-                const id = li.dataset.id;
+                const card = this.closest('.skills-category-row');
+                const id = card.dataset.id;
                 if (!confirm('Delete this category?')) return;
                 const token = document.querySelector('#skillsCategoryForm input[name="__RequestVerificationToken"]')?.value;
                 const fd = new FormData();
@@ -1042,18 +1096,13 @@
                 const resp = await fetch('/Admin/DeleteSkillsCategory', { method: 'POST', body: fd });
                 const res = await resp.json();
                 alert(res.message || (res.success ? 'Deleted.' : 'Error'));
-                if (res.success) li.remove();
+                if (res.success) card.closest('.col-12')?.remove();
             });
         });
         const skillsCategoryCancelBtn = document.getElementById('skillsCategoryCancelBtn');
         if (skillsCategoryCancelBtn) skillsCategoryCancelBtn.addEventListener('click', function() {
-            document.getElementById('skillsCategoryId').value = '0';
-            document.getElementById('skillsCategoryTitle').value = '';
-            document.getElementById('skillsCategoryDescription').value = '';
-            document.getElementById('skillsCategorySkillsText').value = '';
-            document.getElementById('skillsCategoryDisplayOrder').value = '1';
-            document.getElementById('skillsCategoryIsActive').checked = true;
-            this.style.display = 'none';
+            clearSkillsForm();
+            if (skillsCategoryFormCard) skillsCategoryFormCard.style.display = 'none';
         });
         const skillsCategoryForm = document.getElementById('skillsCategoryForm');
         if (skillsCategoryForm) skillsCategoryForm.addEventListener('submit', async function(e) {

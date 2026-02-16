@@ -1,0 +1,24 @@
+-- =============================================================================
+-- NAMING CONVENTION: PascalCase for all table and column names
+-- =============================================================================
+-- The app (EF Core / Npgsql) uses C# property names, so PostgreSQL must use
+-- the same: quoted PascalCase (e.g. "SkillsCategories", "Title", "SkillsJson").
+-- Run postgres-check-naming.sql to find any table/column that doesn't match.
+-- =============================================================================
+
+-- Expected tables (DbSet names)
+-- Admins, Abouts, CTASections, CTATemplates, FeaturesSection, FeaturesTemplates,
+-- HeroTemplates, HomePages, Projects, SkillsCategories, SiteSettings, Videos
+-- (Plus owned/related: WorkExperience, Education if they are separate tables.)
+
+-- Expected columns per table (PascalCase; only main tables listed)
+-- SkillsCategories: Id, Title, Description, ImagePath, SkillsJson, DisplayOrder, IsActive
+-- SiteSettings: Id, ShowGraphicDesignLink, ShowDesignLink, UpdatedAt
+-- Admins: Id, Username, Email, PasswordHash, CreatedAt, LastLoginAt, IsActive, Role
+-- HomePages: Id, HeaderTitle, HeaderSubtitle, ... (all PascalCase)
+-- Projects: Id, Title, Description, ImageUrl, ProjectUrl, GithubUrl, TechnologiesJson, CompletionDate
+-- Abouts: Id, Name, Title, Biography, ProfileImageUrl, Email, LinkedInUrl, GithubUrl, InterestsJson
+-- Videos: Id, Title, Description, FilePath, ThumbnailPath, FileType, FileSize, Duration, UploadDate, IsActive, DisplayOrder
+-- FeaturesSections: Id, SectionTitle, SectionSubtitle, Feature1Title, ... DisplayOrder, CreatedAt, UpdatedAt
+-- CTASections: Id, Title, Subtitle, ButtonText, ButtonLink, CreatedAt, UpdatedAt
+-- (HeroTemplates, FeaturesTemplates, CTATemplates: similar PascalCase properties)
