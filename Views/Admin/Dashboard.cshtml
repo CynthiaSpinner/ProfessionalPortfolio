@@ -41,7 +41,7 @@
                 <li>
                     <a href="#home" class="nav-link active" data-section="home">
                         <i class="fas fa-home"></i>
-                        <span>Home Content</span>
+                        <span>Home</span>
                     </a>
                 </li>
                 <li>
@@ -622,8 +622,9 @@
                                 var skillCount = d.Skills?.Count ?? 0;
                                 var skillsList = d.Skills != null ? (IEnumerable<string>)d.Skills : new List<string>();
                                 var skillsJson = System.Text.Json.JsonSerializer.Serialize(skillsList);
+                                var skillsPipe = string.Join("|", skillsList);
                                 <div class="col-12 col-sm-6 col-lg-4">
-                                    <div class="card skills-category-row h-100" style="background: rgba(10,10,20,0.6); border: 1px solid rgba(129, 140, 248, 0.2);" data-id="@d.Id" data-title="@d.Title" data-description="@(d.Description ?? "")" data-displayorder="@d.DisplayOrder" data-active="@d.IsActive" data-skills-json="@System.Net.WebUtility.HtmlEncode(skillsJson)">
+                                    <div class="card skills-category-row h-100" style="background: rgba(10,10,20,0.6); border: 1px solid rgba(129, 140, 248, 0.2);" data-id="@d.Id" data-title="@d.Title" data-description="@(d.Description ?? "")" data-displayorder="@d.DisplayOrder" data-active="@d.IsActive" data-skills-json="@System.Net.WebUtility.HtmlEncode(skillsJson)" data-skills="@System.Net.WebUtility.HtmlEncode(skillsPipe)">
                                         <div class="card-body d-flex flex-column">
                                             <h6 class="card-title mb-2" style="color: #818cf8 !important;">@d.Title</h6>
                                             <p class="card-text text-muted small mb-2" style="color: #9ca3af !important;"><span class="badge bg-secondary">@skillCount skills</span></p>
@@ -725,6 +726,24 @@
                 }
             });
         });
+
+        // On load, activate section from URL hash or sessionStorage (e.g. after Save skills)
+        (function() {
+            let section = (window.location.hash || '').replace(/^#/, '');
+            const stored = sessionStorage.getItem('adminReturnSection');
+            if (stored) {
+                section = stored;
+                sessionStorage.removeItem('adminReturnSection');
+            }
+            if (section && document.getElementById(section)) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                const navLink = document.querySelector('.nav-link[data-section="' + section + '"]');
+                const sectionEl = document.getElementById(section);
+                if (navLink) navLink.classList.add('active');
+                if (sectionEl) sectionEl.classList.add('active');
+            }
+        })();
 
         // Toggle hero edit form
         function toggleHeroEdit() {
@@ -1075,9 +1094,13 @@
                 document.getElementById('skillsCategoryDescription').value = li.dataset.description || '';
                 let skillsText = '';
                 try {
-                    const raw = li.dataset.skillsJson;
-                    if (raw) skillsText = (JSON.parse(raw) || []).join('\n');
-                } catch (_) { skillsText = (li.dataset.skills || '').replace(/\|/g, '\n'); }
+                    const raw = li.getAttribute('data-skills-json') || li.dataset.skillsJson;
+                    if (raw) {
+                        const arr = JSON.parse(raw);
+                        skillsText = Array.isArray(arr) ? arr.join('\n') : String(raw).replace(/\|/g, '\n');
+                    }
+                } catch (_) { }
+                if (!skillsText && li.dataset.skills != null) skillsText = (li.dataset.skills || '').replace(/\|/g, '\n');
                 document.getElementById('skillsCategorySkillsText').value = skillsText;
                 document.getElementById('skillsCategoryDisplayOrder').value = li.dataset.displayorder || '0';
                 document.getElementById('skillsCategoryIsActive').checked = li.dataset.active === 'True';
@@ -1112,7 +1135,10 @@
             const resp = await fetch('/Admin/SaveSkillsCategory', { method: 'POST', body: formData });
             const res = await resp.json();
             alert(res.message || (res.success ? 'Saved.' : 'Error'));
-            if (res.success) window.location.reload();
+            if (res.success) {
+                sessionStorage.setItem('adminReturnSection', 'skills');
+                window.location.reload();
+            }
         });
 
         // Toggle background type
