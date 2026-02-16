@@ -159,7 +159,8 @@ namespace Portfolio.Controllers
             try
             {
                 var skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync();
-                return Json(skillsCategories);
+                var active = skillsCategories.Where(c => c.IsActive).ToList();
+                return Json(active);
             }
             catch (Exception)
             {

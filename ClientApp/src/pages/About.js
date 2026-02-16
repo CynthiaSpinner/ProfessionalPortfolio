@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import Card from "../components/Card";
 import HeadingGroup from "../components/HeadingGroup";
 import CTA from "../components/CTA";
+import SkillsSection from "../components/SkillsSection";
 import "../styles/About.css";
 
 const About = () => {
@@ -55,42 +56,11 @@ const About = () => {
         </Container>
       </section>
 
-      {/* Skills Section */}
-      <section className="skills-section py-5">
-        <Container>
-          <HeadingGroup
-            title="My Skills"
-            subtitle="A comprehensive overview of my technical expertise and professional capabilities"
-            className="text-center mb-5"
-          />
-          <Row className="g-4">
-            <Col md={4}>
-              <Card>
-                <HeadingGroup
-                  title="Frontend Development"
-                  subtitle="React, JavaScript, HTML5, CSS3, Bootstrap"
-                />
-              </Card>
-            </Col>
-            <Col md={4}>
-              <Card>
-                <HeadingGroup
-                  title="Backend Development"
-                  subtitle=".NET Core, C#, RESTful APIs, MySQL"
-                />
-              </Card>
-            </Col>
-            <Col md={4}>
-              <Card>
-                <HeadingGroup
-                  title="Design & Tools"
-                  subtitle="Adobe Creative Suite, UI/UX Design, Git, Docker"
-                />
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+      {/* Skills Section – fetches active categories from API, matrix-style skill reveal */}
+      <SkillsSection
+        title="My Skills"
+        subtitle="A comprehensive overview of my technical expertise and professional capabilities."
+      />
 
       {/* Team Section */}
       <section className="team-section py-5">
