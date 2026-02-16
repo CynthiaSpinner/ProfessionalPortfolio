@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HeadingGroup from "./HeadingGroup";
-import Card from "./Card";
 import SkillReveal from "./SkillReveal";
 import api from "../services/api";
 import "./SkillsSection.css";
@@ -77,7 +76,7 @@ function SkillsSection({ title = "My Skills", subtitle = "A comprehensive overvi
         <Row className="g-4 skills-categories-row">
           {categories.map((cat) => (
             <Col key={cat.id} xs={12} md={6} lg={4} xl={Math.min(12 / categories.length, 12)}>
-              <Card className="skills-category-card h-100">
+              <div className="skills-column">
                 <h3 className="skills-category-title">{cat.title}</h3>
                 {cat.description && <p className="skills-category-desc">{cat.description}</p>}
                 <ul className="skills-list">
@@ -87,7 +86,7 @@ function SkillsSection({ title = "My Skills", subtitle = "A comprehensive overvi
                     </li>
                   ))}
                 </ul>
-              </Card>
+              </div>
             </Col>
           ))}
         </Row>
