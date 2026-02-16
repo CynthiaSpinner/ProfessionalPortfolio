@@ -13,9 +13,9 @@ namespace Portfolio.Models.Portfolio
         public string Title { get; set; }
 
         [StringLength(500)]
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; }
 
         [Column(TypeName = "json")]
         public string SkillsJson { get; set; } = "[]";

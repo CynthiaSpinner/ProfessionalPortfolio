@@ -1254,7 +1254,8 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving skills category");
-                return Json(new { success = false, message = ex.Message });
+                var inner = ex.InnerException?.Message ?? ex.Message;
+                return Json(new { success = false, message = ex.Message, innerException = inner });
             }
         }
 
