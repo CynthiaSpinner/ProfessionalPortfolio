@@ -68,6 +68,12 @@
                         <span>About</span>
                     </a>
                 </li>
+                <li>
+                    <a href="#navigation" class="nav-link" data-section="navigation">
+                        <i class="fas fa-link"></i>
+                        <span>Navigation</span>
+                    </a>
+                </li>
             </ul>
         </nav>
         <div class="sidebar-footer">
@@ -543,6 +549,124 @@
                 </div>
             </div>
         </div>
+
+        <div id="navigation" class="content-section">
+            <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
+                <div class="card-header">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
+                        <i class="fas fa-link"></i>
+                        Navigation links
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted" style="color: #9ca3af !important;">Show or hide the Graphic Design and Design links in the main nav until those pages have more content.</p>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
+                    <form id="navSettingsForm" asp-action="SaveNavSettings" asp-controller="Admin" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showGraphicDesignLink" name="showGraphicDesignLink" value="true" @(ViewBag.NavSettings?.ShowGraphicDesignLink == true ? "checked" : "")>
+                                <label class="form-check-label" for="showGraphicDesignLink" style="color: #9ca3af !important;">Show &quot;Graphic Design&quot; in nav</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showDesignLink" name="showDesignLink" value="true" @(ViewBag.NavSettings?.ShowDesignLink == true ? "checked" : "")>
+                                <label class="form-check-label" for="showDesignLink" style="color: #9ca3af !important;">Show &quot;Design&quot; in nav</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                    }
+                    else
+                    {
+                    <p class="mb-0 small">Graphic Design: @(ViewBag.NavSettings?.ShowGraphicDesignLink == true ? "Shown" : "Hidden") · Design: @(ViewBag.NavSettings?.ShowDesignLink == true ? "Shown" : "Hidden")</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div id="skills" class="content-section">
+            <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
+                <div class="card-header">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
+                        <i class="fas fa-code"></i>
+                        Skills categories
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage skill categories (e.g. Frontend, Backend, Tools). Each category has a title and a list of skills (one per line or comma-separated).</p>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-outline-primary me-2" id="btnLoadDefaultSkills">
+                            <i class="fas fa-download"></i> Load default skills
+                        </button>
+                        <span class="text-muted small">Loads Frontend, Backend, Databases, Tools, Practices with your provided skill lists.</span>
+                    </div>
+                    <hr style="border-color: rgba(129, 140, 248, 0.2);" />
+                    <h6 class="mb-2" style="color: #818cf8 !important;">Existing categories</h6>
+                    <ul class="list-group mb-4" id="skillsCategoryList" style="background: transparent; border-color: rgba(129, 140, 248, 0.2);">
+                        @foreach (var c in ViewBag.SkillsCategories)
+                        {
+                            var d = (dynamic)c;
+                            var skillCount = d.Skills?.Count ?? 0;
+                            var skillsStr = d.Skills != null ? string.Join("|", (IEnumerable<string>)d.Skills) : "";
+                            <li class="list-group-item d-flex justify-content-between align-items-center" style="background: rgba(10,10,20,0.6); color: #9ca3af; border-color: rgba(129, 140, 248, 0.2);" data-id="@d.Id" data-title="@d.Title" data-description="@(d.Description ?? "")" data-displayorder="@d.DisplayOrder" data-active="@d.IsActive" data-skills="@skillsStr">
+                                <span><strong style="color: #818cf8;">@d.Title</strong> <span class="badge bg-secondary ms-2">@skillCount skills</span></span>
+                                <span>
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-1 editSkillsCatBtn">Edit</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger deleteSkillsCatBtn">Delete</button>
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                    <h6 class="mb-2" style="color: #818cf8 !important;">Add or edit category</h6>
+                    <form id="skillsCategoryForm" method="post" asp-action="SaveSkillsCategory" asp-controller="Admin">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" id="skillsCategoryId" value="0" />
+                        <div class="mb-3">
+                            <label for="skillsCategoryTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
+                            <input type="text" class="form-control" id="skillsCategoryTitle" name="title" required maxlength="100" placeholder="e.g. Frontend" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="skillsCategoryDescription" class="form-label" style="color: #9ca3af !important;">Description (optional)</label>
+                            <input type="text" class="form-control" id="skillsCategoryDescription" name="description" maxlength="500" placeholder="e.g. Frontend technologies" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="skillsCategorySkillsText" class="form-label" style="color: #9ca3af !important;">Skills (one per line or comma-separated)</label>
+                            <textarea class="form-control" id="skillsCategorySkillsText" name="skillsText" rows="6" placeholder="React.js&#10;JavaScript&#10;TypeScript" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="skillsCategoryDisplayOrder" class="form-label" style="color: #9ca3af !important;">Display order</label>
+                                <input type="number" class="form-control" id="skillsCategoryDisplayOrder" name="displayOrder" value="1" min="0" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="skillsCategoryIsActive" name="isActive" value="true" checked />
+                                    <label class="form-check-label" for="skillsCategoryIsActive" style="color: #9ca3af !important;">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save category</button>
+                        <button type="button" class="btn btn-secondary ms-2" id="skillsCategoryCancelBtn" style="display: none;">Cancel</button>
+                    </form>
+                    }
+                    else
+                    {
+                    <ul class="list-group" style="background: transparent; border-color: rgba(129, 140, 248, 0.2);">
+                        @foreach (var c in ViewBag.SkillsCategories)
+                        {
+                            var d = (dynamic)c;
+                            <li class="list-group-item" style="background: rgba(10,10,20,0.6); color: #9ca3af; border-color: rgba(129, 140, 248, 0.2);"><strong style="color: #818cf8;">@d.Title</strong> — @(d.Skills?.Count ?? 0) skills</li>
+                        }
+                    </ul>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -869,6 +993,77 @@
                 alert(sectionRes.message || (sectionRes.success ? 'Saved.' : 'Error'));
                 if (sectionRes.success) toggleCTAEdit();
             });
+        });
+
+        const navSettingsForm = document.getElementById('navSettingsForm');
+        if (navSettingsForm) navSettingsForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.set('showGraphicDesignLink', document.getElementById('showGraphicDesignLink').checked ? 'true' : 'false');
+            formData.set('showDesignLink', document.getElementById('showDesignLink').checked ? 'true' : 'false');
+            const resp = await fetch('/Admin/SaveNavSettings', { method: 'POST', body: formData });
+            const res = await resp.json();
+            alert(res.message || (res.success ? 'Saved.' : 'Error'));
+        });
+
+        // ----- Skills categories -----
+        const btnLoadDefaultSkills = document.getElementById('btnLoadDefaultSkills');
+        if (btnLoadDefaultSkills) btnLoadDefaultSkills.addEventListener('click', async function() {
+            if (!confirm('Load default skill categories (Frontend, Backend, Databases, Tools, Practices)? Existing categories with the same title are skipped.')) return;
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+            const fd = new FormData();
+            fd.append('__RequestVerificationToken', token || '');
+            const resp = await fetch('/Admin/LoadDefaultSkills', { method: 'POST', body: fd });
+            const res = await resp.json();
+            alert(res.message || (res.success ? 'Done.' : 'Error'));
+            if (res.success) window.location.reload();
+        });
+        document.querySelectorAll('.editSkillsCatBtn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const li = this.closest('li');
+                document.getElementById('skillsCategoryId').value = li.dataset.id;
+                document.getElementById('skillsCategoryTitle').value = li.dataset.title || '';
+                document.getElementById('skillsCategoryDescription').value = li.dataset.description || '';
+                document.getElementById('skillsCategorySkillsText').value = (li.dataset.skills || '').replace(/\|/g, '\n');
+                document.getElementById('skillsCategoryDisplayOrder').value = li.dataset.displayorder || '0';
+                document.getElementById('skillsCategoryIsActive').checked = li.dataset.active === 'True';
+                document.getElementById('skillsCategoryCancelBtn').style.display = 'inline-block';
+            });
+        });
+        document.querySelectorAll('.deleteSkillsCatBtn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const li = this.closest('li');
+                const id = li.dataset.id;
+                if (!confirm('Delete this category?')) return;
+                const token = document.querySelector('#skillsCategoryForm input[name="__RequestVerificationToken"]')?.value;
+                const fd = new FormData();
+                fd.append('__RequestVerificationToken', token || '');
+                fd.append('id', id);
+                const resp = await fetch('/Admin/DeleteSkillsCategory', { method: 'POST', body: fd });
+                const res = await resp.json();
+                alert(res.message || (res.success ? 'Deleted.' : 'Error'));
+                if (res.success) li.remove();
+            });
+        });
+        const skillsCategoryCancelBtn = document.getElementById('skillsCategoryCancelBtn');
+        if (skillsCategoryCancelBtn) skillsCategoryCancelBtn.addEventListener('click', function() {
+            document.getElementById('skillsCategoryId').value = '0';
+            document.getElementById('skillsCategoryTitle').value = '';
+            document.getElementById('skillsCategoryDescription').value = '';
+            document.getElementById('skillsCategorySkillsText').value = '';
+            document.getElementById('skillsCategoryDisplayOrder').value = '1';
+            document.getElementById('skillsCategoryIsActive').checked = true;
+            this.style.display = 'none';
+        });
+        const skillsCategoryForm = document.getElementById('skillsCategoryForm');
+        if (skillsCategoryForm) skillsCategoryForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.set('isActive', document.getElementById('skillsCategoryIsActive').checked ? 'true' : 'false');
+            const resp = await fetch('/Admin/SaveSkillsCategory', { method: 'POST', body: formData });
+            const res = await resp.json();
+            alert(res.message || (res.success ? 'Saved.' : 'Error'));
+            if (res.success) window.location.reload();
         });
 
         // Toggle background type

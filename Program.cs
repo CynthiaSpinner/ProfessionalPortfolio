@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
+using Portfolio.Data.Repositories;
 using Portfolio.Services;
 using Portfolio.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -26,6 +26,11 @@ builder.Services.AddControllersWithViews();
 // Register application services
 builder.Services.AddScoped<IHomePageService, HomePageService>();
 builder.Services.AddScoped<IFileService, FileService>();
+// Repositories (MVC repository pattern – data access in repositories, controllers stay thin)
+builder.Services.AddScoped<ISkillsCategoryRepository, SkillsCategoryRepository>();
+builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
+builder.Services.AddScoped<IFeaturesSectionRepository, FeaturesSectionRepository>();
+builder.Services.AddScoped<ICTASectionRepository, CTASectionRepository>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<WebSocketService>();
 

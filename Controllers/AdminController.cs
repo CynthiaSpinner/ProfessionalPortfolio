@@ -20,14 +20,31 @@ namespace Portfolio.Controllers
         private readonly IConfiguration _configuration;
         private readonly IHomePageService _homePageService;
         private readonly WebSocketService _webSocketService;
+        private readonly ISkillsCategoryRepository _skillsCategoryRepository;
+        private readonly ISiteSettingsRepository _siteSettingsRepository;
+        private readonly IFeaturesSectionRepository _featuresSectionRepository;
+        private readonly ICTASectionRepository _ctaSectionRepository;
 
-        public AdminController(PortfolioContext context, ILogger<AdminController> logger, IConfiguration configuration, IHomePageService homePageService, WebSocketService webSocketService)
+        public AdminController(
+            PortfolioContext context,
+            ILogger<AdminController> logger,
+            IConfiguration configuration,
+            IHomePageService homePageService,
+            WebSocketService webSocketService,
+            ISkillsCategoryRepository skillsCategoryRepository,
+            ISiteSettingsRepository siteSettingsRepository,
+            IFeaturesSectionRepository featuresSectionRepository,
+            ICTASectionRepository ctaSectionRepository)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
             _homePageService = homePageService;
             _webSocketService = webSocketService;
+            _skillsCategoryRepository = skillsCategoryRepository;
+            _siteSettingsRepository = siteSettingsRepository;
+            _featuresSectionRepository = featuresSectionRepository;
+            _ctaSectionRepository = ctaSectionRepository;
         }
 
         private static bool IsBcryptHash(string hash)
@@ -313,6 +330,12 @@ namespace Portfolio.Controllers
             {
                 var homePage = await _homePageService.GetHomePageAsync();
                 ViewBag.HomePage = homePage;
+                SiteSettings? navSettings = null;
+                try { navSettings = await _siteSettingsRepository.GetFirstOrDefaultAsync(); } catch { /* table may not exist yet */ }
+                ViewBag.NavSettings = navSettings ?? new SiteSettings();
+                List<SkillsCategory> skillsCategories = new List<SkillsCategory>();
+                try { skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync(); } catch { }
+                ViewBag.SkillsCategories = skillsCategories;
                 ViewBag.UserRole = User.IsInRole("ReadOnly") ? "ReadOnly" : "Admin";
                 ViewBag.IsReadOnly = User.IsInRole("ReadOnly");
                 return View();
@@ -690,11 +713,11 @@ namespace Portfolio.Controllers
                     return Json(new { success = false, message = string.Join(", ", errors) });
                 }
 
-                var featuresSection = await _context.FeaturesSections.FirstOrDefaultAsync();
+                var featuresSection = await _featuresSectionRepository.GetFirstOrDefaultAsync();
                 if (featuresSection == null)
                 {
                     featuresSection = new FeaturesSection();
-                    _context.FeaturesSections.Add(featuresSection);
+                    await _featuresSectionRepository.AddAsync(featuresSection);
                 }
 
                 featuresSection.SectionTitle = model.SectionTitle ?? "Key Skills & Technologies";
@@ -718,7 +741,7 @@ namespace Portfolio.Controllers
                 featuresSection.DisplayOrder = model.DisplayOrder;
                 featuresSection.UpdatedAt = DateTime.UtcNow;
 
-                await _context.SaveChangesAsync();
+                await _featuresSectionRepository.UpdateAsync(featuresSection);
                 await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "featuresDataUpdated" }));
 
                 return Json(new { success = true, message = "Features section saved successfully!" });
@@ -736,7 +759,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var featuresSection = await _context.FeaturesSections.FirstOrDefaultAsync();
+                var featuresSection = await _featuresSectionRepository.GetFirstOrDefaultAsync();
                 if (featuresSection == null)
                 {
                     return Json(new { success = false, message = "Features section not found.", data = (object?)null });
@@ -954,18 +977,29 @@ namespace Portfolio.Controllers
                     var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                     return Json(new { success = false, message = string.Join(", ", errors) });
                 }
-                var ctaSection = await _context.CTASections.FirstOrDefaultAsync();
+                var ctaSection = await _ctaSectionRepository.GetFirstOrDefaultAsync();
                 if (ctaSection == null)
                 {
-                    ctaSection = new CTASection { CreatedAt = DateTime.UtcNow };
-                    _context.CTASections.Add(ctaSection);
+                    ctaSection = new CTASection
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        Title = model.Title ?? "",
+                        Subtitle = model.Subtitle ?? "",
+                        ButtonText = model.ButtonText ?? "",
+                        ButtonLink = model.ButtonLink ?? "",
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    await _ctaSectionRepository.AddAsync(ctaSection);
                 }
-                ctaSection.Title = model.Title ?? "";
-                ctaSection.Subtitle = model.Subtitle ?? "";
-                ctaSection.ButtonText = model.ButtonText ?? "";
-                ctaSection.ButtonLink = model.ButtonLink ?? "";
-                ctaSection.UpdatedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                else
+                {
+                    ctaSection.Title = model.Title ?? "";
+                    ctaSection.Subtitle = model.Subtitle ?? "";
+                    ctaSection.ButtonText = model.ButtonText ?? "";
+                    ctaSection.ButtonLink = model.ButtonLink ?? "";
+                    ctaSection.UpdatedAt = DateTime.UtcNow;
+                    await _ctaSectionRepository.UpdateAsync(ctaSection);
+                }
                 await _webSocketService.BroadcastMessageAsync("{\"type\":\"ctaDataUpdated\",\"timestamp\":\"" + DateTime.UtcNow.ToString("O") + "\"}");
                 return Json(new { success = true, message = "CTA section saved successfully!" });
             }
@@ -982,7 +1016,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var ctaSection = await _context.CTASections.FirstOrDefaultAsync();
+                var ctaSection = await _ctaSectionRepository.GetFirstOrDefaultAsync();
                 if (ctaSection == null)
                     return Json(new { success = false, message = "No CTA section found." });
                 return Json(new
@@ -1148,6 +1182,122 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting CTA template");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveNavSettings([FromForm] bool showGraphicDesignLink, [FromForm] bool showDesignLink)
+        {
+            try
+            {
+                var settings = await _siteSettingsRepository.GetFirstOrDefaultAsync();
+                if (settings == null)
+                {
+                    settings = new SiteSettings();
+                    await _siteSettingsRepository.AddAsync(settings);
+                }
+                settings.ShowGraphicDesignLink = showGraphicDesignLink;
+                settings.ShowDesignLink = showDesignLink;
+                settings.UpdatedAt = DateTime.UtcNow;
+                await _siteSettingsRepository.UpdateAsync(settings);
+                return Json(new { success = true, message = "Navigation settings saved." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving nav settings");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveSkillsCategory([FromForm] int? id, [FromForm] string title, [FromForm] string? description, [FromForm] string? skillsText, [FromForm] int displayOrder, [FromForm] bool isActive)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(title))
+                    return Json(new { success = false, message = "Title is required." });
+                var skillsList = ParseSkillsText(skillsText ?? "");
+                SkillsCategory cat;
+                if (id.HasValue && id.Value > 0)
+                {
+                    cat = await _skillsCategoryRepository.GetByIdAsync(id.Value);
+                    if (cat == null) return Json(new { success = false, message = "Category not found." });
+                    cat.Title = title.Trim();
+                    cat.Description = description?.Trim() ?? "";
+                    cat.Skills = skillsList;
+                    cat.DisplayOrder = displayOrder;
+                    cat.IsActive = isActive;
+                    cat.ImagePath = cat.ImagePath ?? "";
+                    await _skillsCategoryRepository.UpdateAsync(cat);
+                }
+                else
+                {
+                    cat = new SkillsCategory
+                    {
+                        Title = title.Trim(),
+                        Description = description?.Trim() ?? "",
+                        Skills = skillsList,
+                        DisplayOrder = displayOrder,
+                        IsActive = isActive,
+                        ImagePath = ""
+                    };
+                    cat = await _skillsCategoryRepository.AddAsync(cat);
+                }
+                return Json(new { success = true, message = "Skills category saved.", id = cat.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving skills category");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private static List<string> ParseSkillsText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return new List<string>();
+            return text.Split(new[] { '\n', '\r', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .Where(s => s.Length > 0)
+                .ToList();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSkillsCategory([FromForm] int id)
+        {
+            try
+            {
+                var cat = await _skillsCategoryRepository.GetByIdAsync(id);
+                if (cat == null) return Json(new { success = false, message = "Category not found." });
+                await _skillsCategoryRepository.DeleteAsync(cat);
+                return Json(new { success = true, message = "Category deleted." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting skills category");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoadDefaultSkills([FromForm] string? __RequestVerificationToken)
+        {
+            try
+            {
+                await _skillsCategoryRepository.LoadDefaultCategoriesIfMissingAsync();
+                return Json(new { success = true, message = "Default skills categories loaded. Refresh the page to see them." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading default skills");
                 return Json(new { success = false, message = ex.Message });
             }
         }

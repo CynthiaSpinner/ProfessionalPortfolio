@@ -12,12 +12,27 @@ namespace Portfolio.Controllers
     {
         private readonly PortfolioContext _context;
         private readonly IHomePageService _homePageService;
+        private readonly ISkillsCategoryRepository _skillsCategoryRepository;
+        private readonly ISiteSettingsRepository _siteSettingsRepository;
+        private readonly IFeaturesSectionRepository _featuresSectionRepository;
+        private readonly ICTASectionRepository _ctaSectionRepository;
         private readonly ILogger<PortfolioController> _logger;
 
-        public PortfolioController(PortfolioContext context, IHomePageService homePageService, ILogger<PortfolioController> logger)
+        public PortfolioController(
+            PortfolioContext context,
+            IHomePageService homePageService,
+            ISkillsCategoryRepository skillsCategoryRepository,
+            ISiteSettingsRepository siteSettingsRepository,
+            IFeaturesSectionRepository featuresSectionRepository,
+            ICTASectionRepository ctaSectionRepository,
+            ILogger<PortfolioController> logger)
         {
             _context = context;
             _homePageService = homePageService;
+            _skillsCategoryRepository = skillsCategoryRepository;
+            _siteSettingsRepository = siteSettingsRepository;
+            _featuresSectionRepository = featuresSectionRepository;
+            _ctaSectionRepository = ctaSectionRepository;
             _logger = logger;
         }
 
@@ -31,7 +46,7 @@ namespace Portfolio.Controllers
         // GET: Portfolio/Skills
         public async Task<IActionResult> Skills()
         {
-            var skillsCategories = await _context.SkillsCategories.ToListAsync();
+            var skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync();
             return View(skillsCategories);
         }
 
@@ -130,7 +145,7 @@ namespace Portfolio.Controllers
                 var projects = await _context.Projects.ToListAsync();
                 return Json(projects);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load projects data" });
             }
@@ -142,10 +157,10 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var skillsCategories = await _context.SkillsCategories.ToListAsync();
+                var skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync();
                 return Json(skillsCategories);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load skills data" });
             }
@@ -160,7 +175,7 @@ namespace Portfolio.Controllers
                 var about = await _context.Abouts.FirstOrDefaultAsync();
                 return Json(about);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load about data" });
             }
@@ -172,7 +187,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var section = await _context.FeaturesSections.FirstOrDefaultAsync();
+                var section = await _featuresSectionRepository.GetFirstOrDefaultAsync();
                 if (section == null)
                 {
                     return Json(new
@@ -201,7 +216,7 @@ namespace Portfolio.Controllers
                     lastModified = section.UpdatedAt
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load features data" });
             }
@@ -213,7 +228,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var section = await _context.CTASections.FirstOrDefaultAsync();
+                var section = await _ctaSectionRepository.GetFirstOrDefaultAsync();
                 if (section == null)
                 {
                     return Json(new
@@ -234,9 +249,31 @@ namespace Portfolio.Controllers
                     lastModified = section.UpdatedAt ?? section.CreatedAt
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load CTA data" });
+            }
+        }
+
+        // GET: api/portfolio/nav-settings (public - which nav links to show)
+        [HttpGet("api/portfolio/nav-settings")]
+        public async Task<IActionResult> GetNavSettings()
+        {
+            try
+            {
+                var settings = await _siteSettingsRepository.GetFirstOrDefaultAsync();
+                if (settings == null)
+                    return Json(new { showGraphicDesignLink = true, showDesignLink = true });
+                return Json(new
+                {
+                    showGraphicDesignLink = settings.ShowGraphicDesignLink,
+                    showDesignLink = settings.ShowDesignLink
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Nav settings not available");
+                return Json(new { showGraphicDesignLink = true, showDesignLink = true });
             }
         }
     }
