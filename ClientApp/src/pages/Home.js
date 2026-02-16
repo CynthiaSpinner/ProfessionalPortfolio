@@ -202,8 +202,6 @@ const Home = () => {
       />
 
       <SkillsTeaser
-        title="My Skills"
-        subtitle="A quick look at my technical expertise and how I can help bring your ideas to life."
         seeMoreHref="/about#skills"
         seeMoreText="See full skills"
       />

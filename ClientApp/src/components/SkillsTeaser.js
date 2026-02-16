@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
-import HeadingGroup from "./HeadingGroup";
 import SkillReveal from "./SkillReveal";
 import api from "../services/api";
 import "./SkillsTeaser.css";
@@ -8,8 +7,6 @@ import "./SkillsTeaser.css";
 const SKILLS_PER_COLUMN = 4;
 
 function SkillsTeaser({
-  title = "My Skills",
-  subtitle = "A quick look at my technical expertise and how I can help bring your ideas to life.",
   seeMoreHref = "/about",
   seeMoreText = "See full skills",
 }) {
@@ -46,7 +43,6 @@ function SkillsTeaser({
     return (
       <section className="skills-teaser py-5">
         <Container>
-          <HeadingGroup title={title} subtitle={subtitle} className="text-center mb-4" />
           <div className="skills-teaser-loading text-center">Loading…</div>
         </Container>
       </section>
@@ -57,7 +53,6 @@ function SkillsTeaser({
     return (
       <section className="skills-teaser py-5">
         <Container>
-          <HeadingGroup title={title} subtitle={subtitle} className="text-center mb-4" />
           <div className="text-center">
             <a href={seeMoreHref} className="skills-teaser-see-more">{seeMoreText}</a>
           </div>
@@ -69,7 +64,6 @@ function SkillsTeaser({
   return (
     <section className="skills-teaser py-5">
       <Container>
-        <HeadingGroup title={title} subtitle={subtitle} className="text-center mb-4" />
         <div className="skills-teaser-row">
           {categories.map((cat) => (
             <div key={cat.id} className="skills-teaser-column">
