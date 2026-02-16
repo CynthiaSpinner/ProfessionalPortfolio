@@ -4,7 +4,6 @@ import HeadingGroup from "../components/HeadingGroup";
 import Footer from "../components/Footer";
 import Card from "../components/Card";
 import Header from "../components/Header";
-import Button from "../components/Button";
 import SkillsTeaser from "../components/SkillsTeaser";
 import "../styles/Home.css";
 import CTA from "../components/CTA";
