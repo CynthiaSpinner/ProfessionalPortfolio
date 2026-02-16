@@ -289,6 +289,9 @@ bld/
 *.userosscache
 *.sln.docstates
 
+# ASP.NET Core dev HTTPS certs (local, do not commit)
+.aspnet/
+
 # Cursor AI
 .cursor/
 
