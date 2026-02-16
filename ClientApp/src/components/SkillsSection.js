@@ -70,7 +70,7 @@ function SkillsSection({ title = "My Skills", subtitle = "A comprehensive overvi
   }
 
   return (
-    <section className="skills-section py-5">
+    <section id="skills" className="skills-section py-5">
       <Container>
         <HeadingGroup title={title} subtitle={subtitle} className="text-center mb-5" />
         <Row className="g-4 skills-categories-row">
