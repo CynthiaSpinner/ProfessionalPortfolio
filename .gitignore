@@ -299,3 +299,7 @@ bld/
 appsettings.json
 appsettings.Development.json
 appsettings.Azure.json
+
+# Migrations and DB scripts (managed separately)
+Migrations/
+scripts/

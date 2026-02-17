@@ -201,10 +201,7 @@ const Home = () => {
         showButtons={true}
       />
 
-      <SkillsTeaser
-        seeMoreHref="/about#skills"
-        seeMoreText="See full skills"
-      />
+      <SkillsTeaser seeMoreHref="/about#skills" />
 
       <section className="features-section py-5">
         <Container>

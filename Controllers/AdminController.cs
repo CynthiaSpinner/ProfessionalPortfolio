@@ -337,6 +337,7 @@ namespace Portfolio.Controllers
                 List<SkillsCategory> skillsCategories = new List<SkillsCategory>();
                 try { skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync(); } catch { }
                 ViewBag.SkillsCategories = skillsCategories;
+                ViewBag.SkillsTeaserLinkText = skillsCategories.FirstOrDefault()?.TeaserLinkText;
                 ViewBag.UserRole = User.IsInRole("ReadOnly") ? "ReadOnly" : "Admin";
                 ViewBag.IsReadOnly = User.IsInRole("ReadOnly");
                 return View();
@@ -1209,6 +1210,28 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving nav settings");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveSkillsLinkText([FromForm] string? linkText)
+        {
+            try
+            {
+                var categories = await _skillsCategoryRepository.GetAllOrderedAsync();
+                var first = categories.FirstOrDefault();
+                if (first == null)
+                    return Json(new { success = false, message = "Add at least one skills category first." });
+                first.TeaserLinkText = string.IsNullOrWhiteSpace(linkText) ? null : linkText.Trim();
+                await _skillsCategoryRepository.UpdateAsync(first);
+                return Json(new { success = true, message = "Skills teaser link text saved." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving skills link text");
                 return Json(new { success = false, message = ex.Message });
             }
         }

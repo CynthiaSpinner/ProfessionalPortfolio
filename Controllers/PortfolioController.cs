@@ -160,7 +160,9 @@ namespace Portfolio.Controllers
             {
                 var skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync();
                 var active = skillsCategories.Where(c => c.IsActive).ToList();
-                return Json(active);
+                var linkText = skillsCategories.FirstOrDefault()?.TeaserLinkText?.Trim();
+                if (string.IsNullOrEmpty(linkText)) linkText = "View what I spin?";
+                return Json(new { categories = active, linkText });
             }
             catch (Exception)
             {

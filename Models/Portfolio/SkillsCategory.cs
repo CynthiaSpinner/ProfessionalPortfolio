@@ -30,5 +30,9 @@ namespace Portfolio.Models.Portfolio
         public int DisplayOrder { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        /// <summary>Link text for the skills teaser on the home page (e.g. "View what I spin?"). Stored on the first category; used globally for the teaser.</summary>
+        [StringLength(200)]
+        public string? TeaserLinkText { get; set; }
     }
 }

@@ -6,11 +6,9 @@ import "./SkillsTeaser.css";
 
 const SKILLS_PER_COLUMN = 4;
 
-function SkillsTeaser({
-  seeMoreHref = "/about",
-  seeMoreText = "See full skills",
-}) {
+function SkillsTeaser({ seeMoreHref = "/about#skills" }) {
   const [categories, setCategories] = useState([]);
+  const [linkText, setLinkText] = useState("View what I spin?");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,14 +19,16 @@ function SkillsTeaser({
       .then((res) => {
         if (cancelled) return;
         const data = res.data;
-        const list = Array.isArray(data)
-          ? data.map((c) => ({
+        const raw = data?.categories ?? (Array.isArray(data) ? data : []);
+        const list = Array.isArray(raw)
+          ? raw.map((c) => ({
               id: c.id,
               title: c.title || c.name,
               skills: Array.isArray(c.skills) ? c.skills : (c.skillsJson ? JSON.parse(c.skillsJson || "[]") : []),
             }))
           : [];
         setCategories(list);
+        if (data?.linkText != null && data.linkText !== "") setLinkText(data.linkText);
       })
       .catch(() => {
         if (!cancelled) setError(true);
@@ -54,7 +54,7 @@ function SkillsTeaser({
       <section className="skills-teaser py-5">
         <Container>
           <div className="text-center">
-            <a href={seeMoreHref} className="skills-teaser-see-more">{seeMoreText}</a>
+            <a href={seeMoreHref} className="skills-teaser-see-more">{linkText}</a>
           </div>
         </Container>
       </section>
@@ -79,7 +79,7 @@ function SkillsTeaser({
           ))}
         </div>
         <div className="skills-teaser-see-more-wrap text-center mt-4">
-          <a href={seeMoreHref} className="skills-teaser-see-more">{seeMoreText}</a>
+          <a href={seeMoreHref} className="skills-teaser-see-more">{linkText}</a>
         </div>
       </Container>
     </section>

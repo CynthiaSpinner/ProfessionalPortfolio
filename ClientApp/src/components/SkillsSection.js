@@ -17,8 +17,9 @@ function SkillsSection({ title = "My Skills", subtitle = "A comprehensive overvi
       .then((res) => {
         if (cancelled) return;
         const data = res.data;
-        const list = Array.isArray(data)
-          ? data.map((c) => ({
+        const raw = data?.categories ?? (Array.isArray(data) ? data : []);
+        const list = Array.isArray(raw)
+          ? raw.map((c) => ({
               id: c.id,
               title: c.title || c.name,
               description: c.description || "",

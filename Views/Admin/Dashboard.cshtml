@@ -599,6 +599,18 @@
                     <p class="text-muted" style="color: #9ca3af !important;">Manage skill categories (e.g. Frontend, Backend, Tools). Each category has a title and a list of skills (one per line or comma-separated).</p>
                     @if (ViewBag.IsReadOnly != true)
                     {
+                    <div class="mb-4">
+                        <h6 class="mb-2" style="color: #818cf8 !important;">Link text (skills teaser on Home)</h6>
+                        <p class="text-muted small mb-2" style="color: #9ca3af !important;">Text for the link below the skills preview on the home page (e.g. &quot;View what I spin?&quot;).</p>
+                        <form id="skillsLinkTextForm" asp-action="SaveSkillsLinkText" asp-controller="Admin" method="post" class="d-flex flex-wrap gap-2 align-items-end">
+                            @Html.AntiForgeryToken()
+                            <div class="flex-grow-1" style="min-width: 200px;">
+                                <input type="text" class="form-control" id="skillsLinkTextInput" name="linkText" maxlength="200" placeholder="View what I spin?" value="@(ViewBag.SkillsTeaserLinkText ?? "")" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save</button>
+                        </form>
+                    </div>
+                    <hr style="border-color: rgba(129, 140, 248, 0.2);" />
                     <div class="mb-3">
                         <button type="button" class="btn btn-outline-primary me-2" id="btnLoadDefaultSkills">
                             <i class="fas fa-download"></i> Load default skills
@@ -1050,6 +1062,15 @@
             formData.set('showGraphicDesignLink', document.getElementById('showGraphicDesignLink').checked ? 'true' : 'false');
             formData.set('showDesignLink', document.getElementById('showDesignLink').checked ? 'true' : 'false');
             const resp = await fetch('/Admin/SaveNavSettings', { method: 'POST', body: formData });
+            const res = await resp.json();
+            alert(res.message || (res.success ? 'Saved.' : 'Error'));
+        });
+
+        const skillsLinkTextForm = document.getElementById('skillsLinkTextForm');
+        if (skillsLinkTextForm) skillsLinkTextForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const resp = await fetch('/Admin/SaveSkillsLinkText', { method: 'POST', body: formData });
             const res = await resp.json();
             alert(res.message || (res.success ? 'Saved.' : 'Error'));
         });
