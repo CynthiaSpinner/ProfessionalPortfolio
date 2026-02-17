@@ -1157,6 +1157,8 @@ namespace Portfolio.Controllers
             try
             {
                 var (success, message) = await _siteSettingsService.SaveSkillsLinkTextAsync(linkText);
+                if (success)
+                    await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "skillsDataUpdated" }));
                 return Json(new { success, message });
             }
             catch (Exception ex)
@@ -1174,6 +1176,8 @@ namespace Portfolio.Controllers
             try
             {
                 var (success, message, categoryId) = await _skillsCategoryService.SaveCategoryAsync(id, title, description, skillsText, displayOrder, isActive);
+                if (success)
+                    await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "skillsDataUpdated" }));
                 return Json(new { success, message, id = categoryId });
             }
             catch (Exception ex)
@@ -1191,6 +1195,8 @@ namespace Portfolio.Controllers
             try
             {
                 var (success, message) = await _skillsCategoryService.DeleteCategoryAsync(id);
+                if (success)
+                    await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "skillsDataUpdated" }));
                 return Json(new { success, message });
             }
             catch (Exception ex)

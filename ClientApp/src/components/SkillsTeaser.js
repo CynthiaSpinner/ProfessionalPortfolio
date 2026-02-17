@@ -6,7 +6,7 @@ import "./SkillsTeaser.css";
 
 const SKILLS_PER_COLUMN = 4;
 
-function SkillsTeaser({ seeMoreHref = "/about#skills" }) {
+function SkillsTeaser({ seeMoreHref = "/about#skills", refreshKey = 0 }) {
   const [categories, setCategories] = useState([]);
   const [linkText, setLinkText] = useState("View what I spin?");
   const [loading, setLoading] = useState(true);
@@ -14,6 +14,7 @@ function SkillsTeaser({ seeMoreHref = "/about#skills" }) {
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
     api
       .get("/portfolio/skills")
       .then((res) => {
@@ -37,7 +38,7 @@ function SkillsTeaser({ seeMoreHref = "/about#skills" }) {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [refreshKey]);
 
   if (loading) {
     return (

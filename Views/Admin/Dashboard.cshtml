@@ -915,15 +915,15 @@
         }
         async function deleteFeaturesTemplate() {
             const nickname = document.getElementById('featuresTemplateNickname').value.trim();
-            if (!nickname) { alert('Select or enter a template nickname to delete.'); return; }
+            if (!nickname) { showNotification('Error!', 'Select or enter a template nickname to delete.', 'error'); return; }
             const t = featuresTemplatesList.find(x => (x.nickname || '').toLowerCase() === nickname.toLowerCase());
-            if (!t) { alert('Template not found.'); return; }
+            if (!t) { showNotification('Error!', 'Template not found.', 'error'); return; }
             if (!confirm('Delete template "' + nickname + '"?')) return;
             const token = document.querySelector('#featuresForm input[name="__RequestVerificationToken"]').value;
             const fd = new FormData(); fd.append('__RequestVerificationToken', token); fd.append('id', t.id);
             const response = await fetch('/Admin/DeleteFeaturesTemplate', { method: 'POST', body: fd });
             const result = await response.json();
-            alert(result.message || (result.success ? 'Deleted.' : 'Error'));
+            showNotification(result.success ? 'Success!' : 'Error!', result.message || (result.success ? 'Deleted.' : 'Error'), result.success ? 'success' : 'error');
             if (result.success) { clearFeaturesTemplateSelection(); loadFeaturesTemplates(); }
         }
         document.addEventListener('DOMContentLoaded', function() {
@@ -942,12 +942,12 @@
                     formData.append('Feature3Title', formData.get('Feature3Title')); formData.append('Feature3Subtitle', formData.get('Feature3Subtitle')); formData.append('Feature3Description', formData.get('Feature3Description')); formData.append('Feature3Link', formData.get('Feature3Link')); formData.append('Feature3LinkText', formData.get('Feature3LinkText'));
                     const saveResp = await fetch(t ? '/Admin/SaveFeaturesTemplate' : '/Admin/SaveFeaturesTemplate', { method: 'POST', body: formData });
                     const saveRes = await saveResp.json();
-                    if (!saveRes.success) { alert(saveRes.message); return; }
+                    if (!saveRes.success) { showNotification('Error!', saveRes.message, 'error'); return; }
                 }
                 const sectionFormData = new FormData(this);
                 const sectionResp = await fetch('/Admin/SaveFeaturesSection', { method: 'POST', body: sectionFormData });
                 const sectionRes = await sectionResp.json();
-                alert(sectionRes.message || (sectionRes.success ? 'Saved.' : 'Error'));
+                showNotification(sectionRes.success ? 'Success!' : 'Error!', sectionRes.message || (sectionRes.success ? 'Saved.' : 'Error'), sectionRes.success ? 'success' : 'error');
                 if (sectionRes.success) toggleFeaturesEdit();
             });
         });
@@ -1023,15 +1023,15 @@
         }
         async function deleteCTATemplate() {
             const nickname = document.getElementById('ctaTemplateNickname').value.trim();
-            if (!nickname) { alert('Select or enter a template nickname to delete.'); return; }
+            if (!nickname) { showNotification('Error!', 'Select or enter a template nickname to delete.', 'error'); return; }
             const t = ctaTemplatesList.find(x => (x.nickname || '').toLowerCase() === nickname.toLowerCase());
-            if (!t) { alert('Template not found.'); return; }
+            if (!t) { showNotification('Error!', 'Template not found.', 'error'); return; }
             if (!confirm('Delete template "' + nickname + '"?')) return;
             const token = document.querySelector('#ctaForm input[name="__RequestVerificationToken"]').value;
             const fd = new FormData(); fd.append('__RequestVerificationToken', token); fd.append('id', t.id);
             const response = await fetch('/Admin/DeleteCTATemplate', { method: 'POST', body: fd });
             const result = await response.json();
-            alert(result.message || (result.success ? 'Deleted.' : 'Error'));
+            showNotification(result.success ? 'Success!' : 'Error!', result.message || (result.success ? 'Deleted.' : 'Error'), result.success ? 'success' : 'error');
             if (result.success) { clearCTATemplateSelection(); loadCTATemplates(); }
         }
         document.addEventListener('DOMContentLoaded', function() {
@@ -1050,7 +1050,7 @@
                 }
                 const sectionResp = await fetch('/Admin/SaveCTASection', { method: 'POST', body: formData });
                 const sectionRes = await sectionResp.json();
-                alert(sectionRes.message || (sectionRes.success ? 'Saved.' : 'Error'));
+                showNotification(sectionRes.success ? 'Success!' : 'Error!', sectionRes.message || (sectionRes.success ? 'Saved.' : 'Error'), sectionRes.success ? 'success' : 'error');
                 if (sectionRes.success) toggleCTAEdit();
             });
         });
@@ -1063,7 +1063,7 @@
             formData.set('showDesignLink', document.getElementById('showDesignLink').checked ? 'true' : 'false');
             const resp = await fetch('/Admin/SaveNavSettings', { method: 'POST', body: formData });
             const res = await resp.json();
-            alert(res.message || (res.success ? 'Saved.' : 'Error'));
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Saved.' : 'Error'), res.success ? 'success' : 'error');
         });
 
         const skillsLinkTextForm = document.getElementById('skillsLinkTextForm');
@@ -1072,7 +1072,7 @@
             const formData = new FormData(this);
             const resp = await fetch('/Admin/SaveSkillsLinkText', { method: 'POST', body: formData });
             const res = await resp.json();
-            alert(res.message || (res.success ? 'Saved.' : 'Error'));
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Saved.' : 'Error'), res.success ? 'success' : 'error');
         });
 
         // ----- Skills categories -----
@@ -1084,7 +1084,7 @@
             fd.append('__RequestVerificationToken', token || '');
             const resp = await fetch('/Admin/LoadDefaultSkills', { method: 'POST', body: fd });
             const res = await resp.json();
-            alert(res.message || (res.success ? 'Done.' : 'Error'));
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Done.' : 'Error'), res.success ? 'success' : 'error');
             if (res.success) window.location.reload();
         });
         const skillsCategoryFormCard = document.getElementById('skillsCategoryFormCard');
@@ -1139,7 +1139,7 @@
                 fd.append('id', id);
                 const resp = await fetch('/Admin/DeleteSkillsCategory', { method: 'POST', body: fd });
                 const res = await resp.json();
-                alert(res.message || (res.success ? 'Deleted.' : 'Error'));
+                showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Deleted.' : 'Error'), res.success ? 'success' : 'error');
                 if (res.success) card.closest('.col-12')?.remove();
             });
         });
@@ -1155,7 +1155,7 @@
             formData.set('isActive', document.getElementById('skillsCategoryIsActive').checked ? 'true' : 'false');
             const resp = await fetch('/Admin/SaveSkillsCategory', { method: 'POST', body: formData });
             const res = await resp.json();
-            alert(res.message || (res.success ? 'Saved.' : 'Error'));
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Saved.' : 'Error'), res.success ? 'success' : 'error');
             if (res.success) {
                 sessionStorage.setItem('adminReturnSection', 'skills');
                 window.location.reload();

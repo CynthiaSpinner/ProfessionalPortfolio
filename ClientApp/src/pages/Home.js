@@ -43,6 +43,7 @@ const Home = () => {
   });
   const [featuresData, setFeaturesData] = useState(defaultFeatures);
   const [ctaData, setCtaData] = useState(defaultCTA);
+  const [skillsRefreshKey, setSkillsRefreshKey] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const fetchHeroData = useCallback(async () => {
@@ -122,6 +123,8 @@ const Home = () => {
               fetchFeaturesData();
             } else if (data.type === 'ctaDataUpdated') {
               fetchCTAData();
+            } else if (data.type === 'skillsDataUpdated') {
+              setSkillsRefreshKey((k) => k + 1);
             }
           } catch (e) {
             console.error('WebSocket message parse error:', e);
@@ -201,7 +204,7 @@ const Home = () => {
         showButtons={true}
       />
 
-      <SkillsTeaser seeMoreHref="/about#skills" />
+      <SkillsTeaser seeMoreHref="/about#skills" refreshKey={skillsRefreshKey} />
 
       <section className="features-section py-5">
         <Container>
