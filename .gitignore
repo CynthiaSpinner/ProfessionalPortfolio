@@ -292,8 +292,8 @@ bld/
 # ASP.NET Core dev HTTPS certs (local, do not commit)
 .aspnet/
 
-# Cursor AI
-.cursor/
+# Project conventions (local reference; not pushed)
+docs/
 
 # Settings files with sensitive data
 appsettings.json
