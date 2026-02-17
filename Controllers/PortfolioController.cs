@@ -1,47 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Models;
-using Portfolio.Models.Portfolio;
-using Portfolio.Data.Repositories;
 using Portfolio.Services.Interfaces;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Portfolio.Controllers
 {
     public class PortfolioController : Controller
     {
-        private readonly PortfolioContext _context;
         private readonly IHomePageService _homePageService;
-        private readonly ISkillsCategoryRepository _skillsCategoryRepository;
-        private readonly ISiteSettingsRepository _siteSettingsRepository;
-        private readonly IFeaturesSectionRepository _featuresSectionRepository;
         private readonly IFeaturesSectionService _featuresSectionService;
         private readonly IPortfolioPublicService _portfolioPublicService;
-        private readonly ICTASectionRepository _ctaSectionRepository;
         private readonly ICTASectionService _ctaSectionService;
         private readonly ILogger<PortfolioController> _logger;
 
         public PortfolioController(
-            PortfolioContext context,
             IHomePageService homePageService,
-            ISkillsCategoryRepository skillsCategoryRepository,
-            ISiteSettingsRepository siteSettingsRepository,
-            IFeaturesSectionRepository featuresSectionRepository,
             IFeaturesSectionService featuresSectionService,
             IPortfolioPublicService portfolioPublicService,
-            ICTASectionRepository ctaSectionRepository,
             ICTASectionService ctaSectionService,
             ILogger<PortfolioController> logger)
         {
-            _context = context;
             _homePageService = homePageService;
-            _skillsCategoryRepository = skillsCategoryRepository;
-            _siteSettingsRepository = siteSettingsRepository;
-            _featuresSectionRepository = featuresSectionRepository;
             _featuresSectionService = featuresSectionService;
             _portfolioPublicService = portfolioPublicService;
-            _ctaSectionRepository = ctaSectionRepository;
             _ctaSectionService = ctaSectionService;
             _logger = logger;
         }
@@ -49,14 +29,14 @@ namespace Portfolio.Controllers
         // GET: Portfolio/Projects
         public async Task<IActionResult> Projects()
         {
-            var projects = await _context.Projects.ToListAsync();
+            var projects = await _portfolioPublicService.GetProjectsAsync();
             return View(projects);
         }
 
         // GET: Portfolio/Skills
         public async Task<IActionResult> Skills()
         {
-            var skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync();
+            var skillsCategories = await _portfolioPublicService.GetSkillsCategoriesOrderedAsync();
             return View(skillsCategories);
         }
 
@@ -67,63 +47,24 @@ namespace Portfolio.Controllers
             return View(homePage);
         }
 
-        private static object GetDefaultHeroJson(DateTime lastModified)
-        {
-            return new
-            {
-                title = "Welcome to My Portfolio",
-                subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
-                description = "",
-                backgroundImageUrl = "",
-                backgroundVideoUrl = "",
-                primaryButtonText = "View Projects",
-                primaryButtonUrl = "/projects",
-                overlayColor = "#000000",
-                overlayOpacity = 0.5,
-                lastModified
-            };
-        }
-
         // GET: api/portfolio/hero
         [HttpGet("api/portfolio/hero")]
         public async Task<IActionResult> GetHeroSection()
         {
             try
             {
-                var homePage = await _homePageService.GetHomePageAsync();
-                
-                if (homePage == null)
-                    return Json(GetDefaultHeroJson(DateTime.UtcNow));
-
                 var scheme = Request.Scheme;
                 if (scheme == "http" && Request.Host.Host?.Contains("onrender.com", StringComparison.OrdinalIgnoreCase) == true)
                     scheme = "https";
                 var baseUrl = $"{scheme}://{Request.Host}";
-                var version = (homePage.UpdatedAt ?? homePage.CreatedAt).Ticks;
-                var backgroundImageUrl = homePage.HeaderBackgroundImageData != null
-                    ? $"{baseUrl}/api/portfolio/hero-image?v={version}"
-                    : (homePage.HeaderBackgroundImageUrl ?? "");
-
-                return Json(new
-                {
-                    title = homePage.HeaderTitle,
-                    subtitle = homePage.HeaderSubtitle,
-                    description = homePage.HeaderDescription,
-                    backgroundImageUrl,
-                    backgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
-                    primaryButtonText = homePage.HeaderPrimaryButtonText,
-                    primaryButtonUrl = homePage.HeaderPrimaryButtonUrl,
-                    overlayColor = homePage.HeaderOverlayColor,
-                    overlayOpacity = homePage.HeaderOverlayOpacity,
-                    lastModified = homePage.UpdatedAt ?? homePage.CreatedAt
-                });
+                var result = await _homePageService.GetHeroForPublicApiAsync(baseUrl);
+                return Json(result);
             }
             catch (Exception ex)
             {
-                // Log so Render/server logs show the real cause (e.g. missing migration columns)
-                // Return 200 with default hero so the site still loads; run DB migration to fix.
                 _logger.LogError(ex, "GetHeroSection failed: {Message}", ex.Message);
-                return Json(GetDefaultHeroJson(DateTime.UtcNow));
+                var fallback = await _homePageService.GetHeroForPublicApiAsync("");
+                return Json(fallback);
             }
         }
 
@@ -152,7 +93,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var projects = await _context.Projects.ToListAsync();
+                var projects = await _portfolioPublicService.GetProjectsAsync();
                 return Json(projects);
             }
             catch (Exception)
@@ -182,7 +123,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var about = await _context.Abouts.FirstOrDefaultAsync();
+                var about = await _portfolioPublicService.GetAboutAsync();
                 return Json(about);
             }
             catch (Exception)
@@ -227,14 +168,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var settings = await _siteSettingsRepository.GetFirstOrDefaultAsync();
-                if (settings == null)
-                    return Json(new { showGraphicDesignLink = true, showDesignLink = true });
-                return Json(new
-                {
-                    showGraphicDesignLink = settings.ShowGraphicDesignLink,
-                    showDesignLink = settings.ShowDesignLink
-                });
+                var dto = await _portfolioPublicService.GetNavSettingsAsync();
+                return Json(new { showGraphicDesignLink = dto.ShowGraphicDesignLink, showDesignLink = dto.ShowDesignLink });
             }
             catch (Exception ex)
             {

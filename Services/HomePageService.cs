@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Models.Portfolio;
+using Portfolio.Services.DTOs;
 using Portfolio.Services.Interfaces;
 
 namespace Portfolio.Services
@@ -18,6 +19,44 @@ namespace Portfolio.Services
         {
             _context = context;
             _fileService = fileService;
+        }
+
+        public async Task<HeroPublicDto> GetHeroForPublicApiAsync(string baseUrl)
+        {
+            var homePage = await GetHomePageAsync();
+            if (homePage == null)
+            {
+                return new HeroPublicDto
+                {
+                    Title = "Welcome to My Portfolio",
+                    Subtitle = "I am a passionate software engineer specializing in full-stack development, with expertise in creating modern, scalable applications.",
+                    Description = "",
+                    BackgroundImageUrl = "",
+                    BackgroundVideoUrl = null,
+                    PrimaryButtonText = "View Projects",
+                    PrimaryButtonUrl = "/projects",
+                    OverlayColor = "#000000",
+                    OverlayOpacity = 0.5f,
+                    LastModified = DateTime.UtcNow
+                };
+            }
+            var version = (homePage.UpdatedAt ?? homePage.CreatedAt).Ticks;
+            var backgroundImageUrl = homePage.HeaderBackgroundImageData != null
+                ? $"{baseUrl}/api/portfolio/hero-image?v={version}"
+                : (homePage.HeaderBackgroundImageUrl ?? "");
+            return new HeroPublicDto
+            {
+                Title = homePage.HeaderTitle ?? "Welcome to My Portfolio",
+                Subtitle = homePage.HeaderSubtitle ?? "",
+                Description = homePage.HeaderDescription ?? "",
+                BackgroundImageUrl = backgroundImageUrl,
+                BackgroundVideoUrl = homePage.HeaderBackgroundVideoUrl,
+                PrimaryButtonText = homePage.HeaderPrimaryButtonText ?? "View Projects",
+                PrimaryButtonUrl = homePage.HeaderPrimaryButtonUrl ?? "/projects",
+                OverlayColor = homePage.HeaderOverlayColor ?? "#000000",
+                OverlayOpacity = homePage.HeaderOverlayOpacity ?? 0.5f,
+                LastModified = homePage.UpdatedAt ?? homePage.CreatedAt
+            };
         }
 
         public async Task<HomePage?> GetHomePageAsync()

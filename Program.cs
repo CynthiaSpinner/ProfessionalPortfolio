@@ -29,9 +29,13 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFeaturesSectionService, FeaturesSectionService>();
 builder.Services.AddScoped<ICTASectionService, CTASectionService>();
 builder.Services.AddScoped<IPortfolioPublicService, PortfolioPublicService>();
+builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
+builder.Services.AddScoped<ISkillsCategoryService, SkillsCategoryService>();
 // Repositories (data only); Services (logic, mapping, defaults); Controllers (HTTP only)
 builder.Services.AddScoped<ISkillsCategoryRepository, SkillsCategoryRepository>();
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
+builder.Services.AddScoped<IAboutRepository, AboutRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IFeaturesSectionRepository, FeaturesSectionRepository>();
 builder.Services.AddScoped<ICTASectionRepository, CTASectionRepository>();
 builder.Services.AddMemoryCache();

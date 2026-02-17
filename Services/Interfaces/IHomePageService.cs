@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Http;
 using Portfolio.Models.Portfolio;
+using Portfolio.Services.DTOs;
 
 namespace Portfolio.Services.Interfaces
 {
     public interface IHomePageService
     {
+        /// <summary>Returns hero data for the public API. Uses default values when no home page exists.</summary>
+        Task<HeroPublicDto> GetHeroForPublicApiAsync(string baseUrl);
+
         // General CRUD Operations
         Task<HomePage?> GetHomePageAsync();
         Task<HomePage> CreateHomePageAsync(HomePage homePage);

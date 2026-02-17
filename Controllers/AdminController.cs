@@ -22,8 +22,8 @@ namespace Portfolio.Controllers
         private readonly IConfiguration _configuration;
         private readonly IHomePageService _homePageService;
         private readonly WebSocketService _webSocketService;
-        private readonly ISkillsCategoryRepository _skillsCategoryRepository;
-        private readonly ISiteSettingsRepository _siteSettingsRepository;
+        private readonly ISiteSettingsService _siteSettingsService;
+        private readonly ISkillsCategoryService _skillsCategoryService;
         private readonly IFeaturesSectionRepository _featuresSectionRepository;
         private readonly IFeaturesSectionService _featuresSectionService;
         private readonly ICTASectionRepository _ctaSectionRepository;
@@ -35,8 +35,8 @@ namespace Portfolio.Controllers
             IConfiguration configuration,
             IHomePageService homePageService,
             WebSocketService webSocketService,
-            ISkillsCategoryRepository skillsCategoryRepository,
-            ISiteSettingsRepository siteSettingsRepository,
+            ISiteSettingsService siteSettingsService,
+            ISkillsCategoryService skillsCategoryService,
             IFeaturesSectionRepository featuresSectionRepository,
             IFeaturesSectionService featuresSectionService,
             ICTASectionRepository ctaSectionRepository,
@@ -47,8 +47,8 @@ namespace Portfolio.Controllers
             _configuration = configuration;
             _homePageService = homePageService;
             _webSocketService = webSocketService;
-            _skillsCategoryRepository = skillsCategoryRepository;
-            _siteSettingsRepository = siteSettingsRepository;
+            _siteSettingsService = siteSettingsService;
+            _skillsCategoryService = skillsCategoryService;
             _featuresSectionRepository = featuresSectionRepository;
             _featuresSectionService = featuresSectionService;
             _ctaSectionRepository = ctaSectionRepository;
@@ -338,11 +338,11 @@ namespace Portfolio.Controllers
             {
                 var homePage = await _homePageService.GetHomePageAsync();
                 ViewBag.HomePage = homePage;
-                SiteSettings? navSettings = null;
-                try { navSettings = await _siteSettingsRepository.GetFirstOrDefaultAsync(); } catch { /* table may not exist yet */ }
-                ViewBag.NavSettings = navSettings ?? new SiteSettings();
-                List<SkillsCategory> skillsCategories = new List<SkillsCategory>();
-                try { skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync(); } catch { }
+                SiteSettings navSettings;
+                try { navSettings = await _siteSettingsService.GetOrCreateAsync(); } catch { navSettings = new SiteSettings(); }
+                ViewBag.NavSettings = navSettings;
+                List<SkillsCategory> skillsCategories;
+                try { skillsCategories = await _skillsCategoryService.GetOrderedAsync(); } catch { skillsCategories = new List<SkillsCategory>(); }
                 ViewBag.SkillsCategories = skillsCategories;
                 ViewBag.SkillsTeaserLinkText = skillsCategories.FirstOrDefault()?.TeaserLinkText;
                 ViewBag.UserRole = User.IsInRole("ReadOnly") ? "ReadOnly" : "Admin";
@@ -1139,17 +1139,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var settings = await _siteSettingsRepository.GetFirstOrDefaultAsync();
-                if (settings == null)
-                {
-                    settings = new SiteSettings();
-                    await _siteSettingsRepository.AddAsync(settings);
-                }
-                settings.ShowGraphicDesignLink = showGraphicDesignLink;
-                settings.ShowDesignLink = showDesignLink;
-                settings.UpdatedAt = DateTime.UtcNow;
-                await _siteSettingsRepository.UpdateAsync(settings);
-                return Json(new { success = true, message = "Navigation settings saved." });
+                var (success, message) = await _siteSettingsService.SaveNavSettingsAsync(showGraphicDesignLink, showDesignLink);
+                return Json(new { success, message });
             }
             catch (Exception ex)
             {
@@ -1165,13 +1156,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var categories = await _skillsCategoryRepository.GetAllOrderedAsync();
-                var first = categories.FirstOrDefault();
-                if (first == null)
-                    return Json(new { success = false, message = "Add at least one skills category first." });
-                first.TeaserLinkText = string.IsNullOrWhiteSpace(linkText) ? null : linkText.Trim();
-                await _skillsCategoryRepository.UpdateAsync(first);
-                return Json(new { success = true, message = "Skills teaser link text saved." });
+                var (success, message) = await _siteSettingsService.SaveSkillsLinkTextAsync(linkText);
+                return Json(new { success, message });
             }
             catch (Exception ex)
             {
@@ -1187,52 +1173,14 @@ namespace Portfolio.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(title))
-                    return Json(new { success = false, message = "Title is required." });
-                var skillsList = ParseSkillsText(skillsText ?? "");
-                SkillsCategory cat;
-                if (id.HasValue && id.Value > 0)
-                {
-                    cat = await _skillsCategoryRepository.GetByIdAsync(id.Value);
-                    if (cat == null) return Json(new { success = false, message = "Category not found." });
-                    cat.Title = title.Trim();
-                    cat.Description = description?.Trim() ?? "";
-                    cat.Skills = skillsList;
-                    cat.DisplayOrder = displayOrder;
-                    cat.IsActive = isActive;
-                    cat.ImagePath = cat.ImagePath ?? "";
-                    await _skillsCategoryRepository.UpdateAsync(cat);
-                }
-                else
-                {
-                    cat = new SkillsCategory
-                    {
-                        Title = title.Trim(),
-                        Description = description?.Trim() ?? "",
-                        Skills = skillsList,
-                        DisplayOrder = displayOrder,
-                        IsActive = isActive,
-                        ImagePath = ""
-                    };
-                    cat = await _skillsCategoryRepository.AddAsync(cat);
-                }
-                return Json(new { success = true, message = "Skills category saved.", id = cat.Id });
+                var (success, message, categoryId) = await _skillsCategoryService.SaveCategoryAsync(id, title, description, skillsText, displayOrder, isActive);
+                return Json(new { success, message, id = categoryId });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving skills category");
-                var inner = ex.InnerException?.Message ?? ex.Message;
-                return Json(new { success = false, message = ex.Message, innerException = inner });
+                return Json(new { success = false, message = ex.Message, innerException = ex.InnerException?.Message });
             }
-        }
-
-        private static List<string> ParseSkillsText(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text)) return new List<string>();
-            return text.Split(new[] { '\n', '\r', ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Trim())
-                .Where(s => s.Length > 0)
-                .ToList();
         }
 
         [HttpPost]
@@ -1242,10 +1190,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var cat = await _skillsCategoryRepository.GetByIdAsync(id);
-                if (cat == null) return Json(new { success = false, message = "Category not found." });
-                await _skillsCategoryRepository.DeleteAsync(cat);
-                return Json(new { success = true, message = "Category deleted." });
+                var (success, message) = await _skillsCategoryService.DeleteCategoryAsync(id);
+                return Json(new { success, message });
             }
             catch (Exception ex)
             {
@@ -1261,8 +1207,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                await _skillsCategoryRepository.LoadDefaultCategoriesIfMissingAsync();
-                return Json(new { success = true, message = "Default skills categories loaded. Refresh the page to see them." });
+                var (success, message) = await _skillsCategoryService.LoadDefaultCategoriesIfMissingAsync();
+                return Json(new { success, message });
             }
             catch (Exception ex)
             {

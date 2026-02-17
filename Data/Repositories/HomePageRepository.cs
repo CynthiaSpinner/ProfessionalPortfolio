@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Models.Portfolio;
-using Portfolio.Services.Interfaces;
 
 namespace Portfolio.Data.Repositories
 {
-    public class HomePageRepository : IHomePageService
+    /// <summary>Data access for HomePages. Use IHomePageService for application logic.</summary>
+    public class HomePageRepository
     {
         private readonly PortfolioContext _context;
 
