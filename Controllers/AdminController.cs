@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio.Models;
 using Portfolio.Models.Portfolio;
 using Portfolio.Services;
+using Portfolio.Services.DTOs;
 using Portfolio.Data.Repositories;
 using Portfolio.Services.Interfaces;
 using System.Security.Claims;
@@ -24,7 +25,9 @@ namespace Portfolio.Controllers
         private readonly ISkillsCategoryRepository _skillsCategoryRepository;
         private readonly ISiteSettingsRepository _siteSettingsRepository;
         private readonly IFeaturesSectionRepository _featuresSectionRepository;
+        private readonly IFeaturesSectionService _featuresSectionService;
         private readonly ICTASectionRepository _ctaSectionRepository;
+        private readonly ICTASectionService _ctaSectionService;
 
         public AdminController(
             PortfolioContext context,
@@ -35,7 +38,9 @@ namespace Portfolio.Controllers
             ISkillsCategoryRepository skillsCategoryRepository,
             ISiteSettingsRepository siteSettingsRepository,
             IFeaturesSectionRepository featuresSectionRepository,
-            ICTASectionRepository ctaSectionRepository)
+            IFeaturesSectionService featuresSectionService,
+            ICTASectionRepository ctaSectionRepository,
+            ICTASectionService ctaSectionService)
         {
             _context = context;
             _logger = logger;
@@ -45,7 +50,9 @@ namespace Portfolio.Controllers
             _skillsCategoryRepository = skillsCategoryRepository;
             _siteSettingsRepository = siteSettingsRepository;
             _featuresSectionRepository = featuresSectionRepository;
+            _featuresSectionService = featuresSectionService;
             _ctaSectionRepository = ctaSectionRepository;
+            _ctaSectionService = ctaSectionService;
         }
 
         private static bool IsBcryptHash(string hash)
@@ -714,39 +721,32 @@ namespace Portfolio.Controllers
                     var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                     return Json(new { success = false, message = string.Join(", ", errors) });
                 }
-
-                var featuresSection = await _featuresSectionRepository.GetFirstOrDefaultAsync();
-                if (featuresSection == null)
+                var dto = new FeaturesSectionEditDto
                 {
-                    featuresSection = new FeaturesSection();
-                    await _featuresSectionRepository.AddAsync(featuresSection);
-                }
-
-                featuresSection.SectionTitle = model.SectionTitle ?? "Key Skills & Technologies";
-                featuresSection.SectionSubtitle = model.SectionSubtitle ?? "Explore my expertise across different domains";
-                featuresSection.Feature1Title = model.Feature1Title ?? "Frontend Development";
-                featuresSection.Feature1Subtitle = model.Feature1Subtitle ?? "React, JavaScript, HTML5, CSS3, Bootstrap";
-                featuresSection.Feature1Description = model.Feature1Description ?? "";
-                featuresSection.Feature1Link = model.Feature1Link ?? "/projects?category=frontend";
-                featuresSection.Feature1LinkText = model.Feature1LinkText ?? "Learn more";
-                featuresSection.Feature2Title = model.Feature2Title ?? "Backend Development";
-                featuresSection.Feature2Subtitle = model.Feature2Subtitle ?? ".NET Core, C#, RESTful APIs, SQL Server";
-                featuresSection.Feature2Description = model.Feature2Description ?? "";
-                featuresSection.Feature2Link = model.Feature2Link ?? "/projects?category=backend";
-                featuresSection.Feature2LinkText = model.Feature2LinkText ?? "Learn more";
-                featuresSection.Feature3Title = model.Feature3Title ?? "Design & Tools";
-                featuresSection.Feature3Subtitle = model.Feature3Subtitle ?? "Adobe Creative Suite, UI/UX Design, Git, Docker";
-                featuresSection.Feature3Description = model.Feature3Description ?? "";
-                featuresSection.Feature3Link = model.Feature3Link ?? "/projects?category=design";
-                featuresSection.Feature3LinkText = model.Feature3LinkText ?? "Learn more";
-                featuresSection.IsActive = model.IsActive;
-                featuresSection.DisplayOrder = model.DisplayOrder;
-                featuresSection.UpdatedAt = DateTime.UtcNow;
-
-                await _featuresSectionRepository.UpdateAsync(featuresSection);
-                await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "featuresDataUpdated" }));
-
-                return Json(new { success = true, message = "Features section saved successfully!" });
+                    SectionTitle = model.SectionTitle,
+                    SectionSubtitle = model.SectionSubtitle,
+                    Feature1Title = model.Feature1Title,
+                    Feature1Subtitle = model.Feature1Subtitle,
+                    Feature1Description = model.Feature1Description,
+                    Feature1Link = model.Feature1Link,
+                    Feature1LinkText = model.Feature1LinkText,
+                    Feature2Title = model.Feature2Title,
+                    Feature2Subtitle = model.Feature2Subtitle,
+                    Feature2Description = model.Feature2Description,
+                    Feature2Link = model.Feature2Link,
+                    Feature2LinkText = model.Feature2LinkText,
+                    Feature3Title = model.Feature3Title,
+                    Feature3Subtitle = model.Feature3Subtitle,
+                    Feature3Description = model.Feature3Description,
+                    Feature3Link = model.Feature3Link,
+                    Feature3LinkText = model.Feature3LinkText,
+                    IsActive = model.IsActive,
+                    DisplayOrder = model.DisplayOrder
+                };
+                var (success, message) = await _featuresSectionService.SaveFromDtoAsync(dto);
+                if (success)
+                    await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "featuresDataUpdated" }));
+                return Json(new { success, message });
             }
             catch (Exception ex)
             {
@@ -761,34 +761,9 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var featuresSection = await _featuresSectionRepository.GetFirstOrDefaultAsync();
-                if (featuresSection == null)
-                {
+                var data = await _featuresSectionService.GetAdminDtoAsync();
+                if (data == null)
                     return Json(new { success = false, message = "Features section not found.", data = (object?)null });
-                }
-                var data = new
-                {
-                    sectionTitle = featuresSection.SectionTitle,
-                    sectionSubtitle = featuresSection.SectionSubtitle,
-                    feature1Title = featuresSection.Feature1Title,
-                    feature1Subtitle = featuresSection.Feature1Subtitle,
-                    feature1Description = featuresSection.Feature1Description,
-                    feature1Link = featuresSection.Feature1Link,
-                    feature1LinkText = featuresSection.Feature1LinkText,
-                    feature2Title = featuresSection.Feature2Title,
-                    feature2Subtitle = featuresSection.Feature2Subtitle,
-                    feature2Description = featuresSection.Feature2Description,
-                    feature2Link = featuresSection.Feature2Link,
-                    feature2LinkText = featuresSection.Feature2LinkText,
-                    feature3Title = featuresSection.Feature3Title,
-                    feature3Subtitle = featuresSection.Feature3Subtitle,
-                    feature3Description = featuresSection.Feature3Description,
-                    feature3Link = featuresSection.Feature3Link,
-                    feature3LinkText = featuresSection.Feature3LinkText,
-                    isActive = featuresSection.IsActive,
-                    displayOrder = featuresSection.DisplayOrder,
-                    updatedAt = featuresSection.UpdatedAt
-                };
                 return Json(new { success = true, message = "Features section retrieved successfully.", data });
             }
             catch (Exception ex)
@@ -979,31 +954,11 @@ namespace Portfolio.Controllers
                     var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                     return Json(new { success = false, message = string.Join(", ", errors) });
                 }
-                var ctaSection = await _ctaSectionRepository.GetFirstOrDefaultAsync();
-                if (ctaSection == null)
-                {
-                    ctaSection = new CTASection
-                    {
-                        CreatedAt = DateTime.UtcNow,
-                        Title = model.Title ?? "",
-                        Subtitle = model.Subtitle ?? "",
-                        ButtonText = model.ButtonText ?? "",
-                        ButtonLink = model.ButtonLink ?? "",
-                        UpdatedAt = DateTime.UtcNow
-                    };
-                    await _ctaSectionRepository.AddAsync(ctaSection);
-                }
-                else
-                {
-                    ctaSection.Title = model.Title ?? "";
-                    ctaSection.Subtitle = model.Subtitle ?? "";
-                    ctaSection.ButtonText = model.ButtonText ?? "";
-                    ctaSection.ButtonLink = model.ButtonLink ?? "";
-                    ctaSection.UpdatedAt = DateTime.UtcNow;
-                    await _ctaSectionRepository.UpdateAsync(ctaSection);
-                }
-                await _webSocketService.BroadcastMessageAsync("{\"type\":\"ctaDataUpdated\",\"timestamp\":\"" + DateTime.UtcNow.ToString("O") + "\"}");
-                return Json(new { success = true, message = "CTA section saved successfully!" });
+                var dto = new CTASectionEditDto { Title = model.Title, Subtitle = model.Subtitle, ButtonText = model.ButtonText, ButtonLink = model.ButtonLink };
+                var (success, message) = await _ctaSectionService.SaveFromDtoAsync(dto);
+                if (success)
+                    await _webSocketService.BroadcastMessageAsync("{\"type\":\"ctaDataUpdated\",\"timestamp\":\"" + DateTime.UtcNow.ToString("O") + "\"}");
+                return Json(new { success, message });
             }
             catch (Exception ex)
             {
@@ -1018,21 +973,10 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var ctaSection = await _ctaSectionRepository.GetFirstOrDefaultAsync();
-                if (ctaSection == null)
+                var data = await _ctaSectionService.GetAdminDtoAsync();
+                if (data == null)
                     return Json(new { success = false, message = "No CTA section found." });
-                return Json(new
-                {
-                    success = true,
-                    data = new
-                    {
-                        title = ctaSection.Title ?? "",
-                        subtitle = ctaSection.Subtitle ?? "",
-                        buttonText = ctaSection.ButtonText ?? "",
-                        buttonLink = ctaSection.ButtonLink ?? "",
-                        lastModified = ctaSection.UpdatedAt ?? ctaSection.CreatedAt
-                    }
-                });
+                return Json(new { success = true, data });
             }
             catch (Exception ex)
             {

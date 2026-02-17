@@ -16,7 +16,10 @@ namespace Portfolio.Controllers
         private readonly ISkillsCategoryRepository _skillsCategoryRepository;
         private readonly ISiteSettingsRepository _siteSettingsRepository;
         private readonly IFeaturesSectionRepository _featuresSectionRepository;
+        private readonly IFeaturesSectionService _featuresSectionService;
+        private readonly IPortfolioPublicService _portfolioPublicService;
         private readonly ICTASectionRepository _ctaSectionRepository;
+        private readonly ICTASectionService _ctaSectionService;
         private readonly ILogger<PortfolioController> _logger;
 
         public PortfolioController(
@@ -25,7 +28,10 @@ namespace Portfolio.Controllers
             ISkillsCategoryRepository skillsCategoryRepository,
             ISiteSettingsRepository siteSettingsRepository,
             IFeaturesSectionRepository featuresSectionRepository,
+            IFeaturesSectionService featuresSectionService,
+            IPortfolioPublicService portfolioPublicService,
             ICTASectionRepository ctaSectionRepository,
+            ICTASectionService ctaSectionService,
             ILogger<PortfolioController> logger)
         {
             _context = context;
@@ -33,7 +39,10 @@ namespace Portfolio.Controllers
             _skillsCategoryRepository = skillsCategoryRepository;
             _siteSettingsRepository = siteSettingsRepository;
             _featuresSectionRepository = featuresSectionRepository;
+            _featuresSectionService = featuresSectionService;
+            _portfolioPublicService = portfolioPublicService;
             _ctaSectionRepository = ctaSectionRepository;
+            _ctaSectionService = ctaSectionService;
             _logger = logger;
         }
 
@@ -158,11 +167,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var skillsCategories = await _skillsCategoryRepository.GetAllOrderedAsync();
-                var active = skillsCategories.Where(c => c.IsActive).ToList();
-                var linkText = skillsCategories.FirstOrDefault()?.TeaserLinkText?.Trim();
-                if (string.IsNullOrEmpty(linkText)) linkText = "View what I spin?";
-                return Json(new { categories = active, linkText });
+                var dto = await _portfolioPublicService.GetSkillsForPublicAsync();
+                return Json(new { categories = dto.Categories, linkText = dto.LinkText });
             }
             catch (Exception)
             {
@@ -191,34 +197,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var section = await _featuresSectionRepository.GetFirstOrDefaultAsync();
-                if (section == null)
-                {
-                    return Json(new
-                    {
-                        sectionTitle = "Key Skills & Technologies",
-                        sectionSubtitle = "Explore my expertise across different domains",
-                        features = new[]
-                        {
-                            new { title = "Frontend Development", subtitle = "React, JavaScript, HTML5, CSS3, Bootstrap", description = "", link = "/projects?category=frontend", linkText = "Learn more" },
-                            new { title = "Backend Development", subtitle = ".NET Core, C#, RESTful APIs, SQL Server", description = "", link = "/projects?category=backend", linkText = "Learn more" },
-                            new { title = "Design & Tools", subtitle = "Adobe Creative Suite, UI/UX Design, Git, Docker", description = "", link = "/projects?category=design", linkText = "Learn more" }
-                        },
-                        lastModified = DateTime.UtcNow
-                    });
-                }
-                return Json(new
-                {
-                    sectionTitle = section.SectionTitle,
-                    sectionSubtitle = section.SectionSubtitle,
-                    features = new[]
-                    {
-                        new { title = section.Feature1Title, subtitle = section.Feature1Subtitle, description = section.Feature1Description ?? "", link = section.Feature1Link ?? "", linkText = section.Feature1LinkText ?? "Learn more" },
-                        new { title = section.Feature2Title, subtitle = section.Feature2Subtitle, description = section.Feature2Description ?? "", link = section.Feature2Link ?? "", linkText = section.Feature2LinkText ?? "Learn more" },
-                        new { title = section.Feature3Title, subtitle = section.Feature3Subtitle, description = section.Feature3Description ?? "", link = section.Feature3Link ?? "", linkText = section.Feature3LinkText ?? "Learn more" }
-                    },
-                    lastModified = section.UpdatedAt
-                });
+                var result = await _featuresSectionService.GetForPublicApiAsync();
+                return Json(result);
             }
             catch (Exception)
             {
@@ -232,26 +212,8 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var section = await _ctaSectionRepository.GetFirstOrDefaultAsync();
-                if (section == null)
-                {
-                    return Json(new
-                    {
-                        title = "Ready to Start a Project?",
-                        subtitle = "Let's work together to bring your ideas to life.",
-                        buttonText = "Get in Touch",
-                        buttonLink = "/contact",
-                        lastModified = DateTime.UtcNow
-                    });
-                }
-                return Json(new
-                {
-                    title = section.Title,
-                    subtitle = section.Subtitle,
-                    buttonText = section.ButtonText,
-                    buttonLink = section.ButtonLink,
-                    lastModified = section.UpdatedAt ?? section.CreatedAt
-                });
+                var result = await _ctaSectionService.GetForPublicApiAsync();
+                return Json(result);
             }
             catch (Exception)
             {

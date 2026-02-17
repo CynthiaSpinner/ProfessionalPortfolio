@@ -26,7 +26,10 @@ builder.Services.AddControllersWithViews();
 // Register application services
 builder.Services.AddScoped<IHomePageService, HomePageService>();
 builder.Services.AddScoped<IFileService, FileService>();
-// Repositories (MVC repository pattern – data access in repositories, controllers stay thin)
+builder.Services.AddScoped<IFeaturesSectionService, FeaturesSectionService>();
+builder.Services.AddScoped<ICTASectionService, CTASectionService>();
+builder.Services.AddScoped<IPortfolioPublicService, PortfolioPublicService>();
+// Repositories (data only); Services (logic, mapping, defaults); Controllers (HTTP only)
 builder.Services.AddScoped<ISkillsCategoryRepository, SkillsCategoryRepository>();
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
 builder.Services.AddScoped<IFeaturesSectionRepository, FeaturesSectionRepository>();
