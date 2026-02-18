@@ -2,6 +2,65 @@
   background: #050510;
 }
 
+/* Projects page hero: textured background (no image) */
+.page-header--texture {
+  background: linear-gradient(135deg, rgba(75, 75, 90, 0.4), rgba(85, 85, 105, 0.25), rgba(227, 235, 255, 0.08)) !important;
+  position: relative;
+}
+.page-header--texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(187, 195, 255, 0.06) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+.page-header--texture::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(5, 5, 16, 0.3) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Projects section: same gradient as Home features section */
+.projects-section.features-section {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, rgba(75, 75, 90, 0.3), rgba(85, 85, 105, 0.2), rgba(227, 235, 255, 0.1));
+}
+
+/* Project cards: consistent with Home feature cards */
+.projects-page .feature-card-wrapper .project-card {
+  max-width: 100%;
+  margin: 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(0, 0, 10, 0.7), rgba(5, 5, 25, 0.5));
+  border: none;
+  border-radius: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1), 0 3px 3px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(187, 195, 255, 0.03);
+  backdrop-filter: blur(5px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.projects-page .feature-card-wrapper .project-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 0.5px;
+  background: rgba(187, 195, 255, 0.4);
+  border-radius: 0.5rem;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.projects-page .feature-card-wrapper:hover .project-card {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2), 0 8px 8px rgba(0, 0, 0, 0.15), inset 0 0 40px rgba(187, 195, 255, 0.05);
+}
+
 .projects-header {
   padding: 4rem 0;
 }

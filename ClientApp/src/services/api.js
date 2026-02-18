@@ -51,6 +51,10 @@ export const portfolioApi = {
   updateProject: (id, data) => api.put(`/portfolio/projects/${id}`, data),
   deleteProject: (id) => api.delete(`/portfolio/projects/${id}`),
 
+  // Projects page hero and CTA (public)
+  getProjectsPageHero: () => api.get("/portfolio/projects-page/hero"),
+  getProjectsPageCTA: () => api.get("/portfolio/projects-page/cta"),
+
   // Skills endpoints
   getSkills: () =>
     USE_MOCK_DATA

@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProjectCard from "../components/ProjectCard";
 import Button from "../components/Button";
+import CTA from "../components/CTA";
 import { portfolioApi } from "../services/api";
 import "../styles/Projects.css";
 
@@ -16,8 +17,13 @@ const getWebSocketUrl = () => {
   return "wss://localhost:7094/ws/portfolio";
 };
 
+const defaultHero = { title: "My Projects", subtitle: "", buttonText: "About me", buttonUrl: "/about" };
+const defaultCTA = { title: "Ready to work together?", subtitle: "Let's build something.", buttonText: "Get in Touch", buttonLink: "/contact" };
+
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [hero, setHero] = useState(defaultHero);
+  const [cta, setCta] = useState(defaultCTA);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const wsRef = useRef(null);
@@ -39,44 +45,49 @@ const Projects = () => {
 
   useEffect(() => {
     let cancelled = false;
-    fetchProjects().then(() => {
-      if (cancelled) return;
-      setLoading(false);
-    });
+
+    const load = async () => {
+      try {
+        const [projectsRes, heroRes, ctaRes] = await Promise.all([
+          portfolioApi.getProjects(),
+          portfolioApi.getProjectsPageHero().catch(() => ({ data: null })),
+          portfolioApi.getProjectsPageCTA().catch(() => ({ data: null })),
+        ]);
+        if (cancelled) return;
+        setProjects(Array.isArray(projectsRes.data) ? projectsRes.data : []);
+        if (heroRes?.data) setHero({ ...defaultHero, ...heroRes.data });
+        if (ctaRes?.data) setCta({ ...defaultCTA, ...ctaRes.data });
+        setError(null);
+      } catch (err) {
+        if (!cancelled) {
+          setError("Failed to load projects.");
+          setProjects([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
 
     const connectWebSocket = () => {
       try {
         const ws = new WebSocket(getWebSocketUrl());
         wsRef.current = ws;
-
-        ws.onopen = () => {
-          console.log("Projects: WebSocket connected for real-time updates");
-        };
-
+        ws.onopen = () => {};
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            if (data.type === "projectsDataUpdated") {
-              fetchProjects();
-            }
-          } catch (e) {
-            console.error("Projects: WebSocket message parse error:", e);
-          }
+            if (data.type === "projectsDataUpdated") fetchProjects();
+          } catch (e) {}
         };
-
-        ws.onerror = (err) => console.error("Projects: WebSocket error:", err);
-
+        ws.onerror = () => {};
         ws.onclose = (event) => {
-          if (event.code !== 1000) {
-            reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
-          }
+          if (event.code !== 1000) reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
         };
       } catch (err) {
-        console.error("Projects: WebSocket connect failed:", err);
         reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
       }
     };
-
     connectWebSocket();
 
     return () => {
@@ -89,7 +100,7 @@ const Projects = () => {
   if (loading) {
     return (
       <div className="projects-page">
-        <Header title="My Projects" subtitle="Loading..." />
+        <Header title="My Projects" subtitle="Loading..." className="page-header--texture" />
         <Container><p className="text-center py-5">Loading projects...</p></Container>
         <Footer />
       </div>
@@ -99,7 +110,7 @@ const Projects = () => {
   if (error) {
     return (
       <div className="projects-page">
-        <Header title="My Projects" subtitle="" />
+        <Header title="My Projects" subtitle="" className="page-header--texture" />
         <Container><p className="text-center py-5 text-danger">{error}</p></Container>
         <Footer />
       </div>
@@ -109,27 +120,37 @@ const Projects = () => {
   return (
     <div className="projects-page">
       <Header
-        title="My Projects"
-        subtitle="Explore my portfolio of diverse projects showcasing my skills in full-stack development, database design, and creative problem-solving."
+        title={hero.title}
+        subtitle={hero.subtitle || ""}
+        className="page-header--texture"
       >
-        <Button href="/contact" className="mt-4">
-          Let's Work Together
-        </Button>
+        {hero.buttonText && hero.buttonUrl && (
+          <Button href={hero.buttonUrl} className="mt-4">
+            {hero.buttonText}
+          </Button>
+        )}
       </Header>
 
-      {projects.length === 0 ? (
+      <section className="projects-section features-section py-5">
         <Container>
-          <p className="text-center py-5 text-muted">No projects yet.</p>
+          {projects.length === 0 ? (
+            <p className="text-center py-5 text-muted">No projects yet.</p>
+          ) : (
+            projects.map((project) => (
+              <div key={project.id} className="project-item feature-card-wrapper py-4">
+                <ProjectCard project={project} />
+              </div>
+            ))
+          )}
         </Container>
-      ) : (
-        projects.map((project) => (
-          <section key={project.id} className="project-item py-5">
-            <Container>
-              <ProjectCard project={project} />
-            </Container>
-          </section>
-        ))
-      )}
+      </section>
+
+      <CTA
+        title={cta.title}
+        subtitle={cta.subtitle}
+        buttonText={cta.buttonText}
+        buttonHref={cta.buttonLink}
+      />
 
       <Footer />
     </div>

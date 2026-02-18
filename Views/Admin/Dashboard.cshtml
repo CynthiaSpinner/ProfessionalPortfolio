@@ -589,6 +589,50 @@
         </div>
 
         <div id="projects" class="content-section">
+            <!-- Projects page Hero (above projects list) -->
+            <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
+                <div class="card-header">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
+                        <i class="fas fa-heading"></i>
+                        Projects page hero
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted" style="color: #9ca3af !important;">Title, subtitle, and button shown at the top of the Projects page. Background texture is set by the frontend.</p>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
+                    <form id="projectsPageHeroForm" class="mt-3">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="projectsPageHeroTitle" class="form-label" style="color: #9ca3af !important;">Title</label>
+                                <input type="text" class="form-control" id="projectsPageHeroTitle" name="title" value="My Projects" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="projectsPageHeroSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                <input type="text" class="form-control" id="projectsPageHeroSubtitle" name="subtitle" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="projectsPageHeroButtonText" class="form-label" style="color: #9ca3af !important;">Button text (e.g. About me)</label>
+                                <input type="text" class="form-control" id="projectsPageHeroButtonText" name="buttonText" maxlength="100" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="projectsPageHeroButtonUrl" class="form-label" style="color: #9ca3af !important;">Button URL (e.g. /about)</label>
+                                <input type="text" class="form-control" id="projectsPageHeroButtonUrl" name="buttonUrl" maxlength="500" placeholder="/about" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save hero</button>
+                    </form>
+                    }
+                    else
+                    {
+                    <p class="mb-0 text-muted small">Read-only. Hero content is loaded from saved data.</p>
+                    }
+                </div>
+            </div>
+
             <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
                     <h5 class="mb-0" style="color: #818cf8 !important;">
@@ -665,6 +709,48 @@
                     else
                     {
                     <div id="projectsListContainerReadOnly"></div>
+                    }
+                </div>
+            </div>
+
+            <!-- Projects page CTA (below projects form) -->
+            <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
+                <div class="card-header">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
+                        <i class="fas fa-bullhorn"></i>
+                        Projects page CTA
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted" style="color: #9ca3af !important;">Call-to-action block shown at the bottom of the Projects page (e.g. &quot;Ready to work together?&quot; → Contact).</p>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
+                    <form id="projectsPageCTAForm" class="mt-3">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="projectsPageCTATitle" class="form-label" style="color: #9ca3af !important;">Title</label>
+                            <input type="text" class="form-control" id="projectsPageCTATitle" name="title" value="Ready to work together?" maxlength="200" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="projectsPageCTASubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                            <input type="text" class="form-control" id="projectsPageCTASubtitle" name="subtitle" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="projectsPageCTAButtonText" class="form-label" style="color: #9ca3af !important;">Button text</label>
+                                <input type="text" class="form-control" id="projectsPageCTAButtonText" name="buttonText" value="Get in Touch" maxlength="100" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="projectsPageCTAButtonLink" class="form-label" style="color: #9ca3af !important;">Button link</label>
+                                <input type="text" class="form-control" id="projectsPageCTAButtonLink" name="buttonLink" value="/contact" maxlength="500" style="color: #818cf8 !important; -webkit-text-fill-color: #818cf8 !important;" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save CTA</button>
+                    </form>
+                    }
+                    else
+                    {
+                    <p class="mb-0 text-muted small">Read-only. CTA content is loaded from saved data.</p>
                     }
                 </div>
             </div>
@@ -1259,7 +1345,49 @@
                 if (projectFormCard) projectFormCard.style.display = 'none';
             }
         });
-        document.addEventListener('DOMContentLoaded', function() { loadProjects(); });
+        async function loadProjectsPageHero() {
+            try {
+                const resp = await fetch('/Admin/GetProjectsPageHero');
+                const result = await resp.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    const t = document.getElementById('projectsPageHeroTitle'); if (t) t.value = d.title || 'My Projects';
+                    const s = document.getElementById('projectsPageHeroSubtitle'); if (s) s.value = d.subtitle || '';
+                    const bt = document.getElementById('projectsPageHeroButtonText'); if (bt) bt.value = d.buttonText || '';
+                    const bu = document.getElementById('projectsPageHeroButtonUrl'); if (bu) bu.value = d.buttonUrl || '';
+                }
+            } catch (e) { console.error('Load Projects page hero error', e); }
+        }
+        async function loadProjectsPageCTA() {
+            try {
+                const resp = await fetch('/Admin/GetProjectsPageCTA');
+                const result = await resp.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    const t = document.getElementById('projectsPageCTATitle'); if (t) t.value = d.title || 'Ready to work together?';
+                    const s = document.getElementById('projectsPageCTASubtitle'); if (s) s.value = d.subtitle || '';
+                    const bt = document.getElementById('projectsPageCTAButtonText'); if (bt) bt.value = d.buttonText || 'Get in Touch';
+                    const bl = document.getElementById('projectsPageCTAButtonLink'); if (bl) bl.value = d.buttonLink || '/contact';
+                }
+            } catch (e) { console.error('Load Projects page CTA error', e); }
+        }
+        const projectsPageHeroForm = document.getElementById('projectsPageHeroForm');
+        if (projectsPageHeroForm) projectsPageHeroForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fd = new FormData(this);
+            const resp = await fetch('/Admin/SaveProjectsPageHero', { method: 'POST', body: fd });
+            const res = await resp.json();
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Saved.' : 'Error'), res.success ? 'success' : 'error');
+        });
+        const projectsPageCTAForm = document.getElementById('projectsPageCTAForm');
+        if (projectsPageCTAForm) projectsPageCTAForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fd = new FormData(this);
+            const resp = await fetch('/Admin/SaveProjectsPageCTA', { method: 'POST', body: fd });
+            const res = await resp.json();
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Saved.' : 'Error'), res.success ? 'success' : 'error');
+        });
+        document.addEventListener('DOMContentLoaded', function() { loadProjects(); loadProjectsPageHero(); loadProjectsPageCTA(); });
 
         const skillsLinkTextForm = document.getElementById('skillsLinkTextForm');
         if (skillsLinkTextForm) skillsLinkTextForm.addEventListener('submit', async function(e) {

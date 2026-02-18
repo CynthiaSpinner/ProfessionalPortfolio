@@ -16,7 +16,8 @@ const Header = ({
   primaryButtonUrl = "/projects",
   children,
   showButtons = false,
-  refreshing = false
+  refreshing = false,
+  className = ""
 }) => {
   const isImage = !!backgroundImageUrl && !backgroundVideoUrl;
   const isVideo = !!backgroundVideoUrl;
@@ -36,7 +37,7 @@ const Header = ({
 
   return (
     <header
-      className="page-header"
+      className={`page-header ${className}`.trim()}
       style={{
         position: 'relative',
         overflow: 'hidden',

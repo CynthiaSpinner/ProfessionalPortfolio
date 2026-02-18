@@ -29,6 +29,7 @@ namespace Portfolio.Controllers
         private readonly ICTASectionRepository _ctaSectionRepository;
         private readonly ICTASectionService _ctaSectionService;
         private readonly IProjectService _projectService;
+        private readonly IProjectsPageService _projectsPageService;
 
         public AdminController(
             PortfolioContext context,
@@ -42,7 +43,8 @@ namespace Portfolio.Controllers
             IFeaturesSectionService featuresSectionService,
             ICTASectionRepository ctaSectionRepository,
             ICTASectionService ctaSectionService,
-            IProjectService projectService)
+            IProjectService projectService,
+            IProjectsPageService projectsPageService)
         {
             _context = context;
             _logger = logger;
@@ -56,6 +58,7 @@ namespace Portfolio.Controllers
             _ctaSectionRepository = ctaSectionRepository;
             _ctaSectionService = ctaSectionService;
             _projectService = projectService;
+            _projectsPageService = projectsPageService;
         }
 
         private static bool IsBcryptHash(string hash)
@@ -1342,6 +1345,72 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting project");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,ReadOnly")]
+        public async Task<IActionResult> GetProjectsPageHero()
+        {
+            try
+            {
+                var data = await _projectsPageService.GetHeroForAdminAsync();
+                return Json(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting Projects page hero");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveProjectsPageHero([FromForm] string title, [FromForm] string? subtitle, [FromForm] string? buttonText, [FromForm] string? buttonUrl)
+        {
+            try
+            {
+                var (success, message) = await _projectsPageService.SaveHeroAsync(title, subtitle, buttonText, buttonUrl);
+                return Json(new { success, message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving Projects page hero");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,ReadOnly")]
+        public async Task<IActionResult> GetProjectsPageCTA()
+        {
+            try
+            {
+                var data = await _projectsPageService.GetCTAForAdminAsync();
+                return Json(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting Projects page CTA");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveProjectsPageCTA([FromForm] string title, [FromForm] string subtitle, [FromForm] string buttonText, [FromForm] string buttonLink)
+        {
+            try
+            {
+                var (success, message) = await _projectsPageService.SaveCTAAsync(title, subtitle ?? "", buttonText ?? "Get in Touch", buttonLink ?? "/contact");
+                return Json(new { success, message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving Projects page CTA");
                 return Json(new { success = false, message = ex.Message });
             }
         }

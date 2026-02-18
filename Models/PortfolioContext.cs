@@ -22,6 +22,8 @@ namespace Portfolio.Models
         public DbSet<CTASection> CTASections { get; set; } = null!;
         public DbSet<CTATemplate> CTATemplates { get; set; } = null!;
         public DbSet<SiteSettings> SiteSettings { get; set; } = null!;
+        public DbSet<ProjectsPageHero> ProjectsPageHeroes { get; set; } = null!;
+        public DbSet<ProjectsPageCTA> ProjectsPageCTAs { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

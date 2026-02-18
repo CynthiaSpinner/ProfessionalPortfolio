@@ -10,6 +10,7 @@ namespace Portfolio.Controllers
         private readonly IFeaturesSectionService _featuresSectionService;
         private readonly IPortfolioPublicService _portfolioPublicService;
         private readonly ICTASectionService _ctaSectionService;
+        private readonly IProjectsPageService _projectsPageService;
         private readonly ILogger<PortfolioController> _logger;
 
         public PortfolioController(
@@ -17,12 +18,14 @@ namespace Portfolio.Controllers
             IFeaturesSectionService featuresSectionService,
             IPortfolioPublicService portfolioPublicService,
             ICTASectionService ctaSectionService,
+            IProjectsPageService projectsPageService,
             ILogger<PortfolioController> logger)
         {
             _homePageService = homePageService;
             _featuresSectionService = featuresSectionService;
             _portfolioPublicService = portfolioPublicService;
             _ctaSectionService = ctaSectionService;
+            _projectsPageService = projectsPageService;
             _logger = logger;
         }
 
@@ -99,6 +102,38 @@ namespace Portfolio.Controllers
             catch (Exception)
             {
                 return StatusCode(500, new { error = "Failed to load projects data" });
+            }
+        }
+
+        // GET: api/portfolio/projects-page/hero (public - for Projects page hero)
+        [HttpGet("api/portfolio/projects-page/hero")]
+        public async Task<IActionResult> GetProjectsPageHero()
+        {
+            try
+            {
+                var data = await _projectsPageService.GetHeroForPublicApiAsync();
+                return Json(data ?? new { title = "My Projects", subtitle = "", buttonText = "About me", buttonUrl = "/about", lastModified = (DateTime?)null });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetProjectsPageHero failed");
+                return Json(new { title = "My Projects", subtitle = "", buttonText = "About me", buttonUrl = "/about", lastModified = (DateTime?)null });
+            }
+        }
+
+        // GET: api/portfolio/projects-page/cta (public - for Projects page CTA)
+        [HttpGet("api/portfolio/projects-page/cta")]
+        public async Task<IActionResult> GetProjectsPageCTA()
+        {
+            try
+            {
+                var data = await _projectsPageService.GetCTAForPublicApiAsync();
+                return Json(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetProjectsPageCTA failed");
+                return Json(new { title = "Ready to work together?", subtitle = "Let's build something.", buttonText = "Get in Touch", buttonLink = "/contact", lastModified = (DateTime?)null });
             }
         }
 
