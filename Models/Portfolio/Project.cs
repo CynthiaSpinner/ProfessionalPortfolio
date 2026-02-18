@@ -39,6 +39,7 @@ namespace Portfolio.Models.Portfolio
         public string ProjectUrl { get; set; } = string.Empty;
 
         [Required]
+        [Column("GitHubUrl")] // DB column is GitHubUrl (capital H)
         public string GithubUrl { get; set; } = string.Empty;
 
         [Column(TypeName = "json")]
