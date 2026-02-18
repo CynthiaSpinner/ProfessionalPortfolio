@@ -1321,8 +1321,9 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving project");
-                return Json(new { success = false, message = ex.Message });
+                var fullMessage = GetFullExceptionMessage(ex);
+                _logger.LogError(ex, "Error saving project: {FullMessage}", fullMessage);
+                return Json(new { success = false, message = ex.Message, innerException = ex.InnerException?.Message, fullMessage });
             }
         }
 
@@ -1343,6 +1344,15 @@ namespace Portfolio.Controllers
                 _logger.LogError(ex, "Error deleting project");
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        /// <summary>Flatten exception and all inner exceptions into one string for logging/debugging.</summary>
+        private static string GetFullExceptionMessage(Exception ex)
+        {
+            var parts = new List<string>();
+            for (var e = ex; e != null; e = e.InnerException)
+                parts.Add($"[{e.GetType().Name}] {e.Message}");
+            return string.Join(" → ", parts);
         }
 
         private static List<string> ParseJsonStringList(string? json)
