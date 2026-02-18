@@ -37,7 +37,7 @@ public class ProjectService : IProjectService
             existing.Technologies = dto.Technologies ?? new List<string>();
             existing.ProjectUrl = dto.ProjectUrl?.Trim() ?? "";
             existing.GithubUrl = dto.GithubUrl?.Trim() ?? "";
-            existing.CompletionDate = ToUtc(dto.CompletionDate ?? DateTime.UtcNow);
+            existing.CompletionDate = ToUtc(dto.CompletionDate);
             await _repository.UpdateAsync(existing);
             return (true, "Project saved.", existing.Id);
         }
@@ -53,7 +53,7 @@ public class ProjectService : IProjectService
             Technologies = dto.Technologies ?? new List<string>(),
             ProjectUrl = dto.ProjectUrl?.Trim() ?? "",
             GithubUrl = dto.GithubUrl?.Trim() ?? "",
-            CompletionDate = ToUtc(dto.CompletionDate ?? DateTime.UtcNow)
+            CompletionDate = ToUtc(dto.CompletionDate)
         };
         project = await _repository.AddAsync(project);
         return (true, "Project saved.", project.Id);
