@@ -44,11 +44,8 @@ export const portfolioApi = {
       : api.get("/portfolio/about"),
   updateAbout: (data) => api.put("/portfolio/about", data),
 
-  // Projects endpoints
-  getProjects: () =>
-    USE_MOCK_DATA
-      ? Promise.resolve({ data: mockData.projects })
-      : api.get("/portfolio/projects"),
+  // Projects endpoints (always use API so Projects page shows saved data)
+  getProjects: () => api.get("/portfolio/projects"),
   getProject: (id) => api.get(`/portfolio/projects/${id}`),
   createProject: (data) => api.post("/portfolio/projects", data),
   updateProject: (id, data) => api.put(`/portfolio/projects/${id}`, data),
