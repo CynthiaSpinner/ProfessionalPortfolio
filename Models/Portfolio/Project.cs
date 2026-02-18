@@ -14,11 +14,26 @@ namespace Portfolio.Models.Portfolio
         [Required]
         public string Title { get; set; } = string.Empty;
 
+        public string? Subtitle { get; set; }
+
         [Required]
         public string Description { get; set; } = string.Empty;
 
         [Required]
         public string ImageUrl { get; set; } = string.Empty;
+
+        /// <summary>Vimeo embed URL (e.g. https://player.vimeo.com/video/123) or Vimeo video ID. Optional.</summary>
+        public string? VideoUrl { get; set; }
+
+        [Column(TypeName = "json")]
+        public string FeaturesJson { get; set; } = "[]";
+
+        [NotMapped]
+        public List<string> Features
+        {
+            get => JsonSerializer.Deserialize<List<string>>(FeaturesJson) ?? new List<string>();
+            set => FeaturesJson = JsonSerializer.Serialize(value);
+        }
 
         [Required]
         public string ProjectUrl { get; set; } = string.Empty;

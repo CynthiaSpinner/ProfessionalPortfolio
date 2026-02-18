@@ -31,6 +31,7 @@ builder.Services.AddScoped<ICTASectionService, CTASectionService>();
 builder.Services.AddScoped<IPortfolioPublicService, PortfolioPublicService>();
 builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 builder.Services.AddScoped<ISkillsCategoryService, SkillsCategoryService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 // Repositories (data only); Services (logic, mapping, defaults); Controllers (HTTP only)
 builder.Services.AddScoped<ISkillsCategoryRepository, SkillsCategoryRepository>();
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();

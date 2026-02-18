@@ -44,7 +44,8 @@
                         <span>Home</span>
                     </a>
                 </li>
-                <li>
+                @* Videos: hidden until Vimeo integration + video library; restore when ready. *@
+                <li style="display: none;">
                     <a href="#videos" class="nav-link" data-section="videos">
                         <i class="fas fa-video"></i>
                         <span>Videos</span>
@@ -587,6 +588,88 @@
             </div>
         </div>
 
+        <div id="projects" class="content-section">
+            <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
+                <div class="card-header">
+                    <h5 class="mb-0" style="color: #818cf8 !important;">
+                        <i class="fas fa-project-diagram"></i>
+                        Projects
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted" style="color: #9ca3af !important;">Manage portfolio projects. Add a Vimeo video URL or ID (e.g. <code>https://vimeo.com/123456</code> or <code>123456</code>) to show a video on the project card.</p>
+                    @if (ViewBag.IsReadOnly != true)
+                    {
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-primary" id="btnAddProject"><i class="fas fa-plus"></i> Add project</button>
+                    </div>
+                    <div id="projectsListContainer" class="mb-4"></div>
+                    <div id="projectFormCard" class="card mb-4" style="display: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span id="projectFormHeading">Add project</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="projectFormCancel">Cancel</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="projectForm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" id="projectId" name="id" value="0" />
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="projectTitle" class="form-label" style="color: #9ca3af !important;">Title *</label>
+                                        <input type="text" class="form-control" id="projectTitle" name="title" required />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="projectSubtitle" class="form-label" style="color: #9ca3af !important;">Subtitle</label>
+                                        <input type="text" class="form-control" id="projectSubtitle" name="subtitle" />
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="projectDescription" class="form-label" style="color: #9ca3af !important;">Description</label>
+                                    <textarea class="form-control" id="projectDescription" name="description" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="projectVideoUrl" class="form-label" style="color: #9ca3af !important;">Vimeo video (URL or video ID)</label>
+                                    <input type="text" class="form-control" id="projectVideoUrl" name="videoUrl" placeholder="https://vimeo.com/123456 or 123456" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="projectImageUrl" class="form-label" style="color: #9ca3af !important;">Image URL (fallback if no video)</label>
+                                    <input type="text" class="form-control" id="projectImageUrl" name="imageUrl" />
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="projectProjectUrl" class="form-label" style="color: #9ca3af !important;">Project URL</label>
+                                        <input type="text" class="form-control" id="projectProjectUrl" name="projectUrl" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="projectGithubUrl" class="form-label" style="color: #9ca3af !important;">GitHub URL</label>
+                                        <input type="text" class="form-control" id="projectGithubUrl" name="githubUrl" />
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="projectFeatures" class="form-label" style="color: #9ca3af !important;">Features (one per line)</label>
+                                    <textarea class="form-control" id="projectFeatures" name="features" rows="4" placeholder="Feature one&#10;Feature two"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="projectTechnologies" class="form-label" style="color: #9ca3af !important;">Technologies (comma or newline)</label>
+                                    <textarea class="form-control" id="projectTechnologies" name="technologies" rows="2" placeholder="React, .NET, SQL"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="projectCompletionDate" class="form-label" style="color: #9ca3af !important;">Completion date</label>
+                                    <input type="date" class="form-control" id="projectCompletionDate" name="completionDate" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save project</button>
+                            </form>
+                        </div>
+                    </div>
+                    }
+                    else
+                    {
+                    <div id="projectsListContainerReadOnly"></div>
+                    }
+                </div>
+            </div>
+        </div>
+
         <div id="skills" class="content-section">
             <div class="card mb-4 mt-3" style="margin-bottom: 1.5rem !important;">
                 <div class="card-header">
@@ -1065,6 +1148,118 @@
             const res = await resp.json();
             showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Saved.' : 'Error'), res.success ? 'success' : 'error');
         });
+
+        // ----- Projects -----
+        let projectsList = [];
+        const projectsListContainer = document.getElementById('projectsListContainer');
+        const projectsListContainerReadOnly = document.getElementById('projectsListContainerReadOnly');
+        const projectFormCard = document.getElementById('projectFormCard');
+        const projectFormHeading = document.getElementById('projectFormHeading');
+        async function loadProjects() {
+            try {
+                const resp = await fetch('/Admin/GetProjects');
+                const result = await resp.json();
+                projectsList = result.data || [];
+                renderProjectsList(projectsListContainer, true);
+                if (projectsListContainerReadOnly) renderProjectsList(projectsListContainerReadOnly, false);
+            } catch (e) { console.error('Load projects error', e); }
+        }
+        function renderProjectsList(container, withActions) {
+            if (!container) return;
+            if (projectsList.length === 0) { container.innerHTML = '<p class="text-muted mb-0">No projects yet. Add one above.</p>'; return; }
+            container.innerHTML = projectsList.map(p => {
+                const editBtn = withActions ? `<button type="button" class="btn btn-sm btn-outline-primary me-2 editProjectBtn" data-id="${p.id}">Edit</button>` : '';
+                const delBtn = withActions ? `<button type="button" class="btn btn-sm btn-outline-danger deleteProjectBtn" data-id="${p.id}">Delete</button>` : '';
+                return `<div class="d-flex justify-content-between align-items-center border rounded p-3 mb-2" data-project-id="${p.id}">
+                    <div><strong>${escapeHtml(p.title)}</strong>${p.subtitle ? ' <span class="text-muted"> – ' + escapeHtml(p.subtitle) + '</span>' : ''} ${p.videoUrl ? '<span class="badge bg-secondary ms-2">Video</span>' : ''}</div>
+                    <div>${editBtn}${delBtn}</div>
+                </div>`;
+            }).join('');
+            if (withActions) {
+                container.querySelectorAll('.editProjectBtn').forEach(btn => btn.addEventListener('click', function() { editProject(parseInt(this.dataset.id, 10)); }));
+                container.querySelectorAll('.deleteProjectBtn').forEach(btn => btn.addEventListener('click', function() { deleteProject(parseInt(this.dataset.id, 10)); }));
+            }
+        }
+        function escapeHtml(s) { if (!s) return ''; const div = document.createElement('div'); div.textContent = s; return div.innerHTML; }
+        function showProjectForm(heading) {
+            projectFormHeading.textContent = heading;
+            if (projectFormCard) { projectFormCard.style.display = 'block'; projectFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        }
+        function clearProjectForm() {
+            document.getElementById('projectId').value = '0';
+            document.getElementById('projectTitle').value = '';
+            document.getElementById('projectSubtitle').value = '';
+            document.getElementById('projectDescription').value = '';
+            document.getElementById('projectVideoUrl').value = '';
+            document.getElementById('projectImageUrl').value = '';
+            document.getElementById('projectProjectUrl').value = '';
+            document.getElementById('projectGithubUrl').value = '';
+            document.getElementById('projectFeatures').value = '';
+            document.getElementById('projectTechnologies').value = '';
+            document.getElementById('projectCompletionDate').value = new Date().toISOString().slice(0, 10);
+        }
+        async function editProject(id) {
+            try {
+                const resp = await fetch('/Admin/GetProject?id=' + id);
+                const result = await resp.json();
+                if (!result.success || !result.data) { showNotification('Error!', result.message || 'Failed to load project', 'error'); return; }
+                const d = result.data;
+                document.getElementById('projectId').value = d.id;
+                document.getElementById('projectTitle').value = d.title || '';
+                document.getElementById('projectSubtitle').value = d.subtitle || '';
+                document.getElementById('projectDescription').value = d.description || '';
+                document.getElementById('projectVideoUrl').value = d.videoUrl || '';
+                document.getElementById('projectImageUrl').value = d.imageUrl || '';
+                document.getElementById('projectProjectUrl').value = d.projectUrl || '';
+                document.getElementById('projectGithubUrl').value = d.githubUrl || '';
+                document.getElementById('projectFeatures').value = Array.isArray(d.features) ? d.features.join('\n') : '';
+                document.getElementById('projectTechnologies').value = Array.isArray(d.technologies) ? d.technologies.join(', ') : '';
+                document.getElementById('projectCompletionDate').value = d.completionDate ? d.completionDate.slice(0, 10) : new Date().toISOString().slice(0, 10);
+                showProjectForm('Edit project');
+            } catch (e) { showNotification('Error!', e.message || 'Failed to load project', 'error'); }
+        }
+        async function deleteProject(id) {
+            if (!confirm('Delete this project?')) return;
+            const token = document.querySelector('#projectForm input[name="__RequestVerificationToken"]')?.value;
+            const fd = new FormData(); fd.append('__RequestVerificationToken', token || ''); fd.append('id', id);
+            const resp = await fetch('/Admin/DeleteProject', { method: 'POST', body: fd });
+            const res = await resp.json();
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Deleted.' : 'Error'), res.success ? 'success' : 'error');
+            if (res.success) { projectsList = projectsList.filter(p => p.id !== id); renderProjectsList(projectsListContainer, true); if (projectsListContainerReadOnly) renderProjectsList(projectsListContainerReadOnly, false); }
+        }
+        const btnAddProject = document.getElementById('btnAddProject');
+        if (btnAddProject) btnAddProject.addEventListener('click', function() { clearProjectForm(); showProjectForm('Add project'); });
+        const projectFormCancel = document.getElementById('projectFormCancel');
+        if (projectFormCancel) projectFormCancel.addEventListener('click', function() { if (projectFormCard) projectFormCard.style.display = 'none'; });
+        const projectForm = document.getElementById('projectForm');
+        if (projectForm) projectForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const featuresText = document.getElementById('projectFeatures').value || '';
+            const technologiesText = document.getElementById('projectTechnologies').value || '';
+            const features = featuresText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            const technologies = technologiesText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            const fd = new FormData();
+            fd.append('__RequestVerificationToken', document.querySelector('#projectForm input[name="__RequestVerificationToken"]').value);
+            fd.append('id', document.getElementById('projectId').value);
+            fd.append('title', document.getElementById('projectTitle').value);
+            fd.append('subtitle', document.getElementById('projectSubtitle').value);
+            fd.append('description', document.getElementById('projectDescription').value);
+            fd.append('imageUrl', document.getElementById('projectImageUrl').value);
+            fd.append('videoUrl', document.getElementById('projectVideoUrl').value);
+            fd.append('projectUrl', document.getElementById('projectProjectUrl').value);
+            fd.append('githubUrl', document.getElementById('projectGithubUrl').value);
+            fd.append('completionDate', document.getElementById('projectCompletionDate').value);
+            fd.append('featuresJson', JSON.stringify(features));
+            fd.append('technologiesJson', JSON.stringify(technologies));
+            const resp = await fetch('/Admin/SaveProject', { method: 'POST', body: fd });
+            const res = await resp.json();
+            showNotification(res.success ? 'Success!' : 'Error!', res.message || (res.success ? 'Saved.' : 'Error'), res.success ? 'success' : 'error');
+            if (res.success) {
+                await loadProjects();
+                if (projectFormCard) projectFormCard.style.display = 'none';
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() { loadProjects(); });
 
         const skillsLinkTextForm = document.getElementById('skillsLinkTextForm');
         if (skillsLinkTextForm) skillsLinkTextForm.addEventListener('submit', async function(e) {

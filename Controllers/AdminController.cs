@@ -28,6 +28,7 @@ namespace Portfolio.Controllers
         private readonly IFeaturesSectionService _featuresSectionService;
         private readonly ICTASectionRepository _ctaSectionRepository;
         private readonly ICTASectionService _ctaSectionService;
+        private readonly IProjectService _projectService;
 
         public AdminController(
             PortfolioContext context,
@@ -40,7 +41,8 @@ namespace Portfolio.Controllers
             IFeaturesSectionRepository featuresSectionRepository,
             IFeaturesSectionService featuresSectionService,
             ICTASectionRepository ctaSectionRepository,
-            ICTASectionService ctaSectionService)
+            ICTASectionService ctaSectionService,
+            IProjectService projectService)
         {
             _context = context;
             _logger = logger;
@@ -53,6 +55,7 @@ namespace Portfolio.Controllers
             _featuresSectionService = featuresSectionService;
             _ctaSectionRepository = ctaSectionRepository;
             _ctaSectionService = ctaSectionService;
+            _projectService = projectService;
         }
 
         private static bool IsBcryptHash(string hash)
@@ -1221,6 +1224,136 @@ namespace Portfolio.Controllers
                 _logger.LogError(ex, "Error loading default skills");
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        // ----- Projects (with Vimeo video support) -----
+        [HttpGet]
+        [Authorize(Roles = "Admin,ReadOnly")]
+        public async Task<IActionResult> GetProjects()
+        {
+            try
+            {
+                var list = await _projectService.GetAllAsync();
+                var data = list.Select(p => new
+                {
+                    id = p.Id,
+                    title = p.Title,
+                    subtitle = p.Subtitle,
+                    description = p.Description,
+                    imageUrl = p.ImageUrl,
+                    videoUrl = p.VideoUrl,
+                    features = p.Features,
+                    technologies = p.Technologies,
+                    projectUrl = p.ProjectUrl,
+                    githubUrl = p.GithubUrl,
+                    completionDate = p.CompletionDate
+                }).ToList();
+                return Json(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting projects");
+                return Json(new { success = false, message = ex.Message, data = new List<object>() });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,ReadOnly")]
+        public async Task<IActionResult> GetProject(int id)
+        {
+            try
+            {
+                var p = await _projectService.GetByIdAsync(id);
+                if (p == null) return Json(new { success = false, message = "Project not found." });
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        id = p.Id,
+                        title = p.Title,
+                        subtitle = p.Subtitle,
+                        description = p.Description,
+                        imageUrl = p.ImageUrl,
+                        videoUrl = p.VideoUrl,
+                        features = p.Features,
+                        technologies = p.Technologies,
+                        projectUrl = p.ProjectUrl,
+                        githubUrl = p.GithubUrl,
+                        completionDate = p.CompletionDate
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting project");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveProject([FromForm] int? id, [FromForm] string title, [FromForm] string? subtitle, [FromForm] string? description, [FromForm] string? imageUrl, [FromForm] string? videoUrl, [FromForm] string? featuresJson, [FromForm] string? technologiesJson, [FromForm] string? projectUrl, [FromForm] string? githubUrl, [FromForm] DateTime? completionDate)
+        {
+            try
+            {
+                var features = ParseJsonStringList(featuresJson);
+                var technologies = ParseJsonStringList(technologiesJson);
+                var dto = new ProjectEditDto
+                {
+                    Id = id,
+                    Title = title ?? "",
+                    Subtitle = subtitle,
+                    Description = description ?? "",
+                    ImageUrl = imageUrl ?? "",
+                    VideoUrl = videoUrl,
+                    Features = features,
+                    Technologies = technologies,
+                    ProjectUrl = projectUrl ?? "",
+                    GithubUrl = githubUrl ?? "",
+                    CompletionDate = completionDate ?? DateTime.UtcNow
+                };
+                var (success, message, projectId) = await _projectService.SaveAsync(dto);
+                if (success)
+                    await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "projectsDataUpdated" }));
+                return Json(new { success, message, id = projectId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving project");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProject([FromForm] int id)
+        {
+            try
+            {
+                var (success, message) = await _projectService.DeleteAsync(id);
+                if (success)
+                    await _webSocketService.BroadcastMessageAsync(System.Text.Json.JsonSerializer.Serialize(new { type = "projectsDataUpdated" }));
+                return Json(new { success, message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting project");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private static List<string> ParseJsonStringList(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json)) return new List<string>();
+            try
+            {
+                var list = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+                return list ?? new List<string>();
+            }
+            catch { return new List<string>(); }
         }
 
         public class LoginModel
