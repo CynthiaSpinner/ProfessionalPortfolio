@@ -3,10 +3,23 @@ import { Card, Row, Col } from "react-bootstrap";
 import HeadingGroup from "./HeadingGroup";
 import Button from "./Button";
 
+/** Vimeo watch pages (vimeo.com/...) refuse to be embedded. Use player URL. */
+function toVimeoEmbedUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  const s = url.trim();
+  if (s.startsWith("https://player.vimeo.com/video/")) return s;
+  const m = s.match(/vimeo\.com\/(\d+)/i);
+  if (m) return `https://player.vimeo.com/video/${m[1]}`;
+  if (/^\d+$/.test(s)) return `https://player.vimeo.com/video/${s}`;
+  return s;
+}
+
 const ProjectCard = ({ project }) => {
   const features = project.features ?? [];
   const technologies = project.technologies ?? [];
-  const hasVideo = project.videoUrl && project.videoUrl.trim() !== "";
+  const rawVideo = project.videoUrl?.trim() || "";
+  const embedVideoUrl = toVimeoEmbedUrl(rawVideo);
+  const hasVideo = embedVideoUrl && embedVideoUrl.startsWith("https://player.vimeo.com/");
   const imageUrl = project.imageUrl?.trim() || null;
 
   return (
@@ -16,7 +29,7 @@ const ProjectCard = ({ project }) => {
           <div className="video-container">
             {hasVideo ? (
               <iframe
-                src={project.videoUrl}
+                src={embedVideoUrl}
                 title={project.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
