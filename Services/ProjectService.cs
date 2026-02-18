@@ -37,7 +37,7 @@ public class ProjectService : IProjectService
             existing.Technologies = dto.Technologies ?? new List<string>();
             existing.ProjectUrl = dto.ProjectUrl?.Trim() ?? "";
             existing.GithubUrl = dto.GithubUrl?.Trim() ?? "";
-            existing.CompletionDate = dto.CompletionDate;
+            existing.CompletionDate = ToUtc(dto.CompletionDate ?? DateTime.UtcNow);
             await _repository.UpdateAsync(existing);
             return (true, "Project saved.", existing.Id);
         }
@@ -53,7 +53,7 @@ public class ProjectService : IProjectService
             Technologies = dto.Technologies ?? new List<string>(),
             ProjectUrl = dto.ProjectUrl?.Trim() ?? "",
             GithubUrl = dto.GithubUrl?.Trim() ?? "",
-            CompletionDate = dto.CompletionDate
+            CompletionDate = ToUtc(dto.CompletionDate ?? DateTime.UtcNow)
         };
         project = await _repository.AddAsync(project);
         return (true, "Project saved.", project.Id);
@@ -66,6 +66,14 @@ public class ProjectService : IProjectService
             return (false, "Project not found.");
         await _repository.DeleteAsync(project);
         return (true, "Project deleted.");
+    }
+
+    /// <summary>PostgreSQL timestamp with time zone requires UTC. Normalize so Kind is Utc.</summary>
+    private static DateTime ToUtc(DateTime value)
+    {
+        if (value.Kind == DateTimeKind.Utc) return value;
+        if (value.Kind == DateTimeKind.Unspecified) return DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        return value.ToUniversalTime();
     }
 
     /// <summary>Accept full Vimeo URL or bare ID; return embed URL for iframe src.</summary>
